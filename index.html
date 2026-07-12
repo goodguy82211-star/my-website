@@ -12,7 +12,7 @@
 
     <script>
         (function() {
-            const version = "v8.1"; // 💡 更新版本號以清除快取
+            const version = "v8.2"; // 💡 更新版本號以清除快取
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -36,8 +36,7 @@
         }
         .container { max-width: 600px; margin: 20px auto; background: #ffffff; padding: 24px; border-radius: 16px; box-shadow: 0 8px 30px rgba(2, 132, 199, 0.1); position: relative; }
         
-        .top-notice-banner { background-color: #0284c7; color: #ffffff; padding: 10px 16px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; margin: -24px -24px 20px -24px; font-weight: bold; border-radius: 16px 16px 0 0; }
-        .line-open-btn { background-color: #ffffff; color: #0284c7; border: none; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .top-notice-banner { background-color: #0284c7; color: #ffffff; padding: 10px 16px; font-size: 12px; display: flex; justify-content: center; align-items: center; margin: -24px -24px 20px -24px; font-weight: bold; border-radius: 16px 16px 0 0; }
         
         .nav-bar { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #bae6fd; padding-bottom: 12px; gap: 10px; position: relative; }
         .nav-links { display: flex; gap: 10px; font-size: 14px; color: #0369a1; font-weight: 600; flex-wrap: wrap; }
@@ -63,7 +62,11 @@
         .menu-btn-row { display: flex; gap: 12px; width: 100%; max-width: 290px; }
         .action-btn { flex: 1; background-color: #ffffff; color: #0f172a; border: 2px solid #bae6fd; }
         
-        .promo-banner { text-align: center; border: 1px solid #bae6fd; border-radius: 20px; padding: 8px 16px; width: fit-content; margin: 5px auto 35px auto; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08); font-weight: bold; }
+        .promo-banner { text-align: center; border: 1px solid #bae6fd; border-radius: 20px; padding: 8px 16px; width: fit-content; margin: 5px auto 20px auto; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08); font-weight: bold; }
+
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 30px 0 10px 0; }
+        .info-btn { padding: 12px 10px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; text-align: center; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.05); display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .info-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(2, 132, 199, 0.15); }
 
         .view-section { display: none; }
         .view-section.active { display: block; animation: fadeIn 0.3s ease-in-out; }
@@ -119,7 +122,6 @@
 <div class="container">
     <div class="top-notice-banner" id="top-notice-banner-el">
         <div id="notice-text-el">🧮 有換算計算機可以參考唷~~</div>
-        <button class="line-open-btn" onclick="redirectToLineApp()">用 LINE 開啟</button>
     </div>
 
     <div class="nav-bar">
@@ -152,6 +154,13 @@
             </div>
         </div>
         <div class="promo-banner" id="promo-banner-el">載入中...</div>
+        
+        <div class="info-grid" id="info-grid-el">
+            <button class="info-btn" onclick="openInfoModal('definitions')">📖 下單區釋義</button>
+            <button class="info-btn" onclick="openInfoModal('process')">📝 下單流程</button>
+            <button class="info-btn" onclick="openInfoModal('notes')">⚠️ 購買注意事項</button>
+            <button class="info-btn" onclick="openInfoModal('shipping')">📦 物流方式</button>
+        </div>
     </div>
 
     <div id="profile-view" class="view-section">
@@ -283,6 +292,14 @@
     </div>
 </div>
 
+<div id="info-modal" class="modal-overlay" onclick="if(event.target===this) closeInfoModal()">
+    <div class="modal-content" id="info-modal-content" style="max-width: 600px; width: 95%;">
+        <span class="modal-close" onclick="closeInfoModal()">×</span>
+        <h2 id="info-modal-title" style="margin-top:0; border-bottom: 2px dashed #bae6fd; padding-bottom: 10px;"></h2>
+        <div class="modal-body" id="info-modal-body" style="line-height: 1.6; max-height: 65vh; overflow-y: auto;"></div>
+    </div>
+</div>
+
 <script>
     // ⚠️ 這裡替換成您自己的 GAS_URL
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxjeKY2LuG_z2NxPdYsnGf8OF8JIy6LqxpHuYTd-rjVZ8Wj5spuU07N8UsZzoCeWbuE/exec";
@@ -299,6 +316,64 @@
     let currentProductTab = 'current';
     let adminOrderSearch = "";
 
+    const infoContents = {
+        definitions: {
+            title: "📖 下單區釋義",
+            html: `
+                <p><strong>現貨區：</strong> 自助下單，支付訂金，約2-3天出貨。</p>
+                <p><strong>批發區：</strong> 商品流動快速不保單，自助下單，對帳後狀態為 <em>已付訂金開始追加採買</em> ，追加期請抓2個月。</p>
+                <p><strong>連線區：</strong>親飛 連線或小幫手連線期間請『手工製圖』後私訊官方LINE，客服會提供帳號支付訂金，當日客服會更新訂單狀態供查詢， <em>確認買到</em> 會將狀態改為 <em>已採買</em> 。</p>
+            `
+        },
+        process: {
+            title: "📝 下單流程",
+            html: `
+                <ol>
+                    <li>商品照留言「+數量」喊單。</li>
+                    <li>加入官方Line進行結帳：@798igrjf，（請參考範例截圖）。</li>
+                    <li>連線期間確認商品「有貨」後，才會提供匯款資訊，會先收商品一半訂金。</li>
+                    <li>非連線期間，會先收商品一半訂金，若沒代為採買到會全額退款，「請抓1-2個月集運到貨」。</li>
+                    <li>除零食類商品外（但還是要社群喊單並截圖到官方下單），其餘雜貨、扭蛋等商品皆需先支付商品金額 50% 訂金，收到訂金後才會代購。</li>
+                </ol>
+            `
+        },
+        notes: {
+            title: "⚠️ 購買注意事項",
+            html: `
+                <ul style="padding-left: 20px;">
+                    <li>訂金支付後即安排採購，如因買家個人因素取消訂單、棄單或失聯不取貨，訂金恕不退還，尾款於出貨時收，不保單，可能遇到缺貨限購斷單等原因，會全額退款訂金。</li>
+                    <li>扭蛋、盲盒商品皆為隨機內容，無法指定款式。</li>
+                    <li>代購商品恕不保單盒況，不保外盒、吊牌完美，可能有盒損、壓痕、刮痕、鞋盒一律不留等情況。</li>
+                    <li>商品若有原廠製造瑕疵（官瑕），恕無法退換貨，請能接受再下單。</li>
+                    <li>商品顏色可能因拍攝光線、螢幕顯示設定不同而略有色差，請以實際商品為準。</li>
+                    <li>代購商品係依買家支付訂金且指定內容採買，屬客製化委託代購服務，不適用7天鑑賞期，因商品顏色、尺寸、包裝版本、想像落差、收藏喜好改變等個人因素，恕不接受退換貨。</li>
+                    <li>包裝皆採用簡易包材環保重複利用的，若有需要加強防護，取得買家同意後依照（包材費+包材運費）計入尾款跟買家收取。</li>
+                </ul>
+                <p style="font-weight:bold; color: #e11d48; text-align:center;">✅ 下單即表示已閱讀、理解並同意以上代購規範。<br>若隨意喊單或支付訂金後要取消要求退款退貨，會被小魔丸「吉」喔，切勿以身試法</p>
+            `
+        },
+        shipping: {
+            title: "📦 物流方式",
+            html: `
+                <p>以上待商品準備出貨時，會向買家確認希望的出貨方式（運費買家自付）</p>
+                <ul>
+                    <li>A. 黑貓宅配</li>
+                    <li>B. 7-11 交貨便 / 加值交貨便</li>
+                    <li>C. 7-11 賣貨便（賣貨便將改為未取貨退回需支付寄送運費，有此情況產生此費用會尾款加上此金額給買家重新下單才發貨）</li>
+                    <li>D. 新竹好市多附近面交，免運費且整筆訂單總額折抵 $15（節省包材費用）。</li>
+                </ul>
+                <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse: collapse; font-size:12px; margin-top:10px;">
+                    <tr><th style="border:1px solid #cbd5e1; padding:5px;">服務項目</th><th style="border:1px solid #cbd5e1; padding:5px;">黑貓宅急便 (宅配)</th><th style="border:1px solid #cbd5e1; padding:5px;">7-11 交貨便 (一般)</th><th style="border:1px solid #cbd5e1; padding:5px;">7-11 加值交貨便</th><th style="border:1px solid #cbd5e1; padding:5px;">7-11 賣貨便 (電商)</th></tr>
+                    <tr><td style="border:1px solid #cbd5e1; padding:5px; font-weight:bold;">常溫運費</td><td style="border:1px solid #cbd5e1; padding:5px;">130 ~ 290元<br>(依包裹尺寸 60cm~150cm 計算)</td><td style="border:1px solid #cbd5e1; padding:5px;">60元</td><td style="border:1px solid #cbd5e1; padding:5px;">65 ~ 100元<br>(依申報價值 1,001~5,000元 計算)</td><td style="border:1px solid #cbd5e1; padding:5px;">38元</td></tr>
+                    <tr><td style="border:1px solid #cbd5e1; padding:5px; font-weight:bold;">遺失理賠上限</td><td style="border:1px solid #cbd5e1; padding:5px;">最高 20,000元 / 件</td><td style="border:1px solid #cbd5e1; padding:5px;">最高 1,000元 / 件</td><td style="border:1px solid #cbd5e1; padding:5px;">最高 2,000 ~ 5,000元 / 件<br>(依寄件時選擇的申報級距)</td><td style="border:1px solid #cbd5e1; padding:5px;">最高 20,000元 / 件<br>(依平台實際訂單金額理賠)</td></tr>
+                    <tr><td style="border:1px solid #cbd5e1; padding:5px; font-weight:bold;">包裹尺寸限制</td><td style="border:1px solid #cbd5e1; padding:5px;">常溫長寬高總和 ≤ 150cm<br>低溫長寬高總和 ≤ 120cm</td><td style="border:1px solid #cbd5e1; padding:5px;">長寬高總和 ≤ 105cm<br>單邊最長 ≤ 45cm<br>重量 ≤ 5kg</td><td style="border:1px solid #cbd5e1; padding:5px;">長寬高總和 ≤ 105cm<br>單邊最長 ≤ 45cm<br>重量 ≤ 5kg</td><td style="border:1px solid #cbd5e1; padding:5px;">長寬高總和 ≤ 105cm<br>單邊最長 ≤ 45cm<br>重量 ≤ 5kg</td></tr>
+                </table>
+                </div>
+            `
+        }
+    };
+
     const defaultSettings = {
         globalFont: "'Helvetica Neue', Arial, '微軟正黑體', sans-serif",
         main: { text: "小魔丸旅遊代購", size: "28px", color: "#0f172a", font: "inherit" },
@@ -308,7 +383,6 @@
         inStockSect: { text: "現貨區", size: "18px", color: "#0ea5e9", font: "inherit" },
         promo: { text: "✈ 滿$3000免運", size: "13px", color: "#0284c7", bg: "#ffffff", font: "inherit" },
         notice: { text: "🧮 有換算計算機可以參考唷~~", size: "12px", color: "#ffffff", font: "inherit", bg: "#0284c7" },
-        lineUrl: "https://liff.line.me/2010605445-uN1Lgzz8",
         avatarUrl: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=150&q=80",
         bankCode: "822 (中國信託)", bankAccount: "1234-5678-9012", qrCodeUrl: "", linePayUrl: "", sopImgUrl: "",
         sopBtn: { text: "付款SOP", size: "13px", color: "#ffffff", bg: "#e11d48" },
@@ -329,6 +403,15 @@
             paid: { text: "已付款", size: "12px", color: "#475569", font: "inherit" },
             shipped: { text: "已出貨:貨已出轉運中", size: "12px", color: "#475569", font: "inherit" },
             outOfStock: { text: "已斷貨:聯繫退款", size: "12px", color: "#e11d48", font: "inherit" }
+        },
+        infoStyles: {
+            btnBg: "#ffffff",
+            btnTextCol: "#0f172a",
+            btnBorder: "#bae6fd",
+            modalBg: "#ffffff",
+            modalTextCol: "#334155",
+            modalTitleCol: "#0369a1",
+            fontSize: "14px"
         },
         groupCovers: {} 
     };
@@ -387,13 +470,20 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
         if(viewId === 'product') switchProductTab(currentProductTab);
     }
-    function redirectToLineApp() { window.location.href = settings.lineUrl || defaultSettings.lineUrl; }
     
     function openCalculator() { document.getElementById('calc-modal').classList.add('active'); }
     function closeCalculator() { document.getElementById('calc-modal').classList.remove('active'); }
     function openSopModal() { document.getElementById('sop-modal').classList.add('active'); }
     function closeSopModal() { document.getElementById('sop-modal').classList.remove('active'); }
     
+    function openInfoModal(type) {
+        const data = infoContents[type];
+        document.getElementById('info-modal-title').innerText = data.title;
+        document.getElementById('info-modal-body').innerHTML = data.html;
+        document.getElementById('info-modal').classList.add('active');
+    }
+    function closeInfoModal() { document.getElementById('info-modal').classList.remove('active'); }
+
     function openPaymentModal() {
         const checkedBoxes = document.querySelectorAll('.user-order-chk:checked');
         if (checkedBoxes.length === 0) return alert("⚠️ 請先勾選您要結帳的訂單！");
@@ -408,7 +498,6 @@
             sumPrice += Number(c.dataset.price) || 0;
         });
         
-        // 依照新需求：結帳畫面的訂金計算方式改為「勾選項目的金額總和一半金額(小數點後的第一位使用四捨五入算法)」
         let sumDeposit = Math.round(sumPrice / 2);
         
         document.getElementById('payment-total-amount').innerText = sumPrice;
@@ -471,7 +560,6 @@
             if (liff.isLoggedIn()) {
                 liff.getProfile().then(profile => {
                     currentUserProfile = profile;
-                    // 💡 修正：保存真實 LINE 名稱，並固定顯示在黑框區域
                     currentUserProfile.realName = profile.displayName;
                     
                     document.getElementById('user-name').innerText = profile.displayName; 
@@ -493,7 +581,6 @@
         loadProducts();
     };
 
-    // 💡 擴增：修改 saveGroupNickname 使其與後端同步資料
     function saveGroupNickname() {
         const nick = document.getElementById('custom-group-name').value.trim();
         if (!nick) return alert("請輸入有效的暱稱！");
@@ -501,17 +588,15 @@
             return alert("⚠️ 請先點擊大頭照區域登入 LINE！");
         }
 
-        // 先更新本地畫面 (但不覆寫真實名稱)
         localStorage.setItem("customGroupNickname", nick);
 
-        // 送出至後端進行同步寫入「社群綁定資料」
         fetch(GAS_URL, {
             method: "POST",
             body: JSON.stringify({
                 action: "updateUserBinding",
                 userId: currentUserProfile.userId,
-                realName: currentUserProfile.realName, // 真實名稱
-                displayName: nick // 自訂群暱稱
+                realName: currentUserProfile.realName,
+                displayName: nick
             })
         })
         .then(res => res.text())
@@ -564,6 +649,25 @@
         const sopBtn = document.getElementById("sop-btn-el");
         sopBtn.innerText = settings.sopBtn?.text; sopBtn.style.color = settings.sopBtn?.color; sopBtn.style.background = settings.sopBtn?.bg;
         document.getElementById("sop-img-el").src = formatImageUrl(settings.sopImgUrl);
+
+        // 套用 info 區塊樣式
+        const infoGrid = document.getElementById("info-grid-el");
+        if (infoGrid) {
+            const btns = infoGrid.querySelectorAll('.info-btn');
+            btns.forEach(btn => {
+                btn.style.backgroundColor = settings.infoStyles?.btnBg || '#ffffff';
+                btn.style.color = settings.infoStyles?.btnTextCol || '#0f172a';
+                btn.style.borderColor = settings.infoStyles?.btnBorder || '#bae6fd';
+                btn.style.fontSize = settings.infoStyles?.fontSize || '14px';
+            });
+        }
+        const infoModalContent = document.getElementById("info-modal-content");
+        if (infoModalContent) {
+            infoModalContent.style.backgroundColor = settings.infoStyles?.modalBg || '#ffffff';
+            infoModalContent.style.color = settings.infoStyles?.modalTextCol || '#334155';
+            document.getElementById("info-modal-title").style.color = settings.infoStyles?.modalTitleCol || '#0369a1';
+            document.getElementById("info-modal-body").style.fontSize = settings.infoStyles?.fontSize || '14px';
+        }
         
         switchProductTab(currentProductTab);
     }
@@ -588,6 +692,7 @@
                     let savedSettings = JSON.parse(data[setIdx].img);
                     settings = { ...defaultSettings, ...savedSettings }; 
                     if (!settings.summaryBox) settings.summaryBox = defaultSettings.summaryBox; 
+                    if (!settings.infoStyles) settings.infoStyles = defaultSettings.infoStyles;
                     applyStyles(); 
                 } catch(e){}
                 data.splice(setIdx, 1);
@@ -813,8 +918,8 @@
                 action: "submitOrder", 
                 cart: selectedItems, 
                 userId: currentUserProfile.userId, 
-                realName: currentUserProfile.realName, // 💡 傳遞真實名稱
-                customName: finalCustomName            // 💡 傳遞群組暱稱
+                realName: currentUserProfile.realName,
+                customName: finalCustomName
             }) 
         })
         .then(() => { 
@@ -844,23 +949,20 @@
             let html = `<table><tr><th style="width:30px;"><input type="checkbox" onclick="document.querySelectorAll('.user-order-chk').forEach(c=>c.checked=this.checked);calcSelectedTotal()"></th><th>日期</th><th>商品</th><th>備註</th><th>狀態</th><th>金額</th><th>已付訂金</th><th>未付尾款</th></tr>`;
             filtered.forEach(o => {
                 let p = Number(o.price);
-                let deposit = Math.round(p / 2); // 取金額的一半並四捨五入
-                let balance = p - deposit;       // 尾款計算
+                let deposit = Math.round(p / 2); 
+                let balance = p - deposit;       
 
                 let depositDisplay = deposit;
                 let balanceDisplay = balance;
 
-                // 若訂單狀態為已登記，已付訂金/未付尾款不會有數字
                 if (o.status === '已登記') {
                     depositDisplay = '';
                     balanceDisplay = '';
                 } 
-                // 若訂單狀態為已斷貨，未付尾款不會有數字
                 else if (o.status === '已斷貨') {
                     balanceDisplay = '';
                 }
 
-                // 但訂單狀態為已付款項目不開啟勾選功能
                 let chk = '';
                 if(o.status !== '已付款') { 
                     chk = `<input type="checkbox" class="user-order-chk" value="${o.row}" data-price="${p}" data-deposit="${depositDisplay}" data-balance="${balanceDisplay}" data-status="${o.status}" onchange="calcSelectedTotal()">`; 
@@ -908,7 +1010,7 @@
                     <button onclick="openPaymentModal()" style="background:#e11d48; color:white; border:none; padding:6px 12px; border-radius:20px; font-weight:bold;">前往結帳</button>
                 </div>`;
             
-            calcSelectedTotal(); // 初始化計算勾選項目總和為0
+            calcSelectedTotal();
         });
     }
 
@@ -920,7 +1022,6 @@
         document.querySelectorAll('.user-order-chk:checked').forEach(c => {
             sumPrice += Number(c.dataset.price) || 0;
             
-            // 判斷畫面上的數值（data-deposit 與 data-balance），若為空（空白無數字）則排除計算
             if (c.dataset.deposit && c.dataset.deposit.trim() !== '') {
                 sumDeposit += Number(c.dataset.deposit);
             }
@@ -948,7 +1049,7 @@
 
     function enterAdminMode() {
         if (sessionStorage.getItem("isAdminLoggedIn") !== "true") {
-            if (prompt("密碼：") !== "820211") return alert("密碼錯誤");
+            if (prompt("密碼：") !== "102225") return alert("密碼錯誤");
             sessionStorage.setItem("isAdminLoggedIn", "true");
         }
         
@@ -1103,6 +1204,38 @@
                     </div>
                 </div>
 
+                <div style="background:#fff; padding:12px; border-radius:8px; margin-bottom:15px; border:1px solid #e2e8f0;">
+                    <strong style="color:#0284c7;">G. 資訊區塊外觀設定 (按鈕與彈窗)</strong><br>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:100px; font-size:13px; margin-top:10px;">按鈕背景色:</span>
+                        <input id="info-btn-bg" value="${settings.infoStyles?.btnBg || '#ffffff'}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:100px; font-size:13px; margin-top:10px;">按鈕文字色:</span>
+                        <input id="info-btn-col" value="${settings.infoStyles?.btnTextCol || '#0f172a'}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:100px; font-size:13px; margin-top:10px;">按鈕邊框色:</span>
+                        <input id="info-btn-border" value="${settings.infoStyles?.btnBorder || '#bae6fd'}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:100px; font-size:13px; margin-top:10px;">彈窗背景色:</span>
+                        <input id="info-modal-bg" value="${settings.infoStyles?.modalBg || '#ffffff'}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:100px; font-size:13px; margin-top:10px;">彈窗文字色:</span>
+                        <input id="info-modal-col" value="${settings.infoStyles?.modalTextCol || '#334155'}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:100px; font-size:13px; margin-top:10px;">彈窗標題色:</span>
+                        <input id="info-modal-title-col" value="${settings.infoStyles?.modalTitleCol || '#0369a1'}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:100px; font-size:13px; margin-top:10px;">字體大小:</span>
+                        <input id="info-font-size" value="${settings.infoStyles?.fontSize || '14px'}" style="flex:1; margin-bottom:0;">
+                    </div>
+                </div>
+
                 <button onclick="saveSettings()" style="background:#0284c7; color:white; border:none; padding:12px; border-radius:8px; width:100%; font-weight:bold;">💾 儲存外觀設定</button>
             </div>
 
@@ -1134,11 +1267,11 @@
 
             <h3 style="color:#0369a1;">📦 商品庫存與【群組分類】編輯</h3>
             ${products.map((p, i) => `
-                <div class="product-card upload-container" style="margin-bottom:12px; border:1px solid #e2e8f0; background:#f8fafc;">
+                <div class="product-card" style="margin-bottom:12px; border:1px solid #e2e8f0; background:#f8fafc;">
                     名稱: <input type="text" value="${p.name || ''}" id="name-${i}"> 
                     價格: <input type="text" value="${p.price || 0}" id="price-${i}"> 
                     群組(分類): <input type="text" value="${p.group || ''}" id="group-${i}" placeholder="留白則為單獨卡片" style="border-color:#0ea5e9;">
-                    <div style="display:flex; gap:5px; margin-bottom:12px; align-items:center;">
+                    <div class="upload-container" style="display:flex; gap:5px; margin-bottom:12px; align-items:center;">
                         <span style="white-space:nowrap; font-size:14px;">圖片連結:</span>
                         <input type="text" value="${p.img || ''}" id="img-${i}" style="margin-bottom:0; flex:1;"> 
                         <label style="background:#0ea5e9; color:white; padding:10px 12px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; white-space:nowrap; margin-bottom:0;">
@@ -1182,6 +1315,15 @@
         settings.summaryLabels.paid = { text: document.getElementById('sl-paid-t').value, color: document.getElementById('sl-paid-c').value, size: document.getElementById('sl-paid-s').value, font: "inherit" };
         settings.summaryLabels.shipped = { text: document.getElementById('sl-ship-t').value, color: document.getElementById('sl-ship-c').value, size: document.getElementById('sl-ship-s').value, font: "inherit" };
         settings.summaryLabels.outOfStock = { text: document.getElementById('sl-out-t').value, color: document.getElementById('sl-out-c').value, size: document.getElementById('sl-out-s').value, font: "inherit" };
+
+        if(!settings.infoStyles) settings.infoStyles = {};
+        settings.infoStyles.btnBg = document.getElementById('info-btn-bg').value;
+        settings.infoStyles.btnTextCol = document.getElementById('info-btn-col').value;
+        settings.infoStyles.btnBorder = document.getElementById('info-btn-border').value;
+        settings.infoStyles.modalBg = document.getElementById('info-modal-bg').value;
+        settings.infoStyles.modalTextCol = document.getElementById('info-modal-col').value;
+        settings.infoStyles.modalTitleCol = document.getElementById('info-modal-title-col').value;
+        settings.infoStyles.fontSize = document.getElementById('info-font-size').value;
 
         applyStyles();
         fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "updateProduct", data: { id: "_SITE_SETTINGS_", name: "系統設定", price: 0, img: JSON.stringify(settings) } }) }).then(() => alert("設定已儲存！"));
