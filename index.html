@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <title>小魔丸旅遊代購</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+    <script>
+        (function() {
+            const version = "v8.1"; // 💡 更新版本號以清除快取
+            const currentVersion = localStorage.getItem("appVersion");
+            if (currentVersion !== version) {
+                localStorage.removeItem("siteSettings");
+                localStorage.setItem("appVersion", version);
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for(let registration of registrations) { registration.unregister(); }
+                    });
+                }
+                let cleanUrl = window.location.origin + window.location.pathname + '?v=' + new Date().getTime();
+                window.location.replace(cleanUrl);
+            }
+        })();
+    </script>
+
+    <style>
+        body { 
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%); 
+            background-attachment: fixed;
+            margin: 0; padding: 10px; color: #334155; 
+        }
+        .container { max-width: 600px; margin: 20px auto; background: #ffffff; padding: 24px; border-radius: 16px; box-shadow: 0 8px 30px rgba(2, 132, 199, 0.1); position: relative; }
+        
+        .top-notice-banner { background-color: #0284c7; color: #ffffff; padding: 10px 16px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; margin: -24px -24px 20px -24px; font-weight: bold; border-radius: 16px 16px 0 0; }
+        .line-open-btn { background-color: #ffffff; color: #0284c7; border: none; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        
+        .nav-bar { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #bae6fd; padding-bottom: 12px; gap: 10px; position: relative; }
+        .nav-links { display: flex; gap: 10px; font-size: 14px; color: #0369a1; font-weight: 600; flex-wrap: wrap; }
+        .nav-links span { cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: 0.2s; }
+        .nav-links span:hover { background: #e0f2fe; }
+        .admin-btn { background: none; border: none; font-size: 18px; cursor: pointer; padding: 0; transition: transform 0.2s; }
+        
+        .cart-nav-btn { background: #0f172a; color: white; border: none; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: 0.2s; margin-left: 5px; }
+        .cart-nav-btn:hover { background: #1e293b; transform: translateY(-2px); }
+        .cart-badge { background: #e11d48; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; min-width: 14px; text-align: center; }
+
+        .profile-card { display: flex; align-items: center; background: #f0f9ff; padding: 12px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #bae6fd; }
+        .avatar-placeholder { width: 50px; height: 50px; background: #0ea5e9; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 15px; font-weight:bold; }
+        
+        .brand-logo-container { text-align: center; margin: 25px 0 20px 0; }
+        #brand-avatar-el { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid #ffffff; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2); margin: 0 auto 15px auto; display: block; }
+        #main-title { text-align: center; margin-bottom: 5px; cursor: default; font-weight: 800; letter-spacing: 1px; color: #0f172a; }
+        #sub-title { text-align: center; margin-bottom: 24px; cursor: default; font-weight: bold; color: #475569; }
+        
+        .menu-buttons-container { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 25px 0; width: 100%; }
+        .menu-btn { width: 100%; max-width: 290px; padding: 12px; border-radius: 25px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; text-align: center; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08); box-sizing: border-box; }
+        .profile-btn { background-color: #f0f9ff; color: #0284c7; border: 1px solid #bae6fd; }
+        .menu-btn-row { display: flex; gap: 12px; width: 100%; max-width: 290px; }
+        .action-btn { flex: 1; background-color: #ffffff; color: #0f172a; border: 2px solid #bae6fd; }
+        
+        .promo-banner { text-align: center; border: 1px solid #bae6fd; border-radius: 20px; padding: 8px 16px; width: fit-content; margin: 5px auto 35px auto; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08); font-weight: bold; }
+
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .back-btn { background: #f1f5f9; color: #475569; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+        
+        .product-card { position: relative; border: 1px solid #e0f2fe; padding: 15px; border-radius: 12px; background: white; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.05); transition: transform 0.2s; display: flex; flex-direction: column; }
+        .product-card:hover { transform: translateY(-2px); border-color: #7dd3fc; }
+        
+        .product-img-wrapper { position: relative; width: 100%; padding-top: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 10px; }
+        .product-img-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .product-card h4 { margin: 0 0 5px 0; font-size: 15px; color: #0f172a; line-height: 1.3; }
+        
+        .group-card { border: 2px solid #bae6fd; background: #f8fafc; cursor: pointer; }
+        .group-card:hover { border-color: #0284c7; background: #f0f9ff; }
+        .group-badge { position: absolute; top: 15px; left: 15px; background: rgba(15, 23, 42, 0.85); color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .group-card button { background: #0f172a; color: white; border: none; padding: 8px 14px; border-radius: 20px; width: 100%; margin-top: auto; font-weight: bold; font-size: 14px; cursor: pointer; }
+        
+        input:not([type="checkbox"]):not([type="radio"]), select { 
+            width: 100%; margin-bottom: 12px; padding: 10px; box-sizing: border-box; 
+            border: 1px solid #bae6fd; border-radius: 8px; font-size: 14px; outline: none; 
+        }
+        input[type="checkbox"] { 
+            width: auto; margin: 0; padding: 0; box-sizing: border-box; cursor: pointer; 
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+        th, td { border-bottom: 1px solid #e2e8f0; padding: 10px 6px; text-align: left; }
+        th { background-color: #f0f9ff; color: #0369a1; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
+        .modal-content { background: #ffffff; border-radius: 20px; padding: 20px; box-sizing: border-box; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-height: 90vh; display: flex; flex-direction: column; }
+        .modal-close { position: absolute; top: 12px; right: 15px; font-size: 26px; color: #94a3b8; cursor: pointer; font-weight: bold; line-height: 1; z-index: 10; }
+        .modal-body { overflow-y: auto; flex: 1; padding-top: 5px; margin-top: 10px; }
+        
+        #cart-modal .modal-content { max-width: 550px; width: 95%; border: 2px solid #38bdf8; padding: 25px; background: #f8fafc; }
+
+        #product-group-modal .modal-content { max-width: 500px; width: 95%; padding: 15px; background: #f8fafc; }
+        #product-group-modal h2 { margin: 0 0 15px 0; font-size: 18px; color: #0f172a; padding-right: 20px; border-bottom: 2px dashed #bae6fd; padding-bottom: 10px;}
+        .sub-product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .sub-product-card { position: relative; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; }
+        .sub-product-card h5 { margin: 5px 0; font-size: 13px; color: #334155; }
+        .sub-product-card p { margin: 0 0 8px 0; font-size: 14px; font-weight: bold; color: #0284c7; }
+
+    </style>
+</head>
+<body id="app-body">
+
+<div class="container">
+    <div class="top-notice-banner" id="top-notice-banner-el">
+        <div id="notice-text-el">🧮 有換算計算機可以參考唷~~</div>
+        <button class="line-open-btn" onclick="redirectToLineApp()">用 LINE 開啟</button>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-links">
+            <span onclick="showView('home')">首頁</span>
+            <span onclick="showView('product')">商品</span>
+            <span onclick="showView('order')">訂單</span>
+            <span onclick="showView('profile')">綁定</span>
+        </div>
+        <div style="display:flex; align-items:center;">
+            <button onclick="openCalculator()" class="admin-btn" title="匯率計算機">🧮</button>
+            <button onclick="enterAdminMode()" class="admin-btn" title="管理員登入">🔑</button>
+            <button onclick="openCartModal()" class="cart-nav-btn">
+                🛒 購物車 <span class="cart-badge" id="nav-cart-badge">0</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="home-view" class="view-section active">
+        <div class="brand-logo-container">
+            <img id="brand-avatar-el" src="" alt="Logo">
+            <h1 id="main-title">載入中...</h1>
+            <div id="sub-title">...</div>
+        </div>
+        <div class="menu-buttons-container">
+            <button id="home-btn-profile" class="menu-btn profile-btn" onclick="showView('profile')">👤 身分確認（首購）</button>
+            <div class="menu-btn-row">
+                <button id="home-btn-product" class="menu-btn action-btn" onclick="showView('product')">👁️ 商品</button>
+                <button id="home-btn-order" class="menu-btn action-btn" onclick="showView('order')">🔍 查詢訂單</button>
+            </div>
+        </div>
+        <div class="promo-banner" id="promo-banner-el">載入中...</div>
+    </div>
+
+    <div id="profile-view" class="view-section">
+        <button class="back-btn" style="margin-bottom: 20px;" onclick="showView('home')">⬅️ 返回首頁</button>
+        <div class="profile-card" id="login-card-el">
+            <div id="user-avatar-box" class="avatar-placeholder">?</div>
+            <div>
+                <div id="user-name" style="font-weight:bold; color: #0f172a;">載入中...</div>
+                <div id="user-id" style="font-size: 12px; color: #64748b;">請稍候</div>
+            </div>
+        </div>
+        <div style="background: #ffffff; padding: 16px; border-radius: 12px; border: 1px solid #bae6fd; margin-top: 15px;">
+            <h4 style="margin-top: 0; color: #0369a1; margin-bottom: 10px;">👥 LINE 群組暱稱同步設定</h4>
+            <p style="font-size: 12px; color: #64748b;">💡 請輸入您在代購群組內使用的暱稱（例如：+1 小明）。</p>
+            <input type="text" id="custom-group-name" placeholder="請輸入您在LINE群組的暱稱">
+            <button onclick="saveGroupNickname()" style="background: #0284c7; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%;">💾 儲存並同步</button>
+        </div>
+    </div>
+
+    <div id="product-view" class="view-section">
+        <button class="back-btn" style="margin-bottom: 20px;" onclick="showView('home')">⬅️ 返回首頁</button>
+        
+        <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
+            <button id="tab-btn-current" onclick="switchProductTab('current')" style="flex: 1; padding: 10px; border-radius: 25px; border: 2px solid #0ea5e9; font-weight: bold; cursor: pointer; transition: 0.2s;"><span id="section-title">本次商品</span></button>
+            <button id="tab-btn-instock" onclick="switchProductTab('instock')" style="flex: 1; padding: 10px; border-radius: 25px; border: 2px solid #0ea5e9; font-weight: bold; cursor: pointer; transition: 0.2s;"><span id="instock-section-title">現貨區</span></button>
+            <button id="tab-btn-live" onclick="switchProductTab('live')" style="flex: 1; padding: 10px; border-radius: 25px; border: 2px solid #0ea5e9; font-weight: bold; cursor: pointer; transition: 0.2s;"><span id="live-section-title">連線區</span></button>
+        </div>
+
+        <div id="product-list-current" class="product-grid"></div>
+        <div id="product-list-instock" class="product-grid" style="display:none;"></div>
+        <div id="product-list-live" class="product-grid" style="display:none;"></div>
+    </div>
+
+    <div id="order-view" class="view-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <button class="back-btn" style="margin-bottom: 0;" onclick="showView('home')">⬅️ 返回首頁</button>
+            <button id="sop-btn-el" onclick="openSopModal()" style="border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer;">付款SOP</button>
+        </div>
+        
+        <div style="background: #f8fafc; border: 2px dashed #7dd3fc; padding: 20px; border-radius: 12px; overflow-x: auto;">
+            <h3 style="color: #0369a1; margin-top: 0;">📦 我的歷史訂單狀態</h3>
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 4px;">
+                <input type="date" id="start-date" style="margin-bottom: 0;"> <span style="font-weight: bold;">至</span> <input type="date" id="end-date" style="margin-bottom: 0;">
+            </div>
+            <button onclick="fetchMyOrders()" style="background:#0ea5e9; color:white; border:none; width:100%; padding: 12px; border-radius: 8px; font-weight: bold; margin-top: 10px;">查詢與結算</button>
+            <div id="summary-result" style="margin:15px 0 5px 0;"></div>
+            <div id="order-history" style="min-width: 500px;"></div>
+        </div>
+    </div>
+
+    <div id="admin-view" class="view-section">
+        <button class="back-btn" style="margin-bottom: 20px;" onclick="showView('home')">⬅️ 返回首頁</button>
+        <div id="admin-panel"></div>
+    </div>
+</div>
+
+<div id="cart-modal" class="modal-overlay" onclick="if(event.target===this) closeCartModal()">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeCartModal()">×</span>
+        <h3 style="color: #0369a1; margin-top: 0; border-bottom: 1px dashed #bae6fd; padding-bottom: 10px;">📋 我的購物清單</h3>
+        <div class="modal-body" id="cart-items" style="max-height: 60vh; padding-right: 5px; overflow-x: hidden;"></div>
+        
+        <div style="border-top: 2px solid #bae6fd; margin-top: 15px; padding-top: 15px; text-align:right; font-weight:bold; color: #0f172a;">
+            已勾選結帳：<span style="color: #e11d48; font-size: 24px;">NT$ <span id="total-amount">0</span></span>
+        </div>
+        <button onclick="checkoutOrder()" style="width:100%; background:#0284c7; color:white; border:none; padding:12px; margin-top:15px; border-radius: 8px; font-weight: bold; font-size: 15px; transition: 0.2s; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);">確認送出結帳 🚀</button>
+    </div>
+</div>
+
+<div id="product-group-modal" class="modal-overlay" onclick="if(event.target===this) closeGroupModal()">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeGroupModal()">×</span>
+        <h2 id="group-modal-title">群組名稱</h2>
+        <div class="modal-body sub-product-grid" id="group-modal-body"></div>
+    </div>
+</div>
+
+<div id="calc-modal" class="modal-overlay" onclick="if(event.target===this) closeCalculator()">
+    <div class="modal-content" style="max-width:320px;">
+        <span class="modal-close" onclick="closeCalculator()">×</span>
+        <div style="text-align:center; margin-bottom:15px;"><h2 style="margin:0; color:#0f172a;">🧮 匯率計算機</h2></div>
+        <div style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e0f2fe;">
+            <label style="font-size:12px; font-weight:bold; color:#64748b;">輸入日幣：</label>
+            <div style="display:flex; align-items:center; border-bottom:2px solid #bae6fd; margin-bottom:10px;">
+                <span style="font-size:20px; color:#0ea5e9; font-weight:bold; margin-right:5px;">¥</span>
+                <input type="number" id="jpy-input" placeholder="0" oninput="calculateTWD()" style="border:none; font-size:20px; background:transparent; font-weight:bold; margin-bottom:0; padding:5px;">
+            </div>
+            <div style="text-align:center; padding:10px; background:#e0f2fe; border-radius:8px; color:#0284c7; font-weight:bold; font-size:18px;">
+                台幣：<span id="twd-result">NT$ 0</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="payment-modal" class="modal-overlay" onclick="if(event.target===this) closePaymentModal()">
+    <div class="modal-content" style="text-align: center;">
+        <span class="modal-close" onclick="closePaymentModal()">×</span>
+        <h2 style="color: #0369a1; margin-top: 0;">💳 結帳與匯款資訊</h2>
+        <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #bae6fd;">
+            <p style="margin: 0; color: #475569; font-weight: bold;">本次結帳總額</p>
+            <div style="font-size: 28px; color: #e11d48; font-weight: bold; margin: 10px 0;">NT$ <span id="payment-total-amount">0</span></div>
+            
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #bae6fd;">
+                <p style="margin: 0; color: #475569; font-weight: bold;">本次訂金支付金額</p>
+                <div style="font-size: 20px; color: #0284c7; font-weight: bold; margin: 5px 0;">NT$ <span id="payment-deposit-amount">0</span></div>
+            </div>
+        </div>
+        <div style="text-align: left; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
+            <p style="margin: 5px 0; font-size: 14px;">銀行代碼：<strong style="color: #0ea5e9;" id="bank-code-el">尚未設定</strong></p>
+            <p style="margin: 5px 0; font-size: 14px;">銀行帳號：<strong style="color: #0ea5e9;" id="bank-account-el">尚未設定</strong></p>
+            <div style="text-align: center; margin-top: 15px;">
+                <img id="payment-qr" src="" style="width: 150px; height: 150px; border-radius: 8px; border: 1px solid #cbd5e1; object-fit: contain;">
+            </div>
+            <div style="margin-top: 15px; border-top: 1px dashed #cbd5e1; padding-top: 12px;">
+                <label style="font-size: 13px; font-weight: bold; color: #e11d48;">⚠️ 匯款完成後填寫：</label>
+                <input type="text" id="bank-last-5" placeholder="輸入帳號【後五碼】" maxlength="5" style="border-color: #e11d48; border-width: 2px;">
+            </div>
+        </div>
+        <a href="#" id="line-pay-link-el" target="_blank" style="display: none; background: #00c300; color: white; padding: 12px; border-radius: 8px; font-weight: bold; margin-bottom: 15px; text-decoration:none;">🟢 點我用 LINE Pay</a>
+        <button onclick="submitPaymentConfirm()" style="background: #0284c7; color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold;">✅ 送出查帳</button>
+    </div>
+</div>
+
+<div id="sop-modal" class="modal-overlay" onclick="if(event.target===this) closeSopModal()">
+    <div class="modal-content" style="text-align: center; max-width: 800px; padding: 20px;">
+        <span class="modal-close" onclick="closeSopModal()">×</span>
+        <h2 style="color: #0369a1; margin-top: 0; margin-bottom: 12px;">📝 付款 SOP</h2>
+        <img id="sop-img-el" src="" style="width: 100%; border-radius: 8px; max-height: 75vh; object-fit: contain;">
+    </div>
+</div>
+
+<script>
+    // ⚠️ 這裡替換成您自己的 GAS_URL
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxjeKY2LuG_z2NxPdYsnGf8OF8JIy6LqxpHuYTd-rjVZ8Wj5spuU07N8UsZzoCeWbuE/exec";
+    const IMGBB_API_KEY = "047c09f72967af944b7686625c1c9680";
+    
+    let products = [];
+    let myCart = [];
+    let allUserOrders = []; 
+    let cachedUserOrders = []; 
+    let currentUserProfile = { userId: "訪客測試", displayName: "訪客", realName: "訪客" };
+    let selectedPaymentTotal = 0; 
+    let currentAdminPage = 1;
+    let adminStatusFilter = "全部";
+    let currentProductTab = 'current';
+    let adminOrderSearch = "";
+
+    const defaultSettings = {
+        globalFont: "'Helvetica Neue', Arial, '微軟正黑體', sans-serif",
+        main: { text: "小魔丸旅遊代購", size: "28px", color: "#0f172a", font: "inherit" },
+        sub: { text: "東京/大阪Live連線", size: "16px", color: "#475569", font: "inherit" },
+        sect: { text: "本次商品", size: "18px", color: "#ffffff", font: "inherit" },
+        liveSect: { text: "連線區", size: "18px", color: "#0ea5e9", font: "inherit" },
+        inStockSect: { text: "現貨區", size: "18px", color: "#0ea5e9", font: "inherit" },
+        promo: { text: "✈ 滿$3000免運", size: "13px", color: "#0284c7", bg: "#ffffff", font: "inherit" },
+        notice: { text: "🧮 有換算計算機可以參考唷~~", size: "12px", color: "#ffffff", font: "inherit", bg: "#0284c7" },
+        lineUrl: "https://liff.line.me/2010605445-uN1Lgzz8",
+        avatarUrl: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=150&q=80",
+        bankCode: "822 (中國信託)", bankAccount: "1234-5678-9012", qrCodeUrl: "", linePayUrl: "", sopImgUrl: "",
+        sopBtn: { text: "付款SOP", size: "13px", color: "#ffffff", bg: "#e11d48" },
+        btnProfile: { text: "👤 身分確認（首購）", size: "14px", color: "#0284c7" },
+        btnProduct: { text: "👁️ 商品", size: "14px", color: "#0f172a" },
+        btnOrder: { text: "🔍 查詢訂單", size: "14px", color: "#0f172a" },
+        
+        summaryBox: {
+            reg: { text: "🛒 未結案商品總額：", color: "#0ea5e9", size: "14px" },
+            chk: { text: "💰 已付訂金：", color: "#8b5cf6", size: "14px" },
+            dep: { text: "💰 未付尾款：", color: "#10b981", size: "14px" },
+            noteTitle: { text: "狀態說明：", color: "#94a3b8", size: "12px" }
+        },
+        summaryLabels: {
+            registered: { text: "已登記:已成立訂單", size: "12px", color: "#475569", font: "inherit" },
+            unpurchased: { text: "未採買", size: "12px", color: "#475569", font: "inherit" },
+            depositPaid: { text: "已付訂金:採買中", size: "12px", color: "#475569", font: "inherit" },
+            paid: { text: "已付款", size: "12px", color: "#475569", font: "inherit" },
+            shipped: { text: "已出貨:貨已出轉運中", size: "12px", color: "#475569", font: "inherit" },
+            outOfStock: { text: "已斷貨:聯繫退款", size: "12px", color: "#e11d48", font: "inherit" }
+        },
+        groupCovers: {} 
+    };
+    let settings = defaultSettings;
+
+    async function uploadImageToImgbb(fileInput) {
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const container = fileInput.closest('.upload-container');
+        const targetInput = container.querySelector('input[type="text"]');
+        if (!targetInput) { alert("找不到對應的輸入框！"); return; }
+
+        let originalValue = targetInput.value;
+        targetInput.value = "⏳ 上傳中請稍候...";
+        targetInput.disabled = true;
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        try {
+            const response = await fetch("https://api.imgbb.com/1/upload?key=" + IMGBB_API_KEY, { method: "POST", body: formData });
+            const result = await response.json();
+            if (result.success) { targetInput.value = result.data.url; } 
+            else { alert("圖片上傳失敗：" + result.error.message); targetInput.value = originalValue; }
+        } catch (error) {
+            console.error("上傳錯誤:", error);
+            alert("網路錯誤或上傳失敗，請稍後再試。");
+            targetInput.value = originalValue;
+        } finally {
+            targetInput.disabled = false;
+            fileInput.value = ""; 
+        }
+    }
+
+    function fetchUserOrdersBackground() {
+        if (currentUserProfile.userId && currentUserProfile.userId !== "訪客測試") {
+            fetch(`${GAS_URL}?userId=${currentUserProfile.userId}&t=${new Date().getTime()}`)
+                .then(res => res.json())
+                .then(data => { cachedUserOrders = data; });
+        }
+    }
+
+    function changeQty(elementId, delta) {
+        let el = document.getElementById(elementId);
+        let current = parseInt(el.value) || 1;
+        let next = current + delta;
+        if (next < 1) next = 1;
+        el.value = next;
+    }
+
+    function showView(viewId) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        const targetView = document.getElementById(viewId + '-view');
+        if (targetView) targetView.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if(viewId === 'product') switchProductTab(currentProductTab);
+    }
+    function redirectToLineApp() { window.location.href = settings.lineUrl || defaultSettings.lineUrl; }
+    
+    function openCalculator() { document.getElementById('calc-modal').classList.add('active'); }
+    function closeCalculator() { document.getElementById('calc-modal').classList.remove('active'); }
+    function openSopModal() { document.getElementById('sop-modal').classList.add('active'); }
+    function closeSopModal() { document.getElementById('sop-modal').classList.remove('active'); }
+    
+    function openPaymentModal() {
+        const checkedBoxes = document.querySelectorAll('.user-order-chk:checked');
+        if (checkedBoxes.length === 0) return alert("⚠️ 請先勾選您要結帳的訂單！");
+        
+        let invalid = Array.from(checkedBoxes).some(cb => cb.dataset.status !== '已登記');
+        if (invalid) {
+            return alert("請重新選擇僅為已登記的品項");
+        }
+        
+        let sumPrice = 0;
+        checkedBoxes.forEach(c => {
+            sumPrice += Number(c.dataset.price) || 0;
+        });
+        
+        // 依照新需求：結帳畫面的訂金計算方式改為「勾選項目的金額總和一半金額(小數點後的第一位使用四捨五入算法)」
+        let sumDeposit = Math.round(sumPrice / 2);
+        
+        document.getElementById('payment-total-amount').innerText = sumPrice;
+        document.getElementById('payment-deposit-amount').innerText = sumDeposit;
+        
+        document.getElementById('payment-modal').classList.add('active');
+    }
+    function closePaymentModal() { document.getElementById('payment-modal').classList.remove('active'); }
+    
+    function openCartModal() { 
+        updateCartUI(); 
+        document.getElementById('cart-modal').classList.add('active'); 
+    }
+    function closeCartModal() { document.getElementById('cart-modal').classList.remove('active'); }
+
+    function openGroupModal(groupName, tab) {
+        document.getElementById('group-modal-title').innerHTML = `📁 ${groupName}`;
+        let groupItems = products.filter(p => {
+            if (p.group !== groupName) return false;
+            let isLive = p.name.includes('[連線]') || p.name.includes('【連線】');
+            let isInstock = p.name.includes('[批貨]') || p.name.includes('【批貨】');
+            if (tab === 'live' && !isLive) return false;
+            if (tab === 'instock' && !isInstock) return false;
+            if (tab === 'current' && (isLive || isInstock)) return false;
+            return true;
+        });
+        
+        let html = groupItems.map(p => {
+            let cleanName = p.name.replace(/\[連線\]|【連線】|\[批貨\]|【批貨】/g, '').trim();
+            return `
+            <div class="sub-product-card">
+                <div class="product-img-wrapper"><img src="${formatImageUrl(p.img)}"></div>
+                <h5>${cleanName}</h5>
+                <p>NT$ ${p.price}</p>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-top: auto; border-top: 1px dashed #bae6fd; padding-top: 8px; gap: 5px;">
+                    <div style="display:flex; align-items:center; border: 1px solid #bae6fd; border-radius: 4px; overflow:hidden; background:#f0f9ff; height: 28px; flex: 1;">
+                        <button onclick="changeQty('qty-sub-${p.id}', -1)" style="background:transparent; color:#0284c7; border:none; width:30px; font-weight:bold; cursor:pointer; padding:0; display:flex; align-items:center; justify-content:center; font-size:18px; margin:0;">-</button>
+                        <input type="text" id="qty-sub-${p.id}" value="1" readonly style="flex:1; text-align:center; border:none; background:transparent; font-size:13px; font-weight:bold; padding:0; margin:0; outline:none;">
+                        <button onclick="changeQty('qty-sub-${p.id}', 1)" style="background:transparent; color:#0284c7; border:none; width:30px; font-weight:bold; cursor:pointer; padding:0; display:flex; align-items:center; justify-content:center; font-size:16px; margin:0;">+</button>
+                    </div>
+                    <button onclick="addToCart('${p.id}', 'qty-sub-${p.id}', true)" style="background: #0284c7; color: white; border: none; padding: 0 10px; height: 28px; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer; margin:0;">加入</button>
+                </div>
+            </div>
+        `}).join('');
+        document.getElementById('group-modal-body').innerHTML = html || '<p>該群組內無對應商品</p>';
+        document.getElementById('product-group-modal').classList.add('active');
+    }
+    function closeGroupModal() { document.getElementById('product-group-modal').classList.remove('active'); }
+
+    function calculateTWD() {
+        let val = parseFloat(document.getElementById('jpy-input').value) || 0;
+        let rate = val <= 1000 ? 0.3 : val <= 2000 ? 0.27 : val <= 5000 ? 0.25 : val <= 10000 ? 0.24 : 0.23;
+        let result = Math.ceil((val * rate) / 10) * 10;
+        document.getElementById('twd-result').innerText = `NT$ ${result}`;
+    }
+
+    window.onload = function() {
+        applyStyles();
+        liff.init({ liffId: "2010605445-uN1Lgzz8" }).then(() => {
+            if (liff.isLoggedIn()) {
+                liff.getProfile().then(profile => {
+                    currentUserProfile = profile;
+                    // 💡 修正：保存真實 LINE 名稱，並固定顯示在黑框區域
+                    currentUserProfile.realName = profile.displayName;
+                    
+                    document.getElementById('user-name').innerText = profile.displayName; 
+                    document.getElementById('user-id').innerText = "UID: " + profile.userId;
+                    document.getElementById('user-avatar-box').innerText = profile.displayName.charAt(0);
+                    
+                    let savedName = localStorage.getItem("customGroupNickname");
+                    if (savedName) {
+                        document.getElementById('custom-group-name').value = savedName;
+                    }
+                    
+                    fetchUserOrdersBackground(); 
+                });
+            } else {
+                document.getElementById('user-name').innerText = "尚未登入 (點我登入 LINE)";
+                document.getElementById('login-card-el').onclick = () => liff.login({ redirectUri: window.location.href });
+            }
+        });
+        loadProducts();
+    };
+
+    // 💡 擴增：修改 saveGroupNickname 使其與後端同步資料
+    function saveGroupNickname() {
+        const nick = document.getElementById('custom-group-name').value.trim();
+        if (!nick) return alert("請輸入有效的暱稱！");
+        if (currentUserProfile.userId === "訪客測試" || !currentUserProfile.userId) {
+            return alert("⚠️ 請先點擊大頭照區域登入 LINE！");
+        }
+
+        // 先更新本地畫面 (但不覆寫真實名稱)
+        localStorage.setItem("customGroupNickname", nick);
+
+        // 送出至後端進行同步寫入「社群綁定資料」
+        fetch(GAS_URL, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "updateUserBinding",
+                userId: currentUserProfile.userId,
+                realName: currentUserProfile.realName, // 真實名稱
+                displayName: nick // 自訂群暱稱
+            })
+        })
+        .then(res => res.text())
+        .then(() => {
+            alert("🎉 設定並成功同步至後端資料庫！");
+        })
+        .catch(err => {
+            console.error("同步失敗:", err);
+            alert("⚠️ 畫面已更新，但同步至後台失敗，請檢查網路。");
+        });
+    }
+
+    function formatImageUrl(url) {
+        if (!url) return 'https://via.placeholder.com/300?text=No+Image';
+        let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        return match ? `https://drive.google.com/uc?id=${match[1]}` : url;
+    }
+
+    function applyStyles() {
+        document.getElementById('app-body').style.fontFamily = settings.globalFont || defaultSettings.globalFont;
+
+        const safeSet = (id, obj) => {
+            const el = document.getElementById(id);
+            if(el && obj) { 
+                el.innerText = obj.text || ''; 
+                el.style.fontSize = obj.size || ''; 
+                if(!id.includes("section-title")) el.style.color = obj.color || ''; 
+                el.style.fontFamily = obj.font || 'inherit'; 
+            }
+        };
+        safeSet("main-title", settings.main); safeSet("sub-title", settings.sub);
+        safeSet("section-title", settings.sect); safeSet("live-section-title", settings.liveSect); safeSet("instock-section-title", settings.inStockSect);
+        safeSet("home-btn-profile", settings.btnProfile); safeSet("home-btn-product", settings.btnProduct); safeSet("home-btn-order", settings.btnOrder);
+        
+        const promo = document.getElementById("promo-banner-el");
+        if(promo) { promo.innerText = settings.promo?.text||""; promo.style.fontSize = settings.promo?.size; promo.style.color = settings.promo?.color; promo.style.background = settings.promo?.bg; promo.style.fontFamily = settings.promo?.font; }
+        
+        const nEl = document.getElementById("notice-text-el");
+        if(nEl) { nEl.innerText = settings.notice?.text||""; nEl.style.fontSize = settings.notice?.size; nEl.style.color = settings.notice?.color; nEl.style.fontFamily = settings.notice?.font; }
+        document.getElementById("top-notice-banner-el").style.background = settings.notice?.bg;
+
+        document.getElementById("brand-avatar-el").src = formatImageUrl(settings.avatarUrl || defaultSettings.avatarUrl);
+        document.getElementById("bank-code-el").innerText = settings.bankCode || "";
+        document.getElementById("bank-account-el").innerText = settings.bankAccount || "";
+        document.getElementById("payment-qr").src = formatImageUrl(settings.qrCodeUrl);
+        
+        const lpEl = document.getElementById("line-pay-link-el");
+        if(settings.linePayUrl) { lpEl.href = settings.linePayUrl; lpEl.style.display = "block"; } else lpEl.style.display = "none";
+        
+        const sopBtn = document.getElementById("sop-btn-el");
+        sopBtn.innerText = settings.sopBtn?.text; sopBtn.style.color = settings.sopBtn?.color; sopBtn.style.background = settings.sopBtn?.bg;
+        document.getElementById("sop-img-el").src = formatImageUrl(settings.sopImgUrl);
+        
+        switchProductTab(currentProductTab);
+    }
+
+    function switchProductTab(tab) {
+        currentProductTab = tab;
+        ['current', 'instock', 'live'].forEach(t => {
+            let btn = document.getElementById('tab-btn-' + t), list = document.getElementById('product-list-' + t);
+            if(btn) {
+                if(t === tab) { btn.style.background = '#0ea5e9'; btn.style.color = settings.sect?.color || '#fff'; }
+                else { btn.style.background = '#fff'; btn.style.color = '#0ea5e9'; }
+            }
+            if(list) list.style.display = t === tab ? 'grid' : 'none';
+        });
+    }
+
+    function loadProducts() { 
+        fetch(`${GAS_URL}?mode=getProducts&t=${new Date().getTime()}`).then(res => res.json()).then(data => { 
+            let setIdx = data.findIndex(p => p.id === '_SITE_SETTINGS_');
+            if (setIdx !== -1) {
+                try { 
+                    let savedSettings = JSON.parse(data[setIdx].img);
+                    settings = { ...defaultSettings, ...savedSettings }; 
+                    if (!settings.summaryBox) settings.summaryBox = defaultSettings.summaryBox; 
+                    applyStyles(); 
+                } catch(e){}
+                data.splice(setIdx, 1);
+            }
+            products = data; 
+            renderStore(); 
+        });
+    }
+    
+    function renderStore() {
+        function buildTabHtml(tabName) {
+            let filtered = products.filter(p => {
+                let isLive = p.name.includes('[連線]') || p.name.includes('【連線】');
+                let isInstock = p.name.includes('[批貨]') || p.name.includes('【批貨】');
+                if(tabName === 'live') return isLive;
+                if(tabName === 'instock') return isInstock;
+                return !isLive && !isInstock;
+            });
+
+            let groups = {};
+            let standalones = [];
+            filtered.forEach(p => {
+                if (p.group && p.group.trim() !== '') {
+                    if (!groups[p.group]) groups[p.group] = [];
+                    groups[p.group].push(p);
+                } else { standalones.push(p); }
+            });
+
+            let html = '';
+            for (let gName in groups) {
+                let customCoverUrl = (settings.groupCovers && settings.groupCovers[gName]) ? settings.groupCovers[gName] : groups[gName][0].img;
+                let coverImg = formatImageUrl(customCoverUrl); 
+                html += `
+                <div class="product-card group-card" onclick="openGroupModal('${gName}', '${tabName}')">
+                    <span class="group-badge">多款可選</span>
+                    <div class="product-img-wrapper"><img src="${coverImg}"></div>
+                    <h4>📁 ${gName}</h4>
+                    <p style="margin:0; font-size:13px; color:#64748b; font-weight:bold;">內含 ${groups[gName].length} 項款式</p>
+                    <button>點擊進入選購</button>
+                </div>`;
+            }
+            
+            standalones.forEach(p => {
+                let cleanName = p.name.replace(/\[連線\]|【連線】|\[批貨\]|【批貨】/g, '').trim();
+                html += `
+                <div class="product-card">
+                    <div class="product-img-wrapper"><img src="${formatImageUrl(p.img)}"></div>
+                    <h4>${cleanName}</h4>
+                    <p style="margin:0 0 10px 0; color:#0284c7; font-weight:bold;">NT$ ${p.price}</p>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top: auto; border-top: 1px dashed #bae6fd; padding-top: 10px;">
+                        <div style="display:flex; align-items:center; border: 1px solid #bae6fd; border-radius: 6px; overflow:hidden; background:#f0f9ff; height: 30px;">
+                            <button onclick="changeQty('qty-main-${p.id}', -1)" style="background:transparent; color:#0284c7; border:none; width:30px; font-weight:bold; cursor:pointer; padding:0; display:flex; align-items:center; justify-content:center; font-size:18px; margin:0;">-</button>
+                            <input type="text" id="qty-main-${p.id}" value="1" readonly style="width:30px; text-align:center; border:none; background:transparent; font-size:14px; font-weight:bold; padding:0; margin:0; outline:none;">
+                            <button onclick="changeQty('qty-main-${p.id}', 1)" style="background:transparent; color:#0284c7; border:none; width:30px; font-weight:bold; cursor:pointer; padding:0; display:flex; align-items:center; justify-content:center; font-size:16px; margin:0;">+</button>
+                        </div>
+                        <button onclick="addToCart('${p.id}', 'qty-main-${p.id}', false)" style="background: #0ea5e9; color: white; border: none; padding: 0 12px; height: 30px; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; margin:0;">放入清單</button>
+                    </div>
+                </div>`;
+            });
+            return html || '<p style="grid-column: 1/-1; text-align:center; color:#64748b;">目前無商品</p>';
+        }
+
+        document.getElementById('product-list-current').innerHTML = buildTabHtml('current');
+        document.getElementById('product-list-instock').innerHTML = buildTabHtml('instock');
+        document.getElementById('product-list-live').innerHTML = buildTabHtml('live');
+    }
+
+    function addToCart(id, qtyId, isFromModal = false) {
+        const p = products.find(x => String(x.id) === String(id));
+        if (p) { 
+            let qty = parseInt(document.getElementById(qtyId).value) || 1;
+            let cleanName = p.name.replace(/\[連線\]|【連線】|\[批貨\]|【批貨】/g, '').trim();
+            
+            myCart.push({ ...p, name: cleanName, quantity: qty, remark: "", selected: true }); 
+            
+            document.getElementById('nav-cart-badge').innerText = myCart.length;
+            let badge = document.getElementById('nav-cart-badge');
+            badge.style.transform = 'scale(1.5)';
+            setTimeout(() => badge.style.transform = 'scale(1)', 200);
+
+            if(!isFromModal) alert(`✅ 已加入 ${qty} 件「${cleanName}」！`);
+            else {
+                let btn = event.target;
+                let oldText = btn.innerText;
+                btn.innerText = "✅ 已加入";
+                btn.style.background = "#10b981";
+                setTimeout(() => { btn.innerText = oldText; btn.style.background = "#0284c7"; }, 1000);
+            }
+            updateCartUI(); 
+            
+            document.getElementById(qtyId).value = 1;
+        }
+    }
+
+    function updateCartItemRemark(idx, val) {
+        if (myCart[idx]) myCart[idx].remark = val;
+    }
+
+    function updateCartSelection(idx, checked) {
+        if (myCart[idx]) {
+            myCart[idx].selected = checked;
+            updateCartTotal();
+            
+            const allSelected = myCart.length > 0 && myCart.every(i => i.selected);
+            const selectAllChk = document.getElementById('cart-select-all');
+            if (selectAllChk) selectAllChk.checked = allSelected;
+        }
+    }
+
+    function toggleCartSelectAll(checked) {
+        myCart.forEach(i => i.selected = checked);
+        updateCartUI(); 
+    }
+
+    function updateCartQty(idx, delta) {
+        if (!myCart[idx]) return;
+        let next = myCart[idx].quantity + delta;
+        if (next < 1) next = 1;
+        myCart[idx].quantity = next;
+        updateCartUI();
+    }
+
+    function updateCartTotal() {
+        let total = myCart.reduce((s, i) => i.selected ? s + (Number(i.price) * i.quantity) : s, 0);
+        document.getElementById('total-amount').innerText = total;
+    }
+
+    function updateCartUI() {
+        document.getElementById('nav-cart-badge').innerText = myCart.length;
+        if (myCart.length === 0) {
+            document.getElementById('cart-items').innerHTML = '<div style="color:#64748b; text-align:center; padding: 20px; font-weight:bold;">清單是空的，快去選購吧！</div>';
+            document.getElementById('total-amount').innerText = '0';
+            return;
+        }
+        
+        let allSelected = myCart.every(i => i.selected);
+        
+        let html = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom:10px; border-bottom:2px solid #bae6fd;">
+                <label style="display:flex; align-items:center; gap:5px; font-weight:bold; color:#0369a1; cursor:pointer;">
+                    <input type="checkbox" id="cart-select-all" onchange="toggleCartSelectAll(this.checked)" ${allSelected ? 'checked' : ''} style="transform: scale(1.3); accent-color: #0ea5e9; margin:0;"> 
+                    全選
+                </label>
+                <button onclick="removeSelectedCartItems()" style="background:#e11d48; color:white; border:none; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">🗑️ 刪除選取</button>
+            </div>
+        `;
+        
+        html += myCart.map((i, idx) => `
+            <div style="background: #fff; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="checkbox" class="cart-item-chk" value="${idx}" ${i.selected ? 'checked' : ''} onchange="updateCartSelection(${idx}, this.checked)" style="transform: scale(1.3); accent-color: #0ea5e9; cursor: pointer; flex-shrink: 0; width: auto; margin: 0;">
+                    
+                    <div style="width: 65px; height: 65px; flex-shrink: 0; border-radius: 8px; border: 1px solid #f1f5f9; overflow: hidden; background: #f8fafc;">
+                        <img src="${formatImageUrl(i.img)}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    
+                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+                        <div style="font-weight: bold; font-size: 14px; color: #334155; line-height: 1.4; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${i.name}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="color: #e11d48; font-weight: bold; font-size: 14px;">NT$ ${i.price}</div>
+                            
+                            <div style="display: flex; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; height: 26px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                                <button onclick="updateCartQty(${idx}, -1)" style="border: none; background: #f8fafc; width: 26px; font-size: 16px; cursor: pointer; color: #475569; font-weight: bold; padding: 0; display: flex; align-items: center; justify-content: center; margin: 0;">-</button>
+                                <input type="text" value="${i.quantity}" readonly style="width: 32px; text-align: center; border: none; border-left: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; background: transparent; font-size: 13px; font-weight: bold; padding: 0; margin: 0; color: #0f172a; outline: none;">
+                                <button onclick="updateCartQty(${idx}, 1)" style="border: none; background: #f8fafc; width: 26px; font-size: 14px; cursor: pointer; color: #475569; font-weight: bold; padding: 0; display: flex; align-items: center; justify-content: center; margin: 0;">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 10px; background: #f8fafc; border-radius: 6px; padding: 6px 10px; border: 1px dashed #cbd5e1; display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 12px; color: #64748b; white-space: nowrap;">📝 備註：</span>
+                    <input type="text" placeholder="填寫顏色、尺寸等需求" value="${i.remark || ''}" onchange="updateCartItemRemark(${idx}, this.value)" style="flex: 1; border: none; background: transparent; font-size: 13px; outline: none; padding: 0; margin: 0; color: #334155;">
+                </div>
+
+            </div>
+        `).join('');
+        
+        document.getElementById('cart-items').innerHTML = html;
+        updateCartTotal();
+    }
+
+    function removeSelectedCartItems() {
+        const hasSelected = myCart.some(i => i.selected);
+        if (!hasSelected) return alert("⚠️ 請先勾選要刪除的商品！");
+        if (confirm("確定要刪除選取的商品嗎？")) {
+            myCart = myCart.filter(i => !i.selected);
+            updateCartUI();
+        }
+    }
+
+    function checkoutOrder() {
+        const selectedItems = myCart.filter(i => i.selected);
+        if (selectedItems.length === 0) return alert("⚠️ 請先勾選要結帳的商品！");
+        
+        let now = new Date();
+        let sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(now.getDate() - 7);
+        
+        let hasDuplicate = false;
+        for (let item of selectedItems) {
+            let found = cachedUserOrders.some(o => {
+                let orderDate = new Date(o.date.replace(/-/g, '/')); 
+                return o.product === item.name && orderDate >= sevenDaysAgo;
+            });
+            if (found) {
+                hasDuplicate = true;
+                break;
+            }
+        }
+
+        if (hasDuplicate) {
+            if (!confirm("⚠️ 您七天內已有下單紀錄，確定要送出訂單嗎？")) {
+                return; 
+            }
+        }
+        
+        const finalCustomName = localStorage.getItem("customGroupNickname") || "";
+        fetch(GAS_URL, { 
+            method: "POST", 
+            body: JSON.stringify({ 
+                action: "submitOrder", 
+                cart: selectedItems, 
+                userId: currentUserProfile.userId, 
+                realName: currentUserProfile.realName, // 💡 傳遞真實名稱
+                customName: finalCustomName            // 💡 傳遞群組暱稱
+            }) 
+        })
+        .then(() => { 
+            alert("🎉 訂單送出成功！"); 
+            myCart = myCart.filter(i => !i.selected);
+            updateCartUI(); 
+            closeCartModal(); 
+            fetchMyOrders(); 
+            fetchUserOrdersBackground(); 
+        });
+    }
+
+    function fetchMyOrders() {
+        if(currentUserProfile.userId === "訪客測試") return alert("請先登入 LINE 才能查詢唷！");
+        document.getElementById('order-history').innerHTML = '<p style="text-align:center;">載入中...</p>';
+        fetch(`${GAS_URL}?userId=${currentUserProfile.userId}&t=${new Date().getTime()}`).then(res => res.json()).then(data => {
+            cachedUserOrders = data; 
+            selectedPaymentTotal = 0;
+            const sD = document.getElementById('start-date').value, eD = document.getElementById('end-date').value;
+            let filtered = data.filter(o => (!sD || o.date.split(' ')[0]>=sD) && (!eD || o.date.split(' ')[0]<=eD));
+            
+            if(filtered.length===0) {
+                document.getElementById('summary-result').innerHTML = '';
+                return document.getElementById('order-history').innerHTML = '<p style="text-align:center;">無訂單紀錄</p>';
+            }
+            
+            let html = `<table><tr><th style="width:30px;"><input type="checkbox" onclick="document.querySelectorAll('.user-order-chk').forEach(c=>c.checked=this.checked);calcSelectedTotal()"></th><th>日期</th><th>商品</th><th>備註</th><th>狀態</th><th>金額</th><th>已付訂金</th><th>未付尾款</th></tr>`;
+            filtered.forEach(o => {
+                let p = Number(o.price);
+                let deposit = Math.round(p / 2); // 取金額的一半並四捨五入
+                let balance = p - deposit;       // 尾款計算
+
+                let depositDisplay = deposit;
+                let balanceDisplay = balance;
+
+                // 若訂單狀態為已登記，已付訂金/未付尾款不會有數字
+                if (o.status === '已登記') {
+                    depositDisplay = '';
+                    balanceDisplay = '';
+                } 
+                // 若訂單狀態為已斷貨，未付尾款不會有數字
+                else if (o.status === '已斷貨') {
+                    balanceDisplay = '';
+                }
+
+                // 但訂單狀態為已付款項目不開啟勾選功能
+                let chk = '';
+                if(o.status !== '已付款') { 
+                    chk = `<input type="checkbox" class="user-order-chk" value="${o.row}" data-price="${p}" data-deposit="${depositDisplay}" data-balance="${balanceDisplay}" data-status="${o.status}" onchange="calcSelectedTotal()">`; 
+                }
+
+                let sc='#e0f2fe', tc='#0284c7';
+                if(o.status==='已斷貨'){ sc='#ffe4e6'; tc='#e11d48'; }
+                else if(o.status.includes('待查帳')){ sc='#fef08a'; tc='#854d0e'; }
+                
+                let remarkText = o.remark || '';
+                
+                html += `<tr>
+                    <td>${chk}</td>
+                    <td style="white-space:nowrap;">${o.date.split(' ')[0]}</td>
+                    <td>${o.product}</td>
+                    <td style="font-size:11px; color:#64748b; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${remarkText}">${remarkText}</td>
+                    <td><span style="background:${sc};color:${tc};padding:2px 6px;border-radius:4px;font-size:11px;white-space:nowrap;">${o.status}</span></td>
+                    <td>${p}</td>
+                    <td style="color:#8b5cf6; font-weight:bold;">${depositDisplay}</td>
+                    <td style="color:#10b981; font-weight:bold;">${balanceDisplay}</td>
+                </tr>`;
+            });
+            document.getElementById('order-history').innerHTML = html + '</table>';
+
+            const sb = settings.summaryBox || defaultSettings.summaryBox;
+            const sl = settings.summaryLabels;
+            
+            document.getElementById('summary-result').innerHTML = `
+                <div style="background:#f0f9ff; padding:10px; border-radius:8px; margin-bottom:10px; border:1px dashed #7dd3fc;">
+                    <div style="font-size:${sb.reg.size}; color:${sb.reg.color}; font-weight:bold;">${sb.reg.text} NT$ <span id="summary-total-price">0</span></div>
+                    <div style="font-size:${sb.chk.size}; color:${sb.chk.color}; font-weight:bold;">${sb.chk.text} NT$ <span id="summary-total-deposit">0</span></div>
+                    <div style="font-size:${sb.dep.size}; color:${sb.dep.color}; font-weight:bold;">${sb.dep.text} NT$ <span id="summary-total-balance">0</span></div>
+                </div>
+                <div style="padding:10px; background:#fff; border:1px solid #e2e8f0; border-radius:8px; font-size:12px; margin-bottom:10px; line-height:1.6;">
+                    <strong style="color:${sb.noteTitle.color}; font-size:${sb.noteTitle.size};">${sb.noteTitle.text}</strong><br>
+                    <span style="color:${sl.registered.color}; font-size:${sl.registered.size};">• ${sl.registered.text}</span> | 
+                    <span style="color:${sl.unpurchased.color}; font-size:${sl.unpurchased.size};">• ${sl.unpurchased.text}</span><br>
+                    <span style="color:${sl.depositPaid.color}; font-size:${sl.depositPaid.size};">• ${sl.depositPaid.text}</span> | 
+                    <span style="color:${sl.paid.color}; font-size:${sl.paid.size};">• ${sl.paid.text}</span> | 
+                    <span style="color:${sl.shipped.color}; font-size:${sl.shipped.size};">• ${sl.shipped.text}</span> | 
+                    <span style="color:${sl.outOfStock.color}; font-size:${sl.outOfStock.size};">• ${sl.outOfStock.text}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:bold;">勾選欲結帳：<span style="color:#e11d48;">NT$ <span id="selected-payment-display">0</span></span></span>
+                    <button onclick="openPaymentModal()" style="background:#e11d48; color:white; border:none; padding:6px 12px; border-radius:20px; font-weight:bold;">前往結帳</button>
+                </div>`;
+            
+            calcSelectedTotal(); // 初始化計算勾選項目總和為0
+        });
+    }
+
+    function calcSelectedTotal() {
+        let sumPrice = 0;
+        let sumDeposit = 0;
+        let sumBalance = 0;
+
+        document.querySelectorAll('.user-order-chk:checked').forEach(c => {
+            sumPrice += Number(c.dataset.price) || 0;
+            
+            // 判斷畫面上的數值（data-deposit 與 data-balance），若為空（空白無數字）則排除計算
+            if (c.dataset.deposit && c.dataset.deposit.trim() !== '') {
+                sumDeposit += Number(c.dataset.deposit);
+            }
+            if (c.dataset.balance && c.dataset.balance.trim() !== '') {
+                sumBalance += Number(c.dataset.balance);
+            }
+        });
+
+        selectedPaymentTotal = sumPrice;
+        
+        if (document.getElementById('summary-total-price')) document.getElementById('summary-total-price').innerText = sumPrice;
+        if (document.getElementById('summary-total-deposit')) document.getElementById('summary-total-deposit').innerText = sumDeposit;
+        if (document.getElementById('summary-total-balance')) document.getElementById('summary-total-balance').innerText = sumBalance;
+        if (document.getElementById('selected-payment-display')) document.getElementById('selected-payment-display').innerText = sumPrice;
+    }
+
+    function submitPaymentConfirm() {
+        const last5 = document.getElementById('bank-last-5').value.trim();
+        if(last5.length < 4) return alert("請輸入後五碼！");
+        const updates = Array.from(document.querySelectorAll('.user-order-chk:checked')).map(cb => ({ row: parseInt(cb.value), status: `待查帳(${last5})` }));
+        fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "batchUpdateStatus", updates }) }).then(() => {
+            alert("查帳通知已送出！"); closePaymentModal(); fetchMyOrders();
+        });
+    }
+
+    function enterAdminMode() {
+        if (sessionStorage.getItem("isAdminLoggedIn") !== "true") {
+            if (prompt("密碼：") !== "820211") return alert("密碼錯誤");
+            sessionStorage.setItem("isAdminLoggedIn", "true");
+        }
+        
+        let fontOptions = `
+            <option value="'Helvetica Neue', Arial, '微軟正黑體', sans-serif">預設 (微軟正黑體)</option>
+            <option value="'DFKai-sb', 'BiauKai', serif">標楷體</option>
+            <option value="'Noto Sans TC', sans-serif">思源黑體</option>
+            <option value="Georgia, serif">襯線體 (Serif)</option>
+            <option value="Courier New, monospace">等寬字體 (Monospace)</option>
+        `;
+
+        let uniqueGroups = [...new Set(products.filter(p => p.id !== '_SITE_SETTINGS_' && p.group && p.group.trim() !== '').map(p => p.group))];
+        let groupCoverHtml = uniqueGroups.length > 0 ? uniqueGroups.map(g => `
+            <div class="upload-container" style="display:flex; align-items:center; margin-bottom:8px; gap: 8px;">
+                <span style="min-width:80px; font-size:13px; font-weight:bold; color:#475569;" title="${g}">📁 ${g}</span>
+                <input type="text" class="g-cover-input" data-group="${g}" value="${(settings.groupCovers && settings.groupCovers[g]) ? settings.groupCovers[g] : ''}" placeholder="請貼上圖片網址" style="flex:1; margin-bottom:0; padding:8px; border:1px solid #bae6fd; border-radius:6px; font-size:12px;">
+                <label style="background:#0ea5e9; color:white; padding:8px 10px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold; margin-bottom:0; white-space:nowrap;">
+                    📁上傳<input type="file" accept="image/*" style="display:none;" onchange="uploadImageToImgbb(this)">
+                </label>
+            </div>
+        `).join('') : '<p style="font-size:13px; color:#64748b;">目前尚未建立任何包含商品的群組。</p>';
+        
+        const sb = settings.summaryBox || defaultSettings.summaryBox;
+
+        document.getElementById('admin-panel').innerHTML = `
+            <div style="background:#e0f2fe; padding:15px; border-radius:12px; margin-bottom:20px; font-weight:bold; color:#0284c7; display:flex; justify-content:space-between;">
+                🟢 登入成功 <button onclick="sessionStorage.clear();showView('home');" style="background:#e11d48; color:white; border:none; border-radius:6px; padding:4px 8px;">登出</button>
+            </div>
+            
+            <div style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #bae6fd;">
+                <h3 style="color:#0369a1; border-bottom:1px dashed #bae6fd; padding-bottom:8px;">🎨 全站字體與版面設定</h3>
+                
+                <div style="background:#fff; padding:12px; border-radius:8px; margin-bottom:10px; border:1px solid #e2e8f0;">
+                    <strong style="color:#0f172a;">A. 全站基礎預設字型</strong><br>
+                    <select id="g-font" style="margin-top:5px;">
+                        <option value="${settings.globalFont}" selected>目前設定</option>
+                        ${fontOptions}
+                    </select>
+                </div>
+
+                <div style="background:#fff; padding:12px; border-radius:8px; margin-bottom:10px; border:1px solid #e2e8f0;">
+                    <strong style="color:#0284c7;">B. 首頁標題與提示文字設定</strong><br>
+                    大標題: <input value="${settings.main.text}" id="m-t"> 字體: <select id="m-f"><option value="${settings.main.font}" selected>目前</option>${fontOptions}</select> 顏色: <input value="${settings.main.color}" id="m-c"><br>
+                    小標題: <input value="${settings.sub.text}" id="s-t"> 顏色: <input value="${settings.sub.color}" id="s-c"><br>
+                    頂部橫幅: <input value="${settings.notice.text}" id="n-t"> 顏色: <input value="${settings.notice.bg}" id="n-bg">
+                </div>
+
+                <div style="background:#fff; padding:12px; border-radius:8px; margin-bottom:10px; border:1px solid #e2e8f0;">
+                    <strong style="color:#0ea5e9;">C. 按鈕與區塊名稱設定</strong><br>
+                    商品分頁[一般]: <input value="${settings.sect.text}" id="sc-t"> 
+                    商品分頁[現貨]: <input value="${settings.inStockSect.text}" id="is-t"> 
+                    商品分頁[連線]: <input value="${settings.liveSect.text}" id="ls-t"><br>
+                    活動緞帶: <input value="${settings.promo.text}" id="p-t"> 背景: <input value="${settings.promo.bg}" id="p-bg">
+                </div>
+
+                <div style="background:#fff; padding:12px; border-radius:8px; margin-bottom:10px; border:1px solid #e2e8f0;">
+                    <strong style="color:#e11d48;">D. 結帳與圖片設定</strong><br>
+                    <div class="upload-container" style="display:flex; gap:5px; margin-top:5px; margin-bottom:12px; align-items:center;">
+                        <span style="font-size:13px; white-space:nowrap;">中央Logo:</span>
+                        <input type="text" value="${settings.avatarUrl}" id="b-url" style="margin-bottom:0; flex:1;">
+                        <label style="background:#0ea5e9; color:white; padding:8px 10px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold; margin-bottom:0; white-space:nowrap;">
+                            📁上傳<input type="file" accept="image/*" style="display:none;" onchange="uploadImageToImgbb(this)">
+                        </label>
+                    </div>
+                    銀行代碼: <input value="${settings.bankCode}" id="bank-c"> 
+                    銀行帳號: <input value="${settings.bankAccount}" id="bank-a">
+                    <div class="upload-container" style="display:flex; gap:5px; align-items:center;">
+                        <span style="font-size:13px; white-space:nowrap;">SOP圖片:</span>
+                        <input type="text" value="${settings.sopImgUrl}" id="sop-img-url" style="margin-bottom:0; flex:1;">
+                        <label style="background:#0ea5e9; color:white; padding:8px 10px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold; margin-bottom:0; white-space:nowrap;">
+                            📁上傳<input type="file" accept="image/*" style="display:none;" onchange="uploadImageToImgbb(this)">
+                        </label>
+                    </div>
+                </div>
+
+                <div style="background:#fff; padding:12px; border-radius:8px; margin-bottom:15px; border:1px solid #e2e8f0;">
+                    <strong style="color:#8b5cf6;">E. 群組專屬封面設定</strong><br>
+                    <p style="font-size:11px; color:#64748b; margin:5px 0 10px 0;">⚠️ 若留空白，則自動使用該群組內第一項商品的圖片作為封面。</p>
+                    ${groupCoverHtml}
+                </div>
+
+                <div style="background:#fff; padding:12px; border-radius:8px; margin-bottom:15px; border:1px solid #e2e8f0;">
+                    <strong style="color:#10b981;">F. 訂單結算與狀態文字設定 (綠框區塊)</strong><br>
+                    <p style="font-size:11px; color:#64748b; margin:5px 0 10px 0;">設定結算金額標題與各狀態說明的文字、顏色、大小。</p>
+                    
+                    <div style="display:flex; gap:5px; margin-bottom:5px; font-size:12px; font-weight:bold; color:#475569;">
+                        <span style="width:70px;">項目</span><span style="flex:2;">文字</span><span style="flex:1;">色碼</span><span style="flex:1;">大小</span>
+                    </div>
+                    
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:70px; font-size:13px; margin-top:10px;">總額標題:</span>
+                        <input id="sb-reg-t" value="${sb.reg.text}" style="flex:2; margin-bottom:0;">
+                        <input id="sb-reg-c" value="${sb.reg.color}" style="flex:1; margin-bottom:0;">
+                        <input id="sb-reg-s" value="${sb.reg.size}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:70px; font-size:13px; margin-top:10px;">訂金標題:</span>
+                        <input id="sb-chk-t" value="${sb.chk.text}" style="flex:2; margin-bottom:0;">
+                        <input id="sb-chk-c" value="${sb.chk.color}" style="flex:1; margin-bottom:0;">
+                        <input id="sb-chk-s" value="${sb.chk.size}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:70px; font-size:13px; margin-top:10px;">尾款標題:</span>
+                        <input id="sb-dep-t" value="${sb.dep.text}" style="flex:2; margin-bottom:0;">
+                        <input id="sb-dep-c" value="${sb.dep.color}" style="flex:1; margin-bottom:0;">
+                        <input id="sb-dep-s" value="${sb.dep.size}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:70px; font-size:13px; margin-top:10px;">說明標題:</span>
+                        <input id="sb-nt-t" value="${sb.noteTitle.text}" style="flex:2; margin-bottom:0;">
+                        <input id="sb-nt-c" value="${sb.noteTitle.color}" style="flex:1; margin-bottom:0;">
+                        <input id="sb-nt-s" value="${sb.noteTitle.size}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    
+                    <hr style="border-top:1px dashed #e2e8f0; margin:15px 0;">
+                    
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:70px; font-size:13px; margin-top:10px;">已登記:</span>
+                        <input id="sl-reg-t" value="${settings.summaryLabels.registered.text}" style="flex:2; margin-bottom:0;">
+                        <input id="sl-reg-c" value="${settings.summaryLabels.registered.color}" style="flex:1; margin-bottom:0;">
+                        <input id="sl-reg-s" value="${settings.summaryLabels.registered.size}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:70px; font-size:13px; margin-top:10px;">未採買:</span>
+                        <input id="sl-unp-t" value="${settings.summaryLabels.unpurchased.text}" style="flex:2; margin-bottom:0;">
+                        <input id="sl-unp-c" value="${settings.summaryLabels.unpurchased.color}" style="flex:1; margin-bottom:0;">
+                        <input id="sl-unp-s" value="${settings.summaryLabels.unpurchased.size}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:70px; font-size:13px; margin-top:10px;">已付訂金:</span>
+                        <input id="sl-dep-t" value="${settings.summaryLabels.depositPaid.text}" style="flex:2; margin-bottom:0;">
+                        <input id="sl-dep-c" value="${settings.summaryLabels.depositPaid.color}" style="flex:1; margin-bottom:0;">
+                        <input id="sl-dep-s" value="${settings.summaryLabels.depositPaid.size}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:70px; font-size:13px; margin-top:10px;">已付款:</span>
+                        <input id="sl-paid-t" value="${settings.summaryLabels.paid.text}" style="flex:2; margin-bottom:0;">
+                        <input id="sl-paid-c" value="${settings.summaryLabels.paid.color}" style="flex:1; margin-bottom:0;">
+                        <input id="sl-paid-s" value="${settings.summaryLabels.paid.size}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:70px; font-size:13px; margin-top:10px;">已出貨:</span>
+                        <input id="sl-ship-t" value="${settings.summaryLabels.shipped.text}" style="flex:2; margin-bottom:0;">
+                        <input id="sl-ship-c" value="${settings.summaryLabels.shipped.color}" style="flex:1; margin-bottom:0;">
+                        <input id="sl-ship-s" value="${settings.summaryLabels.shipped.size}" style="flex:1; margin-bottom:0;">
+                    </div>
+                    <div style="display:flex; gap:5px; margin-bottom:5px;">
+                        <span style="width:70px; font-size:13px; margin-top:10px;">已斷貨:</span>
+                        <input id="sl-out-t" value="${settings.summaryLabels.outOfStock.text}" style="flex:2; margin-bottom:0;">
+                        <input id="sl-out-c" value="${settings.summaryLabels.outOfStock.color}" style="flex:1; margin-bottom:0;">
+                        <input id="sl-out-s" value="${settings.summaryLabels.outOfStock.size}" style="flex:1; margin-bottom:0;">
+                    </div>
+                </div>
+
+                <button onclick="saveSettings()" style="background:#0284c7; color:white; border:none; padding:12px; border-radius:8px; width:100%; font-weight:bold;">💾 儲存外觀設定</button>
+            </div>
+
+            <hr style="border-top:1px dashed #bae6fd; margin:25px 0;">
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                <h3 style="color:#0284c7; margin:0;">📋 實時訂單管理</h3>
+                <input type="text" placeholder="🔍 搜尋訂購人..." oninput="filterAdminOrders(this.value)" style="width: 150px; padding: 6px 10px; border-radius: 20px; border: 2px solid #bae6fd; font-size: 13px; margin-bottom: 0; outline: none;">
+            </div>
+            
+            <div style="background:#fff; padding:12px; border-radius:8px; margin-bottom:15px; border:1px solid #e2e8f0; font-size:14px;">
+                批次更改狀態為：
+                <select id="batch-status-select" style="width:auto; display:inline-block; margin-bottom:0;">
+                    <option value="已登記">已登記</option>
+                    <option value="已付訂金">已付訂金</option>
+                    <option value="已採買">已採買</option>
+                    <option value="已出貨">已出貨</option>
+                    <option value="已付款">已付款</option>
+                    <option value="已斷貨">已斷貨</option>
+                </select>
+                <button onclick="executeBatchStatusUpdate()" style="background:#0ea5e9; color:white; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; margin-left:5px;">確認更改</button>
+            </div>
+            <div id="admin-orders-table-container" style="overflow-x:auto; background:white; padding:8px; border-radius:8px; border:1px solid #e2e8f0;">
+                載入中...
+            </div>
+            <div id="admin-pagination-container" style="display:flex; justify-content:center; align-items:center; gap:15px; margin-top:15px; margin-bottom:15px;"></div>
+
+            <hr style="border-top:1px dashed #bae6fd; margin:25px 0;">
+
+            <h3 style="color:#0369a1;">📦 商品庫存與【群組分類】編輯</h3>
+            ${products.map((p, i) => `
+                <div class="product-card upload-container" style="margin-bottom:12px; border:1px solid #e2e8f0; background:#f8fafc;">
+                    名稱: <input type="text" value="${p.name || ''}" id="name-${i}"> 
+                    價格: <input type="text" value="${p.price || 0}" id="price-${i}"> 
+                    群組(分類): <input type="text" value="${p.group || ''}" id="group-${i}" placeholder="留白則為單獨卡片" style="border-color:#0ea5e9;">
+                    <div style="display:flex; gap:5px; margin-bottom:12px; align-items:center;">
+                        <span style="white-space:nowrap; font-size:14px;">圖片連結:</span>
+                        <input type="text" value="${p.img || ''}" id="img-${i}" style="margin-bottom:0; flex:1;"> 
+                        <label style="background:#0ea5e9; color:white; padding:10px 12px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; white-space:nowrap; margin-bottom:0;">
+                            📁上傳<input type="file" accept="image/*" style="display:none;" onchange="uploadImageToImgbb(this)">
+                        </label>
+                    </div>
+                    <button onclick="updateProduct(${i})" style="background:#0ea5e9; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;">💾 儲存此商品</button>
+                </div>
+            `).join('')}
+        `;
+        showView('admin');
+        loadAllOrdersForAdmin();
+    }
+
+    function saveSettings() {
+        settings.globalFont = document.getElementById("g-font").value;
+        settings.main.text = document.getElementById("m-t").value; settings.main.font = document.getElementById("m-f").value; settings.main.color = document.getElementById("m-c").value;
+        settings.sub.text = document.getElementById("s-t").value; settings.sub.color = document.getElementById("s-c").value;
+        settings.notice.text = document.getElementById("n-t").value; settings.notice.bg = document.getElementById("n-bg").value;
+        settings.sect.text = document.getElementById("sc-t").value; settings.inStockSect.text = document.getElementById("is-t").value; settings.liveSect.text = document.getElementById("ls-t").value;
+        settings.promo.text = document.getElementById("p-t").value; settings.promo.bg = document.getElementById("p-bg").value;
+        settings.avatarUrl = document.getElementById("b-url").value; settings.bankCode = document.getElementById("bank-c").value; settings.bankAccount = document.getElementById("bank-a").value; settings.sopImgUrl = document.getElementById("sop-img-url").value;
+        
+        if(!settings.groupCovers) settings.groupCovers = {}; 
+        document.querySelectorAll('.g-cover-input').forEach(input => {
+            let groupName = input.dataset.group;
+            let imgUrl = input.value.trim();
+            if(imgUrl !== "") settings.groupCovers[groupName] = imgUrl;
+            else delete settings.groupCovers[groupName];
+        });
+        
+        if(!settings.summaryBox) settings.summaryBox = defaultSettings.summaryBox;
+        settings.summaryBox.reg = { text: document.getElementById('sb-reg-t').value, color: document.getElementById('sb-reg-c').value, size: document.getElementById('sb-reg-s').value };
+        settings.summaryBox.chk = { text: document.getElementById('sb-chk-t').value, color: document.getElementById('sb-chk-c').value, size: document.getElementById('sb-chk-s').value };
+        settings.summaryBox.dep = { text: document.getElementById('sb-dep-t').value, color: document.getElementById('sb-dep-c').value, size: document.getElementById('sb-dep-s').value };
+        settings.summaryBox.noteTitle = { text: document.getElementById('sb-nt-t').value, color: document.getElementById('sb-nt-c').value, size: document.getElementById('sb-nt-s').value };
+        
+        settings.summaryLabels.registered = { text: document.getElementById('sl-reg-t').value, color: document.getElementById('sl-reg-c').value, size: document.getElementById('sl-reg-s').value, font: "inherit" };
+        settings.summaryLabels.unpurchased = { text: document.getElementById('sl-unp-t').value, color: document.getElementById('sl-unp-c').value, size: document.getElementById('sl-unp-s').value, font: "inherit" };
+        settings.summaryLabels.depositPaid = { text: document.getElementById('sl-dep-t').value, color: document.getElementById('sl-dep-c').value, size: document.getElementById('sl-dep-s').value, font: "inherit" };
+        settings.summaryLabels.paid = { text: document.getElementById('sl-paid-t').value, color: document.getElementById('sl-paid-c').value, size: document.getElementById('sl-paid-s').value, font: "inherit" };
+        settings.summaryLabels.shipped = { text: document.getElementById('sl-ship-t').value, color: document.getElementById('sl-ship-c').value, size: document.getElementById('sl-ship-s').value, font: "inherit" };
+        settings.summaryLabels.outOfStock = { text: document.getElementById('sl-out-t').value, color: document.getElementById('sl-out-c').value, size: document.getElementById('sl-out-s').value, font: "inherit" };
+
+        applyStyles();
+        fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "updateProduct", data: { id: "_SITE_SETTINGS_", name: "系統設定", price: 0, img: JSON.stringify(settings) } }) }).then(() => alert("設定已儲存！"));
+    }
+
+    function updateProduct(i) {
+        const updated = { id: products[i].id, name: document.getElementById(`name-${i}`).value, price: document.getElementById(`price-${i}`).value, img: document.getElementById(`img-${i}`).value, group: document.getElementById(`group-${i}`).value };
+        fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "updateProduct", data: updated }) }).then(() => { alert("商品更新成功"); loadProducts(); });
+    }
+
+    function filterAdminOrders(val) {
+        adminOrderSearch = val;
+        currentAdminPage = 1; 
+        renderAdminOrdersTable();
+    }
+
+    function loadAllOrdersForAdmin() {
+        fetch(`${GAS_URL}?mode=admin&page=1&t=${new Date().getTime()}`).then(res => res.json()).then(data => {
+            allUserOrders = data.orders || [];
+            currentAdminPage = 1;
+            adminOrderSearch = ""; 
+            renderAdminOrdersTable();
+        });
+    }
+
+    function renderAdminOrdersTable() {
+        let filteredOrders = allUserOrders;
+        if (adminOrderSearch.trim() !== "") {
+            filteredOrders = filteredOrders.filter(o => (o.displayName || '').toLowerCase().includes(adminOrderSearch.toLowerCase()));
+        }
+
+        if (filteredOrders.length === 0) {
+            document.getElementById('admin-orders-table-container').innerHTML = '<p style="text-align:center; color:#64748b; padding:15px;">🔍 無符合條件的訂單</p>';
+            document.getElementById('admin-pagination-container').innerHTML = '';
+            return;
+        }
+
+        const ITEMS_PER_PAGE = 10;
+        const start = (currentAdminPage - 1) * ITEMS_PER_PAGE;
+        const pageOrders = filteredOrders.slice(start, start + ITEMS_PER_PAGE);
+        
+        let html = `<table><tr>
+            <th><input type="checkbox" onclick="document.querySelectorAll('.admin-order-chk').forEach(c=>c.checked=this.checked)"></th>
+            <th>時間</th><th>訂購人</th><th>商品</th><th>備註</th><th>金額</th><th>狀態</th>
+        </tr>`;
+        
+        pageOrders.forEach(o => {
+            let remarkText = o.remark || '';
+            html += `<tr>
+                <td><input type="checkbox" class="admin-order-chk" value="${o.row}"></td>
+                <td style="font-size:11px; color:#64748b; white-space:nowrap;">${o.date}</td>
+                <td style="color:#0369a1; font-weight:bold; white-space:nowrap;">${o.displayName || '未登入'}</td>
+                <td>${o.product}</td>
+                <td style="font-size:11px; color:#64748b; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${remarkText}">${remarkText}</td>
+                <td>$${o.price}</td>
+                <td><span style="background:#e0f2fe; color:#0284c7; padding:2px 6px; border-radius:4px; font-size:11px; white-space:nowrap;">${o.status}</span></td>
+            </tr>`;
+        });
+        document.getElementById('admin-orders-table-container').innerHTML = html + '</table>';
+        
+        let totalPages = Math.ceil(filteredOrders.length / ITEMS_PER_PAGE);
+        document.getElementById('admin-pagination-container').innerHTML = `
+            <button onclick="currentAdminPage--;renderAdminOrdersTable()" ${currentAdminPage <= 1 ? 'disabled' : ''} style="padding:6px 12px; border-radius:20px; border:1px solid #bae6fd; background:${currentAdminPage <= 1 ? '#f1f5f9' : '#fff'}; cursor:${currentAdminPage <= 1 ? 'not-allowed' : 'pointer'};">⬅️ 上一頁</button>
+            <span style="font-weight:bold; color:#0369a1; font-size:14px;">第 ${currentAdminPage} / ${totalPages} 頁</span>
+            <button onclick="currentAdminPage++;renderAdminOrdersTable()" ${currentAdminPage >= totalPages ? 'disabled' : ''} style="padding:6px 12px; border-radius:20px; border:1px solid #bae6fd; background:${currentAdminPage >= totalPages ? '#f1f5f9' : '#fff'}; cursor:${currentAdminPage >= totalPages ? 'not-allowed' : 'pointer'};">下一頁 ➡️</button>
+        `;
+    }
+
+    function executeBatchStatusUpdate() {
+        const checked = document.querySelectorAll('.admin-order-chk:checked');
+        if (checked.length === 0) return alert("請先勾選訂單！");
+        const status = document.getElementById('batch-status-select').value;
+        const updates = Array.from(checked).map(cb => ({ row: parseInt(cb.value), status }));
+        fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "batchUpdateStatus", updates }) }).then(() => {
+            alert("更新成功！"); loadAllOrdersForAdmin();
+        });
+    }
+</script>
+</body>
+</html>
