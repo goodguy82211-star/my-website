@@ -386,6 +386,7 @@
         avatarUrl: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=150&q=80",
         bankCode: "822 (中國信託)", bankAccount: "1234-5678-9012", qrCodeUrl: "", linePayUrl: "", sopImgUrl: "",
         sopBtn: { text: "付款SOP", size: "13px", color: "#ffffff", bg: "#e11d48" },
+        myshipUrl: "", // 💡 新增：賣貨便連結設定
         btnProfile: { text: "👤 身分確認（首購）", size: "14px", color: "#0284c7" },
         btnProduct: { text: "👁️ 商品", size: "14px", color: "#0f172a" },
         btnOrder: { text: "🔍 查詢訂單", size: "14px", color: "#0f172a" },
@@ -1010,6 +1011,21 @@
                     <button onclick="openPaymentModal()" style="background:#e11d48; color:white; border:none; padding:6px 12px; border-radius:20px; font-weight:bold;">前往結帳</button>
                 </div>`;
             
+            // 💡 新增：依據 image_3d7206.png 設計的賣貨便連結區塊
+            if (settings.myshipUrl && settings.myshipUrl.trim() !== '') {
+                let myshipHtml = `
+                <div style="background: #fdfaf7; border: 1px solid #ebdcd5; border-radius: 12px; padding: 15px; margin-top: 15px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: #5c4b41; cursor: pointer; margin-bottom: 12px; font-size: 14px;">
+                        <input type="checkbox" id="confirm-order-chk" style="width: 18px; height: 18px; accent-color: #a38271; margin: 0; cursor: pointer;" onchange="toggleMyshipBtn(this.checked)">
+                        我已確認訂單明細，金額無誤
+                    </label>
+                    <button id="myship-btn" disabled onclick="window.open('${settings.myshipUrl}', '_blank')" style="width: 100%; background: #e6dacd; color: #735f52; border: none; padding: 12px; border-radius: 20px; font-weight: bold; font-size: 15px; cursor: not-allowed; transition: all 0.3s ease;">
+                        📦 查看賣貨便連結
+                    </button>
+                </div>`;
+                document.getElementById('summary-result').innerHTML += myshipHtml;
+            }
+
             calcSelectedTotal();
         });
     }
@@ -1115,7 +1131,8 @@
                         </label>
                     </div>
                     銀行代碼: <input value="${settings.bankCode}" id="bank-c"> 
-                    銀行帳號: <input value="${settings.bankAccount}" id="bank-a">
+                    銀行帳號: <input value="${settings.bankAccount}" id="bank-a"><br>
+                    賣貨便連結: <input value="${settings.myshipUrl || ''}" id="myship-url" placeholder="請輸入7-11賣貨便網址" style="margin-top:5px; width: 100%;">
                     <div class="upload-container" style="display:flex; gap:5px; align-items:center;">
                         <span style="font-size:13px; white-space:nowrap;">SOP圖片:</span>
                         <input type="text" value="${settings.sopImgUrl}" id="sop-img-url" style="margin-bottom:0; flex:1;">
@@ -1294,6 +1311,7 @@
         settings.sect.text = document.getElementById("sc-t").value; settings.inStockSect.text = document.getElementById("is-t").value; settings.liveSect.text = document.getElementById("ls-t").value;
         settings.promo.text = document.getElementById("p-t").value; settings.promo.bg = document.getElementById("p-bg").value;
         settings.avatarUrl = document.getElementById("b-url").value; settings.bankCode = document.getElementById("bank-c").value; settings.bankAccount = document.getElementById("bank-a").value; settings.sopImgUrl = document.getElementById("sop-img-url").value;
+        settings.myshipUrl = document.getElementById("myship-url") ? document.getElementById("myship-url").value : ""; // 💡 新增：儲存賣貨便連結
         
         if(!settings.groupCovers) settings.groupCovers = {}; 
         document.querySelectorAll('.g-cover-input').forEach(input => {
@@ -1400,6 +1418,24 @@
         fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "batchUpdateStatus", updates }) }).then(() => {
             alert("更新成功！"); loadAllOrdersForAdmin();
         });
+    }
+
+    // 💡 新增：控制賣貨便按鈕的狀態切換
+    function toggleMyshipBtn(isChecked) {
+        const btn = document.getElementById('myship-btn');
+        if (btn) {
+            if (isChecked) {
+                btn.disabled = false;
+                btn.style.cursor = 'pointer';
+                btn.style.background = '#d7bfa6'; // 打勾後的顏色
+                btn.style.color = '#3e2723';
+            } else {
+                btn.disabled = true;
+                btn.style.cursor = 'not-allowed';
+                btn.style.background = '#e6dacd'; // 未打勾的預設顏色
+                btn.style.color = '#735f52';
+            }
+        }
     }
 </script>
 </body>
