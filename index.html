@@ -12,7 +12,7 @@
 
     <script>
         (function() {
-            const version = "v8.2"; // 💡 更新版本號以清除快取
+            const version = "v8.3"; // 💡 更新版本號以清除快取
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -386,7 +386,6 @@
         avatarUrl: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=150&q=80",
         bankCode: "822 (中國信託)", bankAccount: "1234-5678-9012", qrCodeUrl: "", linePayUrl: "", sopImgUrl: "",
         sopBtn: { text: "付款SOP", size: "13px", color: "#ffffff", bg: "#e11d48" },
-        myshipUrl: "", // 💡 新增：賣貨便連結設定
         btnProfile: { text: "👤 身分確認（首購）", size: "14px", color: "#0284c7" },
         btnProduct: { text: "👁️ 商品", size: "14px", color: "#0f172a" },
         btnOrder: { text: "🔍 查詢訂單", size: "14px", color: "#0f172a" },
@@ -452,7 +451,9 @@
         if (currentUserProfile.userId && currentUserProfile.userId !== "訪客測試") {
             fetch(`${GAS_URL}?userId=${currentUserProfile.userId}&t=${new Date().getTime()}`)
                 .then(res => res.json())
-                .then(data => { cachedUserOrders = data; });
+                .then(data => { 
+                    cachedUserOrders = data.orders || []; 
+                });
         }
     }
 
@@ -937,10 +938,15 @@
         if(currentUserProfile.userId === "訪客測試") return alert("請先登入 LINE 才能查詢唷！");
         document.getElementById('order-history').innerHTML = '<p style="text-align:center;">載入中...</p>';
         fetch(`${GAS_URL}?userId=${currentUserProfile.userId}&t=${new Date().getTime()}`).then(res => res.json()).then(data => {
-            cachedUserOrders = data; 
+            
+            // 💡 修正資料解析，從新的回傳格式中取得該使用者的 orders 和專屬 myshipUrl
+            let ordersArray = data.orders || [];
+            let personalMyshipUrl = data.myshipUrl || "";
+            
+            cachedUserOrders = ordersArray; 
             selectedPaymentTotal = 0;
             const sD = document.getElementById('start-date').value, eD = document.getElementById('end-date').value;
-            let filtered = data.filter(o => (!sD || o.date.split(' ')[0]>=sD) && (!eD || o.date.split(' ')[0]<=eD));
+            let filtered = ordersArray.filter(o => (!sD || o.date.split(' ')[0]>=sD) && (!eD || o.date.split(' ')[0]<=eD));
             
             if(filtered.length===0) {
                 document.getElementById('summary-result').innerHTML = '';
@@ -1011,15 +1017,15 @@
                     <button onclick="openPaymentModal()" style="background:#e11d48; color:white; border:none; padding:6px 12px; border-radius:20px; font-weight:bold;">前往結帳</button>
                 </div>`;
             
-            // 💡 新增：依據 image_3d7206.png 設計的賣貨便連結區塊
-            if (settings.myshipUrl && settings.myshipUrl.trim() !== '') {
+            // 💡 修正：改用讀取到的個人專屬賣貨便連結來顯示按鈕
+            if (personalMyshipUrl && personalMyshipUrl.trim() !== '') {
                 let myshipHtml = `
                 <div style="background: #fdfaf7; border: 1px solid #ebdcd5; border-radius: 12px; padding: 15px; margin-top: 15px;">
                     <label style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: #5c4b41; cursor: pointer; margin-bottom: 12px; font-size: 14px;">
                         <input type="checkbox" id="confirm-order-chk" style="width: 18px; height: 18px; accent-color: #a38271; margin: 0; cursor: pointer;" onchange="toggleMyshipBtn(this.checked)">
                         我已確認訂單明細，金額無誤
                     </label>
-                    <button id="myship-btn" disabled onclick="window.open('${settings.myshipUrl}', '_blank')" style="width: 100%; background: #e6dacd; color: #735f52; border: none; padding: 12px; border-radius: 20px; font-weight: bold; font-size: 15px; cursor: not-allowed; transition: all 0.3s ease;">
+                    <button id="myship-btn" disabled onclick="window.open('${personalMyshipUrl}', '_blank')" style="width: 100%; background: #e6dacd; color: #735f52; border: none; padding: 12px; border-radius: 20px; font-weight: bold; font-size: 15px; cursor: not-allowed; transition: all 0.3s ease;">
                         📦 查看賣貨便連結
                     </button>
                 </div>`;
@@ -1090,6 +1096,7 @@
         
         const sb = settings.summaryBox || defaultSettings.summaryBox;
 
+        // 💡 修正：已移除原本全域的「賣貨便連結」設定欄位，改到每筆訂單裡設定
         document.getElementById('admin-panel').innerHTML = `
             <div style="background:#e0f2fe; padding:15px; border-radius:12px; margin-bottom:20px; font-weight:bold; color:#0284c7; display:flex; justify-content:space-between;">
                 🟢 登入成功 <button onclick="sessionStorage.clear();showView('home');" style="background:#e11d48; color:white; border:none; border-radius:6px; padding:4px 8px;">登出</button>
@@ -1132,8 +1139,7 @@
                     </div>
                     銀行代碼: <input value="${settings.bankCode}" id="bank-c"> 
                     銀行帳號: <input value="${settings.bankAccount}" id="bank-a"><br>
-                    賣貨便連結: <input value="${settings.myshipUrl || ''}" id="myship-url" placeholder="請輸入7-11賣貨便網址" style="margin-top:5px; width: 100%;">
-                    <div class="upload-container" style="display:flex; gap:5px; align-items:center;">
+                    <div class="upload-container" style="display:flex; gap:5px; align-items:center; margin-top:5px;">
                         <span style="font-size:13px; white-space:nowrap;">SOP圖片:</span>
                         <input type="text" value="${settings.sopImgUrl}" id="sop-img-url" style="margin-bottom:0; flex:1;">
                         <label style="background:#0ea5e9; color:white; padding:8px 10px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:bold; margin-bottom:0; white-space:nowrap;">
@@ -1311,7 +1317,6 @@
         settings.sect.text = document.getElementById("sc-t").value; settings.inStockSect.text = document.getElementById("is-t").value; settings.liveSect.text = document.getElementById("ls-t").value;
         settings.promo.text = document.getElementById("p-t").value; settings.promo.bg = document.getElementById("p-bg").value;
         settings.avatarUrl = document.getElementById("b-url").value; settings.bankCode = document.getElementById("bank-c").value; settings.bankAccount = document.getElementById("bank-a").value; settings.sopImgUrl = document.getElementById("sop-img-url").value;
-        settings.myshipUrl = document.getElementById("myship-url") ? document.getElementById("myship-url").value : ""; // 💡 新增：儲存賣貨便連結
         
         if(!settings.groupCovers) settings.groupCovers = {}; 
         document.querySelectorAll('.g-cover-input').forEach(input => {
@@ -1383,13 +1388,15 @@
         const start = (currentAdminPage - 1) * ITEMS_PER_PAGE;
         const pageOrders = filteredOrders.slice(start, start + ITEMS_PER_PAGE);
         
+        // 💡 修正：在表格標題加入「專屬賣貨便」的欄位
         let html = `<table><tr>
             <th><input type="checkbox" onclick="document.querySelectorAll('.admin-order-chk').forEach(c=>c.checked=this.checked)"></th>
-            <th>時間</th><th>訂購人</th><th>商品</th><th>備註</th><th>金額</th><th>狀態</th>
+            <th>時間</th><th>訂購人</th><th>商品</th><th>備註</th><th>金額</th><th>狀態</th><th>專屬賣貨便</th>
         </tr>`;
         
         pageOrders.forEach(o => {
             let remarkText = o.remark || '';
+            // 💡 修正：針對這筆訂單的購買人提供設定個人網址的按鈕
             html += `<tr>
                 <td><input type="checkbox" class="admin-order-chk" value="${o.row}"></td>
                 <td style="font-size:11px; color:#64748b; white-space:nowrap;">${o.date}</td>
@@ -1398,6 +1405,11 @@
                 <td style="font-size:11px; color:#64748b; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${remarkText}">${remarkText}</td>
                 <td>$${o.price}</td>
                 <td><span style="background:#e0f2fe; color:#0284c7; padding:2px 6px; border-radius:4px; font-size:11px; white-space:nowrap;">${o.status}</span></td>
+                <td>
+                    <button onclick="setPersonalMyship('${o.uid}', '${o.myshipUrl || ''}')" style="background:${o.myshipUrl ? '#10b981' : '#0ea5e9'}; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer; white-space:nowrap;">
+                        ${o.myshipUrl ? '🔗 已設(修改)' : '➕ 新增連結'}
+                    </button>
+                </td>
             </tr>`;
         });
         document.getElementById('admin-orders-table-container').innerHTML = html + '</table>';
@@ -1408,6 +1420,24 @@
             <span style="font-weight:bold; color:#0369a1; font-size:14px;">第 ${currentAdminPage} / ${totalPages} 頁</span>
             <button onclick="currentAdminPage++;renderAdminOrdersTable()" ${currentAdminPage >= totalPages ? 'disabled' : ''} style="padding:6px 12px; border-radius:20px; border:1px solid #bae6fd; background:${currentAdminPage >= totalPages ? '#f1f5f9' : '#fff'}; cursor:${currentAdminPage >= totalPages ? 'not-allowed' : 'pointer'};">下一頁 ➡️</button>
         `;
+    }
+    
+    // 💡 新增：管理員設定個別客人的賣貨便連結
+    function setPersonalMyship(uid, currentUrl) {
+        if (!uid || uid === "undefined") {
+            return alert("⚠️ 找不到該使用者的身分識別碼，無法設定！");
+        }
+        let newUrl = prompt("請輸入此客人專屬的【7-11 賣貨便連結】：\n(若要清除連結請留白並按確定)", currentUrl);
+        
+        if (newUrl !== null) {
+            fetch(GAS_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "updateUserMyship", userId: uid, myshipUrl: newUrl.trim() })
+            }).then(() => {
+                alert("✅ 客人專屬賣貨便連結已更新！");
+                loadAllOrdersForAdmin(); // 更新完成後刷新表格
+            });
+        }
     }
 
     function executeBatchStatusUpdate() {
@@ -1420,19 +1450,18 @@
         });
     }
 
-    // 💡 新增：控制賣貨便按鈕的狀態切換
     function toggleMyshipBtn(isChecked) {
         const btn = document.getElementById('myship-btn');
         if (btn) {
             if (isChecked) {
                 btn.disabled = false;
                 btn.style.cursor = 'pointer';
-                btn.style.background = '#d7bfa6'; // 打勾後的顏色
+                btn.style.background = '#d7bfa6'; 
                 btn.style.color = '#3e2723';
             } else {
                 btn.disabled = true;
                 btn.style.cursor = 'not-allowed';
-                btn.style.background = '#e6dacd'; // 未打勾的預設顏色
+                btn.style.background = '#e6dacd'; 
                 btn.style.color = '#735f52';
             }
         }
