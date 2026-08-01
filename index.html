@@ -12,7 +12,7 @@
 
     <script>
         (function() {
-            const version = "v8.3"; // 💡 更新版本號以清除快取
+            const version = "v8.4"; // 💡 更新版本號以清除快取
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -301,7 +301,7 @@
 </div>
 
 <script>
-    // ⚠️ 這裡替換成您自己的 GAS_URL
+    // ⚠️ 這裡替換成您自己的全新 GAS_URL，請務必重新複製一次！
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxjeKY2LuG_z2NxPdYsnGf8OF8JIy6LqxpHuYTd-rjVZ8Wj5spuU07N8UsZzoCeWbuE/exec";
     const IMGBB_API_KEY = "047c09f72967af944b7686625c1c9680";
     
@@ -1096,12 +1096,23 @@
         
         const sb = settings.summaryBox || defaultSettings.summaryBox;
 
-        // 💡 修正：已移除原本全域的「賣貨便連結」設定欄位，改到每筆訂單裡設定
+        // 💡 修改：加入小幫手極速打單區塊
         document.getElementById('admin-panel').innerHTML = `
             <div style="background:#e0f2fe; padding:15px; border-radius:12px; margin-bottom:20px; font-weight:bold; color:#0284c7; display:flex; justify-content:space-between;">
                 🟢 登入成功 <button onclick="sessionStorage.clear();showView('home');" style="background:#e11d48; color:white; border:none; border-radius:6px; padding:4px 8px;">登出</button>
             </div>
             
+            <div style="background:#fff; padding:15px; border-radius:8px; margin-bottom:15px; border:2px solid #e11d48; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.1);">
+                <strong style="color:#e11d48; font-size: 16px;">⚡ 小幫手極速建單區 (對照社群留言)</strong>
+                <p style="font-size: 12px; color: #64748b; margin: 5px 0 10px 0;">輸入客人暱稱與代碼，系統會自動尋找對應會員並建單。</p>
+                <div style="display:flex; gap:10px; align-items: center;">
+                    <input type="text" id="fast-user" placeholder="客人社群暱稱" style="flex:2; margin-bottom:0; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                    <input type="text" id="fast-code" placeholder="商品代碼 (如 A01)" style="flex:1.5; margin-bottom:0; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; text-transform: uppercase; font-weight: bold;">
+                    <input type="number" id="fast-qty" placeholder="數量" value="1" min="1" style="flex:1; margin-bottom:0; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; text-align:center;">
+                    <button onclick="submitFastOrder()" style="background:#e11d48; color:white; border:none; border-radius:6px; font-weight:bold; padding: 10px 20px; cursor: pointer;">送出 (Enter)</button>
+                </div>
+            </div>
+
             <div style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #bae6fd;">
                 <h3 style="color:#0369a1; border-bottom:1px dashed #bae6fd; padding-bottom:8px;">🎨 全站字體與版面設定</h3>
                 
@@ -1388,7 +1399,6 @@
         const start = (currentAdminPage - 1) * ITEMS_PER_PAGE;
         const pageOrders = filteredOrders.slice(start, start + ITEMS_PER_PAGE);
         
-        // 💡 修正：在表格標題加入「專屬賣貨便」的欄位
         let html = `<table><tr>
             <th><input type="checkbox" onclick="document.querySelectorAll('.admin-order-chk').forEach(c=>c.checked=this.checked)"></th>
             <th>時間</th><th>訂購人</th><th>商品</th><th>備註</th><th>金額</th><th>狀態</th><th>專屬賣貨便</th>
@@ -1396,7 +1406,6 @@
         
         pageOrders.forEach(o => {
             let remarkText = o.remark || '';
-            // 💡 修正：針對這筆訂單的購買人提供設定個人網址的按鈕
             html += `<tr>
                 <td><input type="checkbox" class="admin-order-chk" value="${o.row}"></td>
                 <td style="font-size:11px; color:#64748b; white-space:nowrap;">${o.date}</td>
@@ -1422,7 +1431,6 @@
         `;
     }
     
-    // 💡 新增：管理員設定個別客人的賣貨便連結
     function setPersonalMyship(uid, currentUrl) {
         if (!uid || uid === "undefined") {
             return alert("⚠️ 找不到該使用者的身分識別碼，無法設定！");
@@ -1435,7 +1443,7 @@
                 body: JSON.stringify({ action: "updateUserMyship", userId: uid, myshipUrl: newUrl.trim() })
             }).then(() => {
                 alert("✅ 客人專屬賣貨便連結已更新！");
-                loadAllOrdersForAdmin(); // 更新完成後刷新表格
+                loadAllOrdersForAdmin(); 
             });
         }
     }
@@ -1466,6 +1474,61 @@
             }
         }
     }
+
+    // 💡 腳本區：小幫手極速建單功能
+    function submitFastOrder() {
+        const nickname = document.getElementById('fast-user').value.trim();
+        const code = document.getElementById('fast-code').value.trim().toUpperCase(); 
+        const qty = parseInt(document.getElementById('fast-qty').value) || 1;
+
+        if (!nickname || !code) return alert("⚠️ 請輸入客人的「社群暱稱」與「商品代碼」！");
+
+        const p = products.find(x => String(x.id).toUpperCase() === code);
+        if (!p) return alert("❌ 找不到商品代碼：" + code + "，請確認試算表是否有此 ID。");
+
+        let originalBtnText = event.target.innerText;
+        event.target.innerText = "⏳ 送出中...";
+        event.target.disabled = true;
+
+        fetch(GAS_URL, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "submitFastOrder",
+                nickname: nickname,
+                productName: p.name.replace(/\[連線\]|【連線】|\[批貨\]|【批貨】/g, '').trim(),
+                price: p.price,
+                qty: qty
+            })
+        }).then(res => res.text()).then(text => {
+            document.getElementById('fast-code').value = "";
+            document.getElementById('fast-qty').value = "1";
+            document.getElementById('fast-code').focus(); 
+            
+            event.target.innerText = "✅ 成功";
+            event.target.style.background = "#10b981"; 
+            
+            setTimeout(() => {
+                event.target.innerText = originalBtnText;
+                event.target.style.background = "#e11d48";
+                event.target.disabled = false;
+            }, 1000);
+            
+            loadAllOrdersForAdmin();
+        }).catch(err => {
+            alert("網路錯誤，請重試！");
+            event.target.innerText = originalBtnText;
+            event.target.disabled = false;
+        });
+    }
+
+    // 💡 腳本區：綁定 Enter 鍵快速發送
+    document.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter' && document.getElementById('admin-panel') && document.getElementById('fast-user')) {
+            if (['fast-user', 'fast-code', 'fast-qty'].includes(document.activeElement.id)) {
+                submitFastOrder();
+            }
+        }
+    });
 </script>
 </body>
 </html>
