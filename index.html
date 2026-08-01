@@ -12,7 +12,7 @@
 
     <script>
         (function() {
-            const version = "v10.1-FujiTheme"; 
+            const version = "v10.2-FujiTheme-FixBg"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -77,11 +77,14 @@
         .modern-cart-btn:hover { background: #1c3f6e; transform: translateY(-2px); }
         .cart-dot { background: #d32f2f; width: 8px; height: 8px; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px rgba(211, 47, 47, 0.6);} /* 鳥居紅 */
 
-        /* 🏔️ 富士山 Hero 區塊 */
+        /* 🏔️ 富士山 Hero 區塊 (已更新圖片呈現方式) */
         .hero-section {
             height: 60vh; min-height: 450px; width: 100%;
-            background-image: linear-gradient(rgba(19, 44, 77, 0.2), rgba(19, 44, 77, 0.6)), url('https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&w=1600&q=80');
-            background-size: cover; background-position: center; background-attachment: fixed;
+            /* ✨ 分別設定漸層與圖片的縮放比例：漸層填滿(100%)，圖片完整呈現(contain)不裁切 */
+            background-size: 100% 100%, contain; 
+            background-position: center, center; 
+            background-repeat: no-repeat, no-repeat;
+            background-color: #132c4d; /* ✨ 兩側的深藍色底色填補直式圖片的空白 */
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             text-align: center; padding-top: 70px; box-sizing: border-box;
         }
@@ -506,7 +509,7 @@
         promo: { text: "✦ 會員專屬：滿 NT$3,000 享國內免運 ✦", size: "14px", color: "#1c3f6e", bg: "#eef3f8", font: "inherit" },
         notice: { text: "🧮 有換算計算機可以參考唷~~", size: "13px", color: "#ffffff", font: "inherit", bg: "#2b6cb0" },
         avatarUrl: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=150&q=80",
-        heroBgUrl: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&w=1600&q=80", // <-- ✨ 新增首頁背景預設
+        heroBgUrl: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&w=1600&q=80",
         bankCode: "822 (中國信託)", bankAccount: "1234-5678-9012", qrCodeUrl: "", linePayUrl: "", sopImgUrl: "",
         sopBtn: { text: "付款SOP", size: "14px", color: "#132c4d", bg: "#eef3f8" },
         btnProfile: { text: "立即綁定", size: "14px", color: "#132c4d" },
@@ -743,7 +746,7 @@
     function applyStyles() {
         document.getElementById('app-body').style.fontFamily = settings.globalFont || defaultSettings.globalFont;
 
-        // ✨ 這裡動態套用首頁背景圖
+        // 動態套用首頁背景圖與漸層
         const heroSection = document.getElementById("hero-section-el");
         if (heroSection) {
             let bgUrl = settings.heroBgUrl || defaultSettings.heroBgUrl;
@@ -1329,7 +1332,6 @@
                         </label>
                     </div>
 
-                    <!-- ✨ 新增首頁背景圖片 -->
                     <div class="upload-container" style="display:flex; gap:10px; margin-top:10px; margin-bottom:15px; align-items:center;">
                         <span style="font-size:14px; white-space:nowrap; font-weight:bold;">首頁背景圖片:</span>
                         <input type="text" value="${settings.heroBgUrl || defaultSettings.heroBgUrl}" id="hero-bg-url" style="margin-bottom:0; flex:1;" placeholder="請貼上圖片網址">
@@ -1564,7 +1566,6 @@
         settings.sect.text = document.getElementById("sc-t").value; settings.inStockSect.text = document.getElementById("is-t").value; settings.liveSect.text = document.getElementById("ls-t").value;
         settings.promo.text = document.getElementById("p-t").value; settings.promo.bg = document.getElementById("p-bg").value;
         
-        // ✨ 儲存新增的背景圖與大頭貼
         settings.avatarUrl = document.getElementById("b-url").value; 
         settings.heroBgUrl = document.getElementById("hero-bg-url").value;
         
