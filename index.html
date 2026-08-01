@@ -12,7 +12,7 @@
 
     <script>
         (function() {
-            const version = "v10.2-FujiTheme-FixBg"; 
+            const version = "v10.3-FujiTheme-AdminFilter"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -34,8 +34,8 @@
         ========================================================= */
         body { 
             margin: 0; padding: 0; 
-            background-color: #f4f8fb; /* 淺晴空藍 */
-            color: #132c4d; /* 沉穩海軍藍 */
+            background-color: #f4f8fb; 
+            color: #132c4d; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "微軟正黑體", sans-serif;
             -webkit-font-smoothing: antialiased;
         }
@@ -75,16 +75,14 @@
             box-shadow: 0 4px 15px rgba(19, 44, 77, 0.2);
         }
         .modern-cart-btn:hover { background: #1c3f6e; transform: translateY(-2px); }
-        .cart-dot { background: #d32f2f; width: 8px; height: 8px; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px rgba(211, 47, 47, 0.6);} /* 鳥居紅 */
+        .cart-dot { background: #d32f2f; width: 8px; height: 8px; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px rgba(211, 47, 47, 0.6);} 
 
-        /* 🏔️ 富士山 Hero 區塊 (已更新圖片呈現方式) */
         .hero-section {
             height: 60vh; min-height: 450px; width: 100%;
-            /* ✨ 分別設定漸層與圖片的縮放比例：漸層填滿(100%)，圖片完整呈現(contain)不裁切 */
             background-size: 100% 100%, contain; 
             background-position: center, center; 
             background-repeat: no-repeat, no-repeat;
-            background-color: #132c4d; /* ✨ 兩側的深藍色底色填補直式圖片的空白 */
+            background-color: #132c4d; 
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             text-align: center; padding-top: 70px; box-sizing: border-box;
         }
@@ -434,10 +432,16 @@
     let cachedUserOrders = []; 
     let currentUserProfile = { userId: "訪客測試", displayName: "訪客", realName: "訪客" };
     let selectedPaymentTotal = 0; 
+    
     let currentAdminPage = 1;
-    let currentInventoryPage = 1; 
     let adminOrderSearch = "";
+    
     let currentProductTab = 'current';
+
+    // 💡 新增：後台庫存管理的狀態變數
+    let currentInventoryPage = 1; 
+    let currentAdminInvTab = 'all'; 
+    let adminInvSearchText = ''; 
 
     const infoContents = {
         definitions: {
@@ -498,7 +502,6 @@
         }
     };
 
-    // 💡 預設設定
     const defaultSettings = {
         globalFont: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, '微軟正黑體', sans-serif",
         main: { text: "小魔丸旅遊代購", size: "48px", color: "#ffffff", font: "inherit" },
@@ -746,7 +749,6 @@
     function applyStyles() {
         document.getElementById('app-body').style.fontFamily = settings.globalFont || defaultSettings.globalFont;
 
-        // 動態套用首頁背景圖與漸層
         const heroSection = document.getElementById("hero-section-el");
         if (heroSection) {
             let bgUrl = settings.heroBgUrl || defaultSettings.heroBgUrl;
@@ -1236,6 +1238,34 @@
         });
     }
 
+    // 💡 新增：後台庫存切換頁籤功能
+    function switchAdminInvTab(tab) {
+        currentAdminInvTab = tab;
+        currentInventoryPage = 1; 
+        ['all', 'current', 'instock', 'live'].forEach(t => {
+            let btn = document.getElementById('admin-inv-tab-' + t);
+            if(btn) {
+                if(t === tab) { 
+                    btn.classList.add('active'); 
+                    btn.style.background = '#132c4d'; 
+                    btn.style.color = 'white'; 
+                } else { 
+                    btn.classList.remove('active'); 
+                    btn.style.background = 'transparent'; 
+                    btn.style.color = '#4a5568'; 
+                }
+            }
+        });
+        renderAdminInventoryTable();
+    }
+
+    // 💡 新增：後台庫存搜尋功能
+    function searchAdminInv(val) {
+        adminInvSearchText = val.toLowerCase().trim();
+        currentInventoryPage = 1; 
+        renderAdminInventoryTable();
+    }
+
     function enterAdminMode() {
         if (sessionStorage.getItem("isAdminLoggedIn") !== "true") {
             if (prompt("請輸入管理員密碼：") !== "102225") return alert("密碼錯誤");
@@ -1447,6 +1477,16 @@
 
             <h3 style="color:#132c4d; font-size: 22px; font-weight: 900; margin-top: 40px; border-bottom: 2px solid #dbe4f0; padding-bottom: 10px;">📦 庫存與【群組分類】編輯</h3>
             
+            <!-- 💡 新增：後台庫存分類與搜尋列 -->
+            <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; align-items:center;">
+                <button id="admin-inv-tab-all" onclick="switchAdminInvTab('all')" class="tab-btn active" style="background:#132c4d; color:white;">全部商品</button>
+                <button id="admin-inv-tab-current" onclick="switchAdminInvTab('current')" class="tab-btn">本次一般</button>
+                <button id="admin-inv-tab-instock" onclick="switchAdminInvTab('instock')" class="tab-btn">現貨區 [批貨]</button>
+                <button id="admin-inv-tab-live" onclick="switchAdminInvTab('live')" class="tab-btn">連線區 [連線]</button>
+                
+                <input type="text" placeholder="🔍 搜尋商品代碼或名稱..." oninput="searchAdminInv(this.value)" style="flex:1; min-width:220px; margin-bottom:0; border-radius:30px; padding:10px 15px; border:1px solid #c6d4e1; font-size:14px; height: 42px;">
+            </div>
+
             <div id="admin-inventory-container">載入中...</div>
             <div id="admin-inventory-pagination" style="display:flex; justify-content:center; align-items:center; gap:20px; margin-top:25px; margin-bottom:25px;"></div>
         `;
@@ -1461,22 +1501,54 @@
     function renderAdminInventoryTable() {
         const ITEMS_PER_PAGE = 5;
         
-        if (products.length === 0) {
-            document.getElementById('admin-inventory-container').innerHTML = '<p style="text-align:center; color:#a0aec0; padding:40px;">目前無商品庫存</p>';
+        // 💡 根據頁籤與搜尋條件過濾商品
+        let filteredProducts = products.filter(p => {
+            let isLive = p.name.includes('[連線]') || p.name.includes('【連線】');
+            let isInstock = p.name.includes('[批貨]') || p.name.includes('【批貨】');
+            
+            // 判斷分類
+            let matchTab = false;
+            if (currentAdminInvTab === 'all') matchTab = true;
+            else if (currentAdminInvTab === 'live' && isLive) matchTab = true;
+            else if (currentAdminInvTab === 'instock' && isInstock) matchTab = true;
+            else if (currentAdminInvTab === 'current' && !isLive && !isInstock) matchTab = true;
+            
+            if (!matchTab) return false;
+
+            // 判斷搜尋
+            if (adminInvSearchText !== "") {
+                let matchSearch = (p.name || '').toLowerCase().includes(adminInvSearchText) || 
+                                  (String(p.id) || '').toLowerCase().includes(adminInvSearchText) ||
+                                  (p.group || '').toLowerCase().includes(adminInvSearchText);
+                if (!matchSearch) return false;
+            }
+            
+            return true;
+        });
+
+        if (filteredProducts.length === 0) {
+            document.getElementById('admin-inventory-container').innerHTML = '<p style="text-align:center; color:#a0aec0; padding:40px;">🔍 找不到符合條件的商品</p>';
             document.getElementById('admin-inventory-pagination').innerHTML = '';
             return;
         }
 
-        let totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+        let totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
         if (currentInventoryPage > totalPages) currentInventoryPage = totalPages;
         if (currentInventoryPage < 1) currentInventoryPage = 1;
 
         const start = (currentInventoryPage - 1) * ITEMS_PER_PAGE;
-        const pageItems = products.slice(start, start + ITEMS_PER_PAGE);
+        const pageItems = filteredProducts.slice(start, start + ITEMS_PER_PAGE);
 
         let html = pageItems.map(p => {
             return `
             <div style="margin-bottom:20px; border:1px solid #dbe4f0; background:#ffffff; padding: 25px; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+                
+                <!-- 💡 新增：顯示商品代碼標籤 -->
+                <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #dbe4f0; display: flex; align-items: center;">
+                    <span style="font-size: 13px; color: #718096; font-weight: bold;">商品代碼：</span>
+                    <span style="color: #e53e3e; font-size: 16px; font-weight: 900; background: #fef2f2; padding: 4px 10px; border-radius: 6px; margin-left: 8px; letter-spacing: 1px;">${p.id}</span>
+                </div>
+
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div><strong style="font-size:13px; color:#718096;">名稱:</strong> <input type="text" value="${p.name || ''}" id="name-${p.id}"></div>
                     <div><strong style="font-size:13px; color:#718096;">價格:</strong> <input type="text" value="${p.price || 0}" id="price-${p.id}"></div>
@@ -1699,7 +1771,7 @@
 
         if (!p) {
             if (confirm(`❌ 找不到商品代碼：${code}。\n是否要立即建立此商品並繼續建單？`)) {
-                productName = prompt(`請為代碼「${code}」輸入商品名稱：`, `直播商品-${code}`);
+                productName = prompt(`請為代碼「${code}」輸入商品名稱：`, `[連線]${code}`);
                 if (productName === null) return; 
                 let priceInput = prompt(`請輸入「${code}」的商品價格：`, `0`);
                 if (priceInput === null) return; 
