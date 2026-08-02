@@ -12,7 +12,7 @@
 
     <script>
         (function() {
-            const version = "v10.5-FujiTheme-SeamlessMarquee"; 
+            const version = "v10.6-FujiTheme-RPA-Workflow"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -181,9 +181,7 @@
         .fast-order-box { background: #ffffff; padding: 25px; border-radius: 20px; margin-bottom: 25px; border: 1px solid #dbe4f0; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
         .status-badge { padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; white-space: nowrap; }
 
-        /* =========================================================
-           💡 無縫連續跑馬燈 (Seamless Marquee) 相關設定 
-        ========================================================= */
+        /* 💡 無縫連續跑馬燈 (Seamless Marquee) 相關設定 */
         .marquee-track {
             display: flex;
             align-items: center;
@@ -191,12 +189,12 @@
         }
         
         #notice-text-el-clone {
-            display: none; /* 桌機版預設隱藏分身 */
+            display: none; 
         }
         
         @keyframes marquee-seamless {
             0%   { transform: translateX(0); }
-            100% { transform: translateX(-50%); } /* 移動剛好 50% 距離，靠分身實現無縫銜接 */
+            100% { transform: translateX(-50%); } 
         }
 
         @media (max-width: 850px) {
@@ -210,16 +208,16 @@
                 overflow: hidden; 
             }
             .marquee-track {
-                width: max-content; /* 讓軌道寬度自動撐開容納兩段文字 */
-                animation: marquee-seamless 12s linear infinite; /* 無縫動畫 */
+                width: max-content; 
+                animation: marquee-seamless 12s linear infinite; 
                 justify-content: flex-start;
             }
             .marquee-track span {
-                padding-right: 40px; /* 兩段文字之間的間距 */
+                padding-right: 40px; 
                 display: inline-block;
             }
             #notice-text-el-clone {
-                display: inline-block; /* 手機版顯示分身來做銜接 */
+                display: inline-block; 
             }
 
             .modern-cart-btn { padding: 10px 14px; font-size: 13px; }
@@ -242,7 +240,6 @@
         <span id="nav-title-el">載入中...</span>
     </div>
     
-    <!-- 💡 加入跑馬燈軌道與文字分身，達成無縫銜接效果 -->
     <div class="top-notice-banner" id="top-notice-banner-el">
         <div class="marquee-track">
             <span id="notice-text-el">🧮 有換算計算機可以參考唷~~</span>
@@ -481,7 +478,6 @@
     
     let currentProductTab = 'current';
 
-    // 💡 新增：後台庫存管理的狀態變數
     let currentInventoryPage = 1; 
     let currentAdminInvTab = 'all'; 
     let adminInvSearchText = ''; 
@@ -822,7 +818,6 @@
         const promo = document.getElementById("promo-banner-el");
         if(promo) { promo.innerText = settings.promo?.text||""; promo.style.fontSize = settings.promo?.size; promo.style.color = settings.promo?.color; promo.style.background = settings.promo?.bg; promo.style.fontFamily = settings.promo?.font; }
         
-        // 💡 套用頂部橫幅設定 (同時套用到本尊與分身)
         const nEl = document.getElementById("notice-text-el");
         const nElClone = document.getElementById("notice-text-el-clone");
         
@@ -1205,10 +1200,14 @@
                     chk = `<input type="checkbox" class="user-order-chk" value="${o.row}" data-price="${p}" data-deposit="${depositDisplay}" data-balance="${balanceDisplay}" data-status="${o.status}" onchange="calcSelectedTotal()">`; 
                 }
 
+                // 💡 更新狀態標籤顏色配置 (加入 RPA 相關狀態)
                 let sc='#eef3f8', tc='#4a5568';
                 if(o.status==='已斷貨'){ sc='#fef2f2'; tc='#e53e3e'; }
                 else if(o.status.includes('待查帳')){ sc='#fef3c7'; tc='#d97706'; }
                 else if(o.status==='已出貨' || o.status==='已付款'){ sc='#e6fffa'; tc='#319795'; }
+                else if(o.status==='準備出貨'){ sc='#ebf8ff'; tc='#2b6cb0'; }
+                else if(o.status==='等待填寫門市'){ sc='#fffaf0'; tc='#805ad5'; }
+                else if(o.status==='出貨中'){ sc='#f0fff4'; tc='#dd6b20'; }
                 
                 let remarkText = o.remark || '';
                 
@@ -1250,15 +1249,31 @@
             
             if (personalMyshipUrl && personalMyshipUrl.trim() !== '') {
                 let myshipHtml = `
-                <div style="background: #eef3f8; border: 1px solid #c6d4e1; border-radius: 16px; padding: 20px; margin-top: 20px;">
-                    <label style="display: flex; align-items: center; gap: 10px; font-weight: bold; color: #1c3f6e; cursor: pointer; margin-bottom: 15px; font-size: 15px;">
-                        <input type="checkbox" id="confirm-order-chk" style="width: 20px; height: 20px; accent-color: #1a365d; margin: 0; cursor: pointer;" onchange="toggleMyshipBtn(this.checked)">
-                        我已確認訂單明細，金額無誤
+                <div style="background: #fffaf0; border: 1px solid #fbd38d; border-radius: 16px; padding: 20px; margin-top: 20px;">
+                    <label style="display: flex; align-items: center; gap: 10px; font-weight: bold; color: #975a16; cursor: pointer; margin-bottom: 15px; font-size: 15px;">
+                        <input type="checkbox" id="confirm-order-chk" style="width: 20px; height: 20px; accent-color: #dd6b20; margin: 0; cursor: pointer;" onchange="toggleMyshipBtn(this.checked)">
+                        我已確認訂單明細，準備填寫寄件門市
                     </label>
-                    <button id="myship-btn" disabled onclick="window.open('${personalMyshipUrl}', '_blank')" style="width: 100%; background: #c6d4e1; color: #4a5568; border: none; padding: 14px; border-radius: 30px; font-weight: bold; font-size: 15px; cursor: not-allowed; transition: all 0.3s ease;">
-                        📦 前往專屬賣貨便結帳
+                    <button id="myship-btn" disabled onclick="window.open('${personalMyshipUrl}', '_blank')" style="width: 100%; background: #fbd38d; color: #7b341e; border: none; padding: 14px; border-radius: 30px; font-weight: bold; font-size: 15px; cursor: not-allowed; transition: all 0.3s ease;">
+                        📦 系統已產生專屬賣貨便結帳連結
                     </button>
-                </div>`;
+                </div>
+                <script>
+                    function toggleMyshipBtn(isChecked) {
+                        let btn = document.getElementById('myship-btn');
+                        if(isChecked) {
+                            btn.disabled = false;
+                            btn.style.background = '#dd6b20';
+                            btn.style.color = '#ffffff';
+                            btn.style.cursor = 'pointer';
+                        } else {
+                            btn.disabled = true;
+                            btn.style.background = '#fbd38d';
+                            btn.style.color = '#7b341e';
+                            btn.style.cursor = 'not-allowed';
+                        }
+                    }
+                <\/script>`;
                 document.getElementById('summary-result').innerHTML += myshipHtml;
             }
 
@@ -1546,11 +1561,15 @@
             
             <div style="background:#ffffff; padding:20px; border-radius:20px; border:1px solid #dbe4f0; font-size:15px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
                 <span style="font-weight: bold;">批次更改狀態為：</span>
+                
+                <!-- 💡 在狀態選單中加入了 RPA 需要的三個流程節點 -->
                 <select id="batch-status-select" style="width:auto; margin-bottom:0; padding: 8px 12px; border-radius: 8px;">
                     <option value="已登記">已登記</option>
                     <option value="已付訂金">已付訂金</option>
                     <option value="已採買">已採買</option>
-                    <option value="已出貨">已出貨</option>
+                    <option value="準備出貨">📦 準備出貨 (觸發RPA)</option>
+                    <option value="等待填寫門市">⏳ 等待填寫門市</option>
+                    <option value="出貨中">🚀 出貨中</option>
                     <option value="已付款">已付款</option>
                     <option value="已斷貨">已斷貨</option>
                 </select>
@@ -1564,7 +1583,6 @@
 
             <h3 style="color:#132c4d; font-size: 22px; font-weight: 900; margin-top: 40px; border-bottom: 2px solid #dbe4f0; padding-bottom: 10px;">📦 庫存與【群組分類】編輯</h3>
             
-            <!-- 💡 新增：後台庫存分類與搜尋列 -->
             <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; align-items:center;">
                 <button id="admin-inv-tab-all" onclick="switchAdminInvTab('all')" class="tab-btn active" style="background:#132c4d; color:white;">全部商品</button>
                 <button id="admin-inv-tab-current" onclick="switchAdminInvTab('current')" class="tab-btn">本次一般</button>
@@ -1588,12 +1606,10 @@
     function renderAdminInventoryTable() {
         const ITEMS_PER_PAGE = 5;
         
-        // 💡 根據頁籤與搜尋條件過濾商品
         let filteredProducts = products.filter(p => {
             let isLive = p.name.includes('[連線]') || p.name.includes('【連線】');
             let isInstock = p.name.includes('[批貨]') || p.name.includes('【批貨】');
             
-            // 判斷分類
             let matchTab = false;
             if (currentAdminInvTab === 'all') matchTab = true;
             else if (currentAdminInvTab === 'live' && isLive) matchTab = true;
@@ -1602,7 +1618,6 @@
             
             if (!matchTab) return false;
 
-            // 判斷搜尋
             if (adminInvSearchText !== "") {
                 let matchSearch = (p.name || '').toLowerCase().includes(adminInvSearchText) || 
                                   (String(p.id) || '').toLowerCase().includes(adminInvSearchText) ||
@@ -1630,7 +1645,6 @@
             return `
             <div style="margin-bottom:20px; border:1px solid #dbe4f0; background:#ffffff; padding: 25px; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
                 
-                <!-- 💡 新增：顯示商品代碼標籤 -->
                 <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #dbe4f0; display: flex; align-items: center;">
                     <span style="font-size: 13px; color: #718096; font-weight: bold;">商品代碼：</span>
                     <span style="color: #e53e3e; font-size: 16px; font-weight: 900; background: #fef2f2; padding: 4px 10px; border-radius: 6px; margin-left: 8px; letter-spacing: 1px;">${p.id}</span>
