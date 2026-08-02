@@ -12,7 +12,7 @@
 
     <script>
         (function() {
-            const version = "v10.4-FujiTheme-Marquee"; 
+            const version = "v10.5-FujiTheme-SeamlessMarquee"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -60,17 +60,13 @@
         .top-notice-banner {
             padding: 8px 20px; 
             border-radius: 30px; 
-            font-weight: bold; letter-spacing: 1px; 
+            font-size: 13px; font-weight: bold; letter-spacing: 1px; 
             margin: 0 auto; 
             display: flex; justify-content: center; align-items: center;
             max-width: fit-content;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
-            overflow: hidden; /* 確保文字超過範圍時不會影響版面 */
+            overflow: hidden; 
             white-space: nowrap;
-        }
-
-        #notice-text-el {
-            display: inline-block;
         }
 
         .modern-cart-btn {
@@ -185,26 +181,45 @@
         .fast-order-box { background: #ffffff; padding: 25px; border-radius: 20px; margin-bottom: 25px; border: 1px solid #dbe4f0; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
         .status-badge { padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; white-space: nowrap; }
 
-        /* 💡 跑馬燈動畫 */
-        @keyframes marquee {
+        /* =========================================================
+           💡 無縫連續跑馬燈 (Seamless Marquee) 相關設定 
+        ========================================================= */
+        .marquee-track {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #notice-text-el-clone {
+            display: none; /* 桌機版預設隱藏分身 */
+        }
+        
+        @keyframes marquee-seamless {
             0%   { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
+            100% { transform: translateX(-50%); } /* 移動剛好 50% 距離，靠分身實現無縫銜接 */
         }
 
         @media (max-width: 850px) {
             .nav-brand span { display: none; } 
             
-            /* 💡 手機版橫幅跑馬燈專屬設定 */
             .top-notice-banner { 
-                flex: 1;            /* 自動填滿剩餘空間 */
-                max-width: none;    /* 解除最大寬度限制 */
+                flex: 1;            
+                max-width: none;    
                 margin: 0 10px;     
-                padding: 8px 0;     /* 移除左右 padding 讓跑馬燈貼邊 */
-                position: relative; 
+                padding: 8px 0;     
+                overflow: hidden; 
             }
-            #notice-text-el {
-                padding-left: 100%; /* 從容器的最右邊開始出現 */
-                animation: marquee 12s linear infinite; /* 啟動 12 秒的平滑滾動動畫 */
+            .marquee-track {
+                width: max-content; /* 讓軌道寬度自動撐開容納兩段文字 */
+                animation: marquee-seamless 12s linear infinite; /* 無縫動畫 */
+                justify-content: flex-start;
+            }
+            .marquee-track span {
+                padding-right: 40px; /* 兩段文字之間的間距 */
+                display: inline-block;
+            }
+            #notice-text-el-clone {
+                display: inline-block; /* 手機版顯示分身來做銜接 */
             }
 
             .modern-cart-btn { padding: 10px 14px; font-size: 13px; }
@@ -227,9 +242,12 @@
         <span id="nav-title-el">載入中...</span>
     </div>
     
-    <!-- 💡 加入包裹層支援跑馬燈 -->
+    <!-- 💡 加入跑馬燈軌道與文字分身，達成無縫銜接效果 -->
     <div class="top-notice-banner" id="top-notice-banner-el">
-        <span id="notice-text-el">🧮 有換算計算機可以參考唷~~</span>
+        <div class="marquee-track">
+            <span id="notice-text-el">🧮 有換算計算機可以參考唷~~</span>
+            <span id="notice-text-el-clone">🧮 有換算計算機可以參考唷~~</span>
+        </div>
     </div>
 
     <div class="nav-actions">
@@ -804,13 +822,21 @@
         const promo = document.getElementById("promo-banner-el");
         if(promo) { promo.innerText = settings.promo?.text||""; promo.style.fontSize = settings.promo?.size; promo.style.color = settings.promo?.color; promo.style.background = settings.promo?.bg; promo.style.fontFamily = settings.promo?.font; }
         
-        // 💡 套用頂部橫幅設定
+        // 💡 套用頂部橫幅設定 (同時套用到本尊與分身)
         const nEl = document.getElementById("notice-text-el");
+        const nElClone = document.getElementById("notice-text-el-clone");
+        
         if(nEl) { 
             nEl.innerText = settings.notice?.text||""; 
             nEl.style.fontSize = settings.notice?.size; 
             nEl.style.color = settings.notice?.color; 
             nEl.style.fontFamily = settings.notice?.font; 
+        }
+        if(nElClone) { 
+            nElClone.innerText = settings.notice?.text||""; 
+            nElClone.style.fontSize = settings.notice?.size; 
+            nElClone.style.color = settings.notice?.color; 
+            nElClone.style.fontFamily = settings.notice?.font; 
         }
         document.getElementById("top-notice-banner-el").style.background = settings.notice?.bg;
 
