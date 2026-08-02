@@ -1060,6 +1060,7 @@
         }
     }
 
+    // 💡 1. 核心修正：加入等待提示與自動結帳引導機制
     function checkoutOrder() {
         const selectedItems = myCart.filter(i => i.selected);
         if (selectedItems.length === 0) return alert("⚠️ 請先勾選要結帳的商品！");
@@ -1087,6 +1088,13 @@
         }
         
         const finalCustomName = localStorage.getItem("customGroupNickname") || "";
+
+        // 鎖定按鈕防止重複點擊並顯示狀態
+        let btn = event.target;
+        let originalText = btn.innerText;
+        btn.innerText = "⏳ 訂單建立中，準備結帳...";
+        btn.disabled = true;
+
         fetch(GAS_URL, { 
             method: "POST", 
             body: JSON.stringify({ 
@@ -1098,16 +1106,23 @@
             }) 
         })
         .then(() => { 
-            alert("🎉 訂單送出成功！"); 
             myCart = myCart.filter(i => !i.selected);
             updateCartUI(); 
             closeCartModal(); 
-            fetchMyOrders(); 
+            
+            // 💡 導航至訂單頁面，並且啟動「自動結帳」功能 (傳入 true)
+            showView('order');
+            fetchMyOrders(true); 
             fetchUserOrdersBackground(); 
+        })
+        .finally(() => {
+            btn.innerText = originalText;
+            btn.disabled = false;
         });
     }
 
-    function fetchMyOrders() {
+    // 💡 2. 核心修正：增加 autoPay 參數，並在訂單加載完畢後自動觸發結帳畫面
+    function fetchMyOrders(autoPay = false) {
         if(currentUserProfile.userId === "訪客測試") return alert("請先登入 LINE 才能查詢唷！");
         document.getElementById('order-history').innerHTML = '<p style="text-align:center; padding: 40px 0; color: #a0aec0;">載入中...</p>';
         fetch(`${GAS_URL}?userId=${currentUserProfile.userId}&t=${new Date().getTime()}`).then(res => res.json()).then(data => {
@@ -1200,6 +1215,35 @@
             }
 
             calcSelectedTotal();
+
+            // 💡 如果是購物車結帳觸發，直接幫客人全選未結帳訂單並打開匯款視窗
+            if (autoPay === true) {
+                let checkboxes = document.querySelectorAll('.user-order-chk');
+                let hasEligible = false;
+                
+                // 自動勾選所有「已登記」的品項
+                checkboxes.forEach(c => {
+                    if (c.dataset.status === '已登記') {
+                        c.checked = true;
+                        hasEligible = true;
+                    }
+                });
+                
+                // 同步更新表頭的「全選」框狀態
+                let selectAllChk = document.querySelector('th input[type="checkbox"]');
+                if (selectAllChk) {
+                    let allChks = document.querySelectorAll('.user-order-chk');
+                    let allChecked = Array.from(allChks).every(c => c.checked);
+                    selectAllChk.checked = allChecked && allChks.length > 0;
+                }
+
+                if (hasEligible) {
+                    calcSelectedTotal(); // 計算被自動勾選的總額
+                    openPaymentModal();  // 無縫彈出匯款表單
+                } else {
+                    alert("🎉 訂單送出成功！(目前無待結帳的『已登記』訂單)");
+                }
+            }
         });
     }
 
