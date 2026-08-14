@@ -12,7 +12,7 @@
 
     <script>
         (function() {
-            const version = "v10.6-FujiTheme-RPA-Workflow"; 
+            const version = "v10.7-FujiTheme-Delivery-Rates"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -29,9 +29,6 @@
     </script>
 
     <style>
-        /* =========================================================
-           🏔️ 富士山晴空藍風格 (Fuji Blue Theme) 基礎設定
-        ========================================================= */
         body { 
             margin: 0; padding: 0; 
             background-color: #f4f8fb; 
@@ -56,7 +53,6 @@
         .admin-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 0; transition: transform 0.2s; color: #132c4d; }
         .admin-btn:hover { transform: scale(1.1); }
         
-        /* 💡 頂部提示橫幅：基本設定 */
         .top-notice-banner {
             padding: 8px 20px; 
             border-radius: 30px; 
@@ -144,10 +140,25 @@
         .group-card:hover .group-btn { background: #132c4d; color: white; border-color: #132c4d; }
 
         .action-row { display:flex; justify-content:space-between; align-items:center; margin-top: auto; gap: 10px; }
-        .qty-selector { display:flex; align-items:center; border: 1px solid #c6d4e1; border-radius: 30px; background:#ffffff; height: 40px; flex: 1; overflow: hidden;}
-        .qty-btn { background:transparent; color:#132c4d; border:none; width:40px; font-weight:bold; cursor:pointer; font-size:16px; transition: 0.2s; }
+        
+        /* 🟢 修正 1：絕對置中對齊的數量輸入器 CSS (套用 CSS Grid) */
+        .qty-selector { 
+            display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; 
+            border: 1px solid #c6d4e1; border-radius: 30px; background: #ffffff; 
+            height: 40px; flex: 1; overflow: hidden;
+        }
+        .qty-btn { 
+            background: transparent; color: #132c4d; border: none; width: 100%; height: 100%; 
+            font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s; 
+            display: flex; justify-content: center; align-items: center; padding: 0;
+        }
         .qty-btn:hover { background: #eef3f8; }
-        .qty-input { width:100%; text-align:center; border:none; background:transparent; font-size:15px; font-weight:bold; padding:0; outline:none; color:#132c4d; }
+        .qty-input { 
+            width: 100%; height: 100%; text-align: center; border: none; background: transparent; 
+            font-size: 15px; font-weight: bold; padding: 0; margin: 0; outline: none; 
+            color: #132c4d; box-sizing: border-box;
+        }
+
         .add-btn { background: #132c4d; color: white; border: none; padding: 0 20px; height: 40px; border-radius: 30px; font-weight: bold; font-size: 14px; cursor: pointer; white-space:nowrap; transition: 0.2s; box-shadow: 0 4px 10px rgba(19, 44, 77, 0.15);}
         .add-btn:hover { background: #1c3f6e; transform: translateY(-2px); }
 
@@ -181,16 +192,13 @@
         .fast-order-box { background: #ffffff; padding: 25px; border-radius: 20px; margin-bottom: 25px; border: 1px solid #dbe4f0; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
         .status-badge { padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; white-space: nowrap; }
 
-        /* 💡 無縫連續跑馬燈 (Seamless Marquee) 相關設定 */
         .marquee-track {
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
-        #notice-text-el-clone {
-            display: none; 
-        }
+        #notice-text-el-clone { display: none; }
         
         @keyframes marquee-seamless {
             0%   { transform: translateX(0); }
@@ -200,25 +208,10 @@
         @media (max-width: 850px) {
             .nav-brand span { display: none; } 
             
-            .top-notice-banner { 
-                flex: 1;            
-                max-width: none;    
-                margin: 0 10px;     
-                padding: 8px 0;     
-                overflow: hidden; 
-            }
-            .marquee-track {
-                width: max-content; 
-                animation: marquee-seamless 12s linear infinite; 
-                justify-content: flex-start;
-            }
-            .marquee-track span {
-                padding-right: 40px; 
-                display: inline-block;
-            }
-            #notice-text-el-clone {
-                display: inline-block; 
-            }
+            .top-notice-banner { flex: 1; max-width: none; margin: 0 10px; padding: 8px 0; overflow: hidden; }
+            .marquee-track { width: max-content; animation: marquee-seamless 12s linear infinite; justify-content: flex-start;}
+            .marquee-track span { padding-right: 40px; display: inline-block;}
+            #notice-text-el-clone { display: inline-block; }
 
             .modern-cart-btn { padding: 10px 14px; font-size: 13px; }
         }
@@ -387,7 +380,31 @@
             <div style="font-weight:bold; color: #4a5568;">已勾選結帳：</div>
             <div style="color: #e53e3e; font-size: 24px; font-weight: 900;">NT$ <span id="total-amount">0</span></div>
         </div>
-        <button onclick="checkoutOrder()" style="width:100%; background:#132c4d; color:white; border:none; padding:15px; margin-top:20px; border-radius: 30px; font-weight: bold; font-size: 16px; transition: 0.2s; cursor: pointer; box-shadow: 0 10px 20px rgba(19,44,77,0.2);">確認送出結帳 🚀</button>
+        <!-- 🟢 修正 2：更改為觸發「準備送出」開啟交貨方式彈窗 -->
+        <button onclick="prepareCheckout()" style="width:100%; background:#132c4d; color:white; border:none; padding:15px; margin-top:20px; border-radius: 30px; font-weight: bold; font-size: 16px; transition: 0.2s; cursor: pointer; box-shadow: 0 10px 20px rgba(19,44,77,0.2);">下一步：選擇交貨方式 🚀</button>
+    </div>
+</div>
+
+<!-- 🟢 修正 2：新增選擇交貨方式的提示與選項彈窗 -->
+<div id="delivery-modal" class="modal-overlay" onclick="if(event.target===this) closeDeliveryModal()">
+    <div class="modal-content" style="max-width: 450px; text-align: center; width: 90%;">
+        <span class="modal-close" onclick="closeDeliveryModal()">×</span>
+        <h2 style="color: #132c4d; margin-top: 0; font-weight: 900;">🚚 請選擇交貨方式</h2>
+        <p style="color: #718096; font-size: 14px; margin-bottom: 20px;">這將幫助我們為您準備後續的寄件流程。</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
+            <label style="border: 2px solid #dbe4f0; padding: 15px 20px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s;" onmouseover="this.style.borderColor='#132c4d'" onmouseout="this.style.borderColor='#dbe4f0'">
+                <input type="radio" name="deliveryMethod" value="新竹市/竹北面交" style="width: 20px; height: 20px; margin: 0; accent-color: #132c4d;"> 
+                <span style="font-weight: bold; color: #132c4d; font-size: 16px;">新竹市 / 竹北面交</span>
+            </label>
+            
+            <label style="border: 2px solid #dbe4f0; padding: 15px 20px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s;" onmouseover="this.style.borderColor='#132c4d'" onmouseout="this.style.borderColor='#dbe4f0'">
+                <input type="radio" name="deliveryMethod" value="7-11 賣貨便" style="width: 20px; height: 20px; margin: 0; accent-color: #132c4d;"> 
+                <span style="font-weight: bold; color: #132c4d; font-size: 16px;">7-11 賣貨便</span>
+            </label>
+        </div>
+        
+        <button id="delivery-submit-btn" onclick="confirmAndSubmitOrder()" style="width:100%; background:#132c4d; color:white; border:none; padding:15px; margin-top:25px; border-radius: 30px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(19, 44, 77, 0.2);">確定選擇並送出訂單 🚀</button>
     </div>
 </div>
 
@@ -472,6 +489,7 @@
     let cachedUserOrders = []; 
     let currentUserProfile = { userId: "訪客測試", displayName: "訪客", realName: "訪客" };
     let selectedPaymentTotal = 0; 
+    let pendingCheckoutItems = []; // 🟢 用於儲存結帳中的商品等待交貨方式確認
     
     let currentAdminPage = 1;
     let adminOrderSearch = "";
@@ -558,6 +576,15 @@
         btnProduct: { text: "瀏覽商品", size: "15px", color: "#132c4d" },
         btnOrder: { text: "查詢訂單", size: "15px", color: "#132c4d" },
         
+        // 🟢 修正 3：加入匯率計算機預設區間設定
+        exchangeRates: [
+            { limit: 1000, rate: 0.3 },
+            { limit: 2000, rate: 0.27 },
+            { limit: 5000, rate: 0.25 },
+            { limit: 10000, rate: 0.24 },
+            { limit: 9999999, rate: 0.23 }
+        ],
+
         summaryBox: {
             reg: { text: "🛒 未結案總額：", color: "#132c4d", size: "15px" },
             chk: { text: "💰 已付訂金：", color: "#319795", size: "15px" },
@@ -682,6 +709,8 @@
         document.getElementById('cart-modal').classList.add('active'); 
     }
     function closeCartModal() { document.getElementById('cart-modal').classList.remove('active'); }
+    
+    function closeDeliveryModal() { document.getElementById('delivery-modal').classList.remove('active'); }
 
     function openGroupModal(groupName, tab) {
         document.getElementById('group-modal-title').innerHTML = `📁 ${groupName}`;
@@ -704,9 +733,9 @@
                 <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: bold; color: #4a5568;">NT$ ${p.price}</p>
                 <div class="action-row" style="margin-top:auto;">
                     <div class="qty-selector" style="height:32px; border-radius:8px;">
-                        <button class="qty-btn" onclick="changeQty('qty-sub-${p.id}', -1)" style="width:30px;">-</button>
+                        <button class="qty-btn" onclick="changeQty('qty-sub-${p.id}', -1)">-</button>
                         <input class="qty-input" type="text" id="qty-sub-${p.id}" value="1" readonly>
-                        <button class="qty-btn" onclick="changeQty('qty-sub-${p.id}', 1)" style="width:30px;">+</button>
+                        <button class="qty-btn" onclick="changeQty('qty-sub-${p.id}', 1)">+</button>
                     </div>
                     <button class="add-btn" onclick="addToCart('${p.id}', 'qty-sub-${p.id}', true)" style="height:32px; border-radius:8px; padding:0 12px; box-shadow:none;">加入</button>
                 </div>
@@ -717,9 +746,19 @@
     }
     function closeGroupModal() { document.getElementById('product-group-modal').classList.remove('active'); }
 
+    // 🟢 修正 3：匯率計算機將讀取後台設定的 5 階段匯率
     function calculateTWD() {
         let val = parseFloat(document.getElementById('jpy-input').value) || 0;
-        let rate = val <= 1000 ? 0.3 : val <= 2000 ? 0.27 : val <= 5000 ? 0.25 : val <= 10000 ? 0.24 : 0.23;
+        let rates = settings.exchangeRates || defaultSettings.exchangeRates;
+        let rate = rates[4].rate; // 預設使用最後一個極大值的匯率
+        
+        for (let i = 0; i < rates.length; i++) {
+            if (val <= rates[i].limit) {
+                rate = rates[i].rate;
+                break;
+            }
+        }
+        
         let result = Math.ceil((val * rate) / 10) * 10;
         document.getElementById('twd-result').innerText = `NT$ ${result}`;
     }
@@ -871,6 +910,8 @@
                     settings = { ...defaultSettings, ...savedSettings }; 
                     if (!settings.summaryBox) settings.summaryBox = defaultSettings.summaryBox; 
                     if (!settings.infoStyles) settings.infoStyles = defaultSettings.infoStyles;
+                    // 確保讀取到匯率設定
+                    if (!settings.exchangeRates) settings.exchangeRates = defaultSettings.exchangeRates;
                     applyStyles(); 
                 } catch(e){}
                 data.splice(setIdx, 1);
@@ -1077,10 +1118,11 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div style="color: #e53e3e; font-weight: bold; font-size: 15px;">NT$ ${i.price}</div>
                             
-                            <div style="display: flex; border: 1px solid #c6d4e1; border-radius: 8px; background: #ffffff; height: 28px; overflow: hidden;">
-                                <button onclick="updateCartQty(${idx}, -1)" style="border: none; background: #f4f8fb; width: 28px; font-size: 16px; cursor: pointer; color: #4a5568; font-weight: bold; padding: 0;">-</button>
-                                <input type="text" value="${i.quantity}" readonly style="width: 36px; text-align: center; border: none; border-left: 1px solid #dbe4f0; border-right: 1px solid #dbe4f0; background: transparent; font-size: 14px; font-weight: bold; padding: 0; margin: 0; color: #132c4d; outline: none; border-radius:0;">
-                                <button onclick="updateCartQty(${idx}, 1)" style="border: none; background: #f4f8fb; width: 28px; font-size: 14px; cursor: pointer; color: #4a5568; font-weight: bold; padding: 0;">+</button>
+                            <!-- 同步修正 Modal 內的數量選擇器置中 -->
+                            <div style="display: grid; grid-template-columns: 28px 1fr 28px; align-items: center; border: 1px solid #c6d4e1; border-radius: 8px; background: #ffffff; height: 28px; width: 90px; overflow: hidden;">
+                                <button onclick="updateCartQty(${idx}, -1)" style="border: none; background: #f4f8fb; height: 100%; width: 100%; font-size: 16px; cursor: pointer; color: #4a5568; font-weight: bold; padding: 0; display:flex; justify-content:center; align-items:center;">-</button>
+                                <input type="text" value="${i.quantity}" readonly style="width: 100%; height:100%; text-align: center; border: none; border-left: 1px solid #dbe4f0; border-right: 1px solid #dbe4f0; background: transparent; font-size: 14px; font-weight: bold; padding: 0; margin: 0; color: #132c4d; outline: none; border-radius:0; box-sizing: border-box;">
+                                <button onclick="updateCartQty(${idx}, 1)" style="border: none; background: #f4f8fb; height: 100%; width: 100%; font-size: 14px; cursor: pointer; color: #4a5568; font-weight: bold; padding: 0; display:flex; justify-content:center; align-items:center;">+</button>
                             </div>
                         </div>
                     </div>
@@ -1107,7 +1149,8 @@
         }
     }
 
-    function checkoutOrder() {
+    // 🟢 修正 2：取代舊的 checkoutOrder，改為先驗證再彈出選擇交貨方式的 Modal
+    function prepareCheckout() {
         const selectedItems = myCart.filter(i => i.selected);
         if (selectedItems.length === 0) return alert("⚠️ 請先勾選要結帳的商品！");
         
@@ -1133,27 +1176,44 @@
             }
         }
         
+        // 將選中的商品存入變數，並開啟交貨方式彈窗
+        pendingCheckoutItems = selectedItems;
+        closeCartModal();
+        document.getElementById('delivery-modal').classList.add('active');
+    }
+
+    // 🟢 修正 2：確認交貨方式後正式送出訂單
+    function confirmAndSubmitOrder() {
+        const selectedMethod = document.querySelector('input[name="deliveryMethod"]:checked');
+        if (!selectedMethod) return alert("⚠️ 請先選擇一種交貨方式！");
+
+        // 提醒確認是否選擇此方式
+        if (!confirm(`您選擇的交貨方式為「${selectedMethod.value}」\n確定是否選擇此方式並送出訂單？`)) {
+            return;
+        }
+
         const finalCustomName = localStorage.getItem("customGroupNickname") || "";
 
-        let btn = event.target;
+        let btn = document.getElementById("delivery-submit-btn");
         let originalText = btn.innerText;
-        btn.innerText = "⏳ 訂單建立中，準備結帳...";
+        btn.innerText = "⏳ 訂單建立中，請稍候...";
         btn.disabled = true;
 
         fetch(GAS_URL, { 
             method: "POST", 
             body: JSON.stringify({ 
                 action: "submitOrder", 
-                cart: selectedItems, 
+                cart: pendingCheckoutItems, 
                 userId: currentUserProfile.userId, 
                 realName: currentUserProfile.realName,
-                customName: finalCustomName
+                customName: finalCustomName,
+                deliveryMethod: selectedMethod.value // 附加交貨方式到後端
             }) 
         })
         .then(() => { 
             myCart = myCart.filter(i => !i.selected);
             updateCartUI(); 
-            closeCartModal(); 
+            closeDeliveryModal(); 
             
             showView('order');
             fetchMyOrders(true); 
@@ -1200,7 +1260,6 @@
                     chk = `<input type="checkbox" class="user-order-chk" value="${o.row}" data-price="${p}" data-deposit="${depositDisplay}" data-balance="${balanceDisplay}" data-status="${o.status}" onchange="calcSelectedTotal()">`; 
                 }
 
-                // 💡 更新狀態標籤顏色配置 (加入 RPA 相關狀態)
                 let sc='#eef3f8', tc='#4a5568';
                 if(o.status==='已斷貨'){ sc='#fef2f2'; tc='#e53e3e'; }
                 else if(o.status.includes('待查帳')){ sc='#fef3c7'; tc='#d97706'; }
@@ -1394,6 +1453,7 @@
         `).join('') : '<p style="font-size:14px; color:#a0aec0;">目前尚未建立任何包含商品的群組。</p>';
         
         const sb = settings.summaryBox || defaultSettings.summaryBox;
+        const exRates = settings.exchangeRates || defaultSettings.exchangeRates; // 讀取匯率設定
 
         document.getElementById('admin-panel').innerHTML = `
             <div style="background:#e6fffa; padding:20px; border-radius:16px; margin-bottom:25px; font-weight:bold; color:#319795; display:flex; justify-content:space-between; align-items: center; border: 1px solid #81e6d9;">
@@ -1415,6 +1475,31 @@
             <div style="background:#ffffff; padding:30px; border-radius:24px; border:1px solid #dbe4f0; box-shadow: 0 10px 30px rgba(0,0,0,0.02); margin-bottom: 25px;">
                 <h3 style="color:#132c4d; border-bottom:2px solid #eef3f8; padding-bottom:15px; margin-top:0;">🎨 全站字體與版面設定</h3>
                 
+                <!-- 🟢 修正 3：新增自定義 5 階段匯率區間面板 -->
+                <div style="background:#f4f8fb; padding:20px; border-radius:16px; margin-bottom:15px; border:1px solid #dbe4f0;">
+                    <strong style="color:#132c4d;">🧮 匯率計算機設定 (5個區間)</strong><br>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                        <div style="font-weight:bold; font-size:13px; color:#4a5568;">區間上限 (日圓)</div>
+                        <div style="font-weight:bold; font-size:13px; color:#4a5568;">對應匯率倍數</div>
+                        
+                        <div>區間 1: ≦ <input type="number" id="er-l1" value="${exRates[0].limit}" style="width:70%; margin-bottom:0; padding:10px;"></div>
+                        <div><input type="number" step="0.001" id="er-r1" value="${exRates[0].rate}" style="margin-bottom:0; padding:10px;"></div>
+                        
+                        <div>區間 2: ≦ <input type="number" id="er-l2" value="${exRates[1].limit}" style="width:70%; margin-bottom:0; padding:10px;"></div>
+                        <div><input type="number" step="0.001" id="er-r2" value="${exRates[1].rate}" style="margin-bottom:0; padding:10px;"></div>
+                        
+                        <div>區間 3: ≦ <input type="number" id="er-l3" value="${exRates[2].limit}" style="width:70%; margin-bottom:0; padding:10px;"></div>
+                        <div><input type="number" step="0.001" id="er-r3" value="${exRates[2].rate}" style="margin-bottom:0; padding:10px;"></div>
+                        
+                        <div>區間 4: ≦ <input type="number" id="er-l4" value="${exRates[3].limit}" style="width:70%; margin-bottom:0; padding:10px;"></div>
+                        <div><input type="number" step="0.001" id="er-r4" value="${exRates[3].rate}" style="margin-bottom:0; padding:10px;"></div>
+                        
+                        <div>區間 5: ≦ <input type="number" id="er-l5" value="${exRates[4].limit}" style="width:70%; margin-bottom:0; padding:10px;" placeholder="填入極大值"></div>
+                        <div><input type="number" step="0.001" id="er-r5" value="${exRates[4].rate}" style="margin-bottom:0; padding:10px;"></div>
+                    </div>
+                    <p style="font-size:12px; color:#e53e3e; margin-top:10px; font-weight:bold;">⚠️ 注意：區間請由小填到大，最後一個區間上限請填極大值 (例如 9999999) 以涵蓋所有剩餘金額。</p>
+                </div>
+
                 <div style="background:#f4f8fb; padding:20px; border-radius:16px; margin-bottom:15px; border:1px solid #dbe4f0;">
                     <strong style="color:#132c4d;">A. 全站基礎預設字型</strong><br>
                     <select id="g-font" style="margin-top:10px;">
@@ -1562,7 +1647,6 @@
             <div style="background:#ffffff; padding:20px; border-radius:20px; border:1px solid #dbe4f0; font-size:15px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
                 <span style="font-weight: bold;">批次更改狀態為：</span>
                 
-                <!-- 💡 在狀態選單中加入了 RPA 需要的三個流程節點 -->
                 <select id="batch-status-select" style="width:auto; margin-bottom:0; padding: 8px 12px; border-radius: 8px;">
                     <option value="已登記">已登記</option>
                     <option value="已付訂金">已付訂金</option>
@@ -1764,6 +1848,15 @@
         settings.summaryLabels.shipped = { text: document.getElementById('sl-ship-t').value, color: document.getElementById('sl-ship-c').value, size: "13px", font: "inherit" };
         settings.summaryLabels.outOfStock = { text: document.getElementById('sl-out-t').value, color: document.getElementById('sl-out-c').value, size: "13px", font: "inherit" };
 
+        // 🟢 修正 3：寫入五階層的匯率設定
+        settings.exchangeRates = [
+            { limit: Number(document.getElementById('er-l1').value) || 0, rate: Number(document.getElementById('er-r1').value) || 0 },
+            { limit: Number(document.getElementById('er-l2').value) || 0, rate: Number(document.getElementById('er-r2').value) || 0 },
+            { limit: Number(document.getElementById('er-l3').value) || 0, rate: Number(document.getElementById('er-r3').value) || 0 },
+            { limit: Number(document.getElementById('er-l4').value) || 0, rate: Number(document.getElementById('er-r4').value) || 0 },
+            { limit: Number(document.getElementById('er-l5').value) || 9999999, rate: Number(document.getElementById('er-r5').value) || 0 }
+        ];
+
         applyStyles();
         fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "updateProduct", data: { id: "_SITE_SETTINGS_", name: "系統設定", price: 0, img: JSON.stringify(settings) } }) }).then(() => alert("設定已儲存！"));
     }
@@ -1799,9 +1892,10 @@
         const start = (currentAdminPage - 1) * ITEMS_PER_PAGE;
         const pageOrders = filteredOrders.slice(start, start + ITEMS_PER_PAGE);
         
+        // 🟢 修正 2：後台訂單顯示增加「交貨方式」欄位
         let html = `<table><tr>
             <th style="text-align:center;"><input type="checkbox" onclick="document.querySelectorAll('.admin-order-chk').forEach(c=>c.checked=this.checked)"></th>
-            <th>時間</th><th>訂購人</th><th>商品</th><th>備註</th><th>金額</th><th>狀態</th><th>專屬賣貨便</th>
+            <th>時間</th><th>訂購人</th><th>商品</th><th>備註</th><th>金額</th><th>狀態</th><th>交貨方式</th><th>專屬賣貨便</th>
         </tr>`;
         
         pageOrders.forEach(o => {
@@ -1814,6 +1908,7 @@
                 <td style="font-size:12px; color:#a0aec0; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${remarkText}">${remarkText}</td>
                 <td style="font-weight:bold;">$${o.price}</td>
                 <td><span class="status-badge" style="background:#eef3f8; color:#4a5568;">${o.status}</span></td>
+                <td style="font-size:13px; font-weight:bold; color:#d97706; white-space:nowrap;">${o.deliveryMethod || '-'}</td>
                 <td>
                     <button onclick="setPersonalMyship('${o.uid}', '${o.myshipUrl || ''}')" style="background:${o.myshipUrl ? '#319795' : '#132c4d'}; color:white; border:none; padding:6px 12px; border-radius:20px; font-size:12px; font-weight:bold; cursor:pointer; white-space:nowrap; transition:0.2s;">
                         ${o.myshipUrl ? '🔗 已設(修改)' : '➕ 新增連結'}
