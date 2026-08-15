@@ -12,7 +12,7 @@
 
     <script>
         (function() {
-            const version = "v10.8-ResponsiveFix"; 
+            const version = "v10.9-BalanceFix"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -178,10 +178,7 @@
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(19, 44, 77, 0.6); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
-        
-        /* 🟢 重要修正：加入 overflow-y: auto，讓過長的內容可以上下滑動，解決手機按鈕被遮擋 */
         .modal-content { background: #ffffff; border-radius: 24px; padding: 30px; box-sizing: border-box; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); max-height: 90vh; display: flex; flex-direction: column; border: 1px solid #dbe4f0; overflow-y: auto; }
-        
         .modal-close { position: absolute; top: 20px; right: 25px; font-size: 28px; color: #a0aec0; cursor: pointer; font-weight: bold; line-height: 1; z-index: 10; transition: 0.2s; }
         .modal-close:hover { color: #132c4d; }
         .modal-body { overflow-y: auto; flex: 1; padding-top: 10px; margin-top: 15px; }
@@ -207,7 +204,6 @@
             100% { transform: translateX(-50%); } 
         }
 
-        /* 🟢 新增的排版 Class，方便套用 RWD */
         .summary-stats-box { background:#f4f8fb; padding:20px; border-radius:16px; margin-bottom:15px; border:1px solid #dbe4f0; display:flex; flex-wrap:wrap; gap:15px; justify-content:space-between; align-items:center; }
         .checkout-bar { display:flex; flex-wrap:wrap; gap:15px; justify-content:space-between; align-items:center; background: #132c4d; padding: 20px; border-radius: 16px; color: white; }
 
@@ -229,7 +225,6 @@
             .action-row { flex-direction: column; align-items: stretch; }
             .add-btn { width: 100%; }
             
-            /* 🟢 新增：手機版特化調整，避免 Modal padding 過大與表格斷行 */
             .modal-content { padding: 20px; max-height: 85vh; }
             .summary-stats-box { flex-direction: column; align-items: flex-start; gap: 10px; }
             .checkout-bar { flex-direction: column; align-items: stretch; text-align: center; }
@@ -357,7 +352,6 @@
             <button id="sop-btn-el" onclick="openSopModal()" style="border: none; padding: 10px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; background: #eef3f8; color: #132c4d;">付款SOP</button>
         </div>
         
-        <!-- 🟢 替換加入了 order-history-wrapper Class 用於處理手機版間距 -->
         <div class="order-history-wrapper" style="background: #ffffff; border: 1px solid #dbe4f0; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); overflow-x: auto;">
             <h2 style="color: #132c4d; margin-top: 0; font-weight: 900;">📦 我的歷史訂單</h2>
             <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
@@ -1247,10 +1241,12 @@
                 return document.getElementById('order-history').innerHTML = '<p style="text-align:center; padding: 40px 0; color: #a0aec0;">無訂單紀錄</p>';
             }
             
-            let html = `<table><tr><th style="width:30px; text-align:center;"><input type="checkbox" onclick="document.querySelectorAll('.user-order-chk').forEach(c=>c.checked=this.checked);calcSelectedTotal()"></th><th>日期</th><th>商品</th><th>備註</th><th>狀態</th><th>金額</th><th>已付訂金</th><th>未付尾款</th></tr>`;
+            let html = `<table><tr><th style="width:30px; text-align:center;"><input type="checkbox" onclick="document.querySelectorAll('.user-order-chk').forEach(c=>c.checked=this.checked);calcSelectedTotal()"></th><th>日期</th><th>商品</th><th>備註</th><th>狀態</th><th>金額</th><th>已付金額</th><th>未付尾款</th></tr>`;
             filtered.forEach(o => {
-                let p = Number(o.price);
-                let deposit = Math.round(p / 2); 
+                let p = Number(o.price) || 0;
+                
+                // 🟢 修正：讀取後台傳來的「已付金額」(J欄)，並計算「未付尾款」(F欄 - J欄)
+                let deposit = Number(o.paidAmount) || 0;
                 let balance = p - deposit;       
 
                 let depositDisplay = deposit;
@@ -1290,7 +1286,6 @@
             const sb = settings.summaryBox || defaultSettings.summaryBox;
             const sl = settings.summaryLabels;
             
-            // 🟢 修改：將 Inline-CSS 改用 Class 名稱，以利手機版 RWD
             document.getElementById('summary-result').innerHTML = `
                 <div class="summary-stats-box">
                     <div style="font-size:${sb.reg.size}; color:${sb.reg.color}; font-weight:bold;">${sb.reg.text} NT$ <span id="summary-total-price">0</span></div>
