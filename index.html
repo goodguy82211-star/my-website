@@ -7,14 +7,12 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     
-    <title>小魔丸旅遊代購 - 大人可愛版</title>
+    <title>小魔丸旅遊代購</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <!-- 引入日式風格字體 -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
 
     <script>
         (function() {
-            const version = "v11.0-WafuCute"; 
+            const version = "v10.9-BalanceFix"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -31,41 +29,28 @@
     </script>
 
     <style>
-        :root {
-            --bg-color: #FDFBF7;     /* 和紙色 */
-            --text-main: #4A4036;    /* 深咖啡色 */
-            --text-muted: #8C7A6B;   /* 淺茶色 */
-            --accent-red: #D94F5C;   /* 鳥居紅 */
-            --accent-gold: #D4AF37;  /* 枯草金 */
-            --border-color: #EFE8DF; 
-            
-            --font-serif: 'Noto Serif TC', serif;
-            --font-sans: 'Noto Sans TC', sans-serif;
-        }
-
         body { 
             margin: 0; padding: 0; 
-            background-color: var(--bg-color); 
-            color: var(--text-main); 
-            font-family: var(--font-sans);
+            background-color: #f4f8fb; 
+            color: #132c4d; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "微軟正黑體", sans-serif;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 導覽列 */
         .glass-nav {
             position: fixed; top: 0; left: 0; width: 100%; height: 70px;
-            background: rgba(253, 251, 247, 0.95);
+            background: rgba(244, 248, 251, 0.85);
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-bottom: 2px dashed var(--border-color);
+            border-bottom: 1px solid rgba(19, 44, 77, 0.08);
             display: flex; justify-content: space-between; align-items: center; gap: 15px;
             z-index: 1000; padding: 0 5%; box-sizing: border-box;
             box-shadow: 0 4px 20px rgba(0,0,0,0.02);
         }
-        .nav-brand { font-family: var(--font-serif); font-size: 20px; font-weight: 900; letter-spacing: 1px; color: var(--text-main); display: flex; align-items: center; gap: 12px; cursor: pointer; flex-shrink: 0;}
-        .nav-brand img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-red);}
+        .nav-brand { font-size: 18px; font-weight: 900; letter-spacing: 1px; color: #132c4d; display: flex; align-items: center; gap: 12px; cursor: pointer; flex-shrink: 0;}
+        .nav-brand img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid #dbe4f0;}
         
         .nav-actions { display: flex; align-items: center; gap: 15px; flex-shrink: 0;}
-        .admin-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 0; transition: transform 0.2s; color: var(--text-main); }
+        .admin-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 0; transition: transform 0.2s; color: #132c4d; }
         .admin-btn:hover { transform: scale(1.1); }
         
         .top-notice-banner {
@@ -75,206 +60,176 @@
             margin: 0 auto; 
             display: flex; justify-content: center; align-items: center;
             max-width: fit-content;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
             overflow: hidden; 
             white-space: nowrap;
         }
 
         .modern-cart-btn {
-            background: var(--accent-red); color: #ffffff; border: 2px solid var(--accent-red);
+            background: #132c4d; color: #ffffff; border: none;
             padding: 10px 22px; border-radius: 30px; font-size: 14px; font-weight: bold;
             cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(217, 79, 92, 0.2);
-            font-family: var(--font-sans);
+            box-shadow: 0 4px 15px rgba(19, 44, 77, 0.2);
         }
-        .modern-cart-btn:hover { background: #b83c48; transform: translateY(-2px); }
-        .cart-dot { background: #ffffff; width: 8px; height: 8px; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px rgba(255,255,255, 0.6);} 
+        .modern-cart-btn:hover { background: #1c3f6e; transform: translateY(-2px); }
+        .cart-dot { background: #d32f2f; width: 8px; height: 8px; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px rgba(211, 47, 47, 0.6);} 
 
-        /* 主視覺區 Q版設計 */
         .hero-section {
-            padding: 100px 5% 50px 5%;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 50vh;
+            height: 60vh; min-height: 450px; width: 100%;
+            background-size: 100% 100%, contain; 
+            background-position: center, center; 
+            background-repeat: no-repeat, no-repeat;
+            background-color: #132c4d; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding-top: 70px; box-sizing: border-box;
         }
-        .hero-content-wrapper {
-            display: flex; align-items: center; justify-content: space-between; 
-            width: 100%; max-width: 1100px; flex-wrap: wrap; gap: 40px;
-        }
-        .hero-left { flex: 1; min-width: 300px; text-align: left; }
-        .hero-right { flex: 1; min-width: 300px; display: flex; justify-content: center; position: relative; }
+        .hero-title { font-size: clamp(32px, 5vw, 48px); font-weight: 900; color: #ffffff; margin: 0 0 15px 0; letter-spacing: 3px; text-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 2px 5px rgba(0,0,0,0.8);}
+        .hero-subtitle { font-size: clamp(14px, 2.5vw, 18px); color: #ffffff; margin: 0 0 35px 0; font-weight: 400; letter-spacing: 5px; text-shadow: 0 2px 10px rgba(0,0,0,0.6), 0 1px 3px rgba(0,0,0,0.8);}
         
-        /* Q版對話框 */
-        .q-speech-bubble {
-            background: #fff; border: 2px solid var(--accent-red); border-radius: 24px;
-            padding: 12px 20px; display: inline-block; position: relative;
-            margin-bottom: 25px; font-weight: bold; color: var(--accent-red);
-            box-shadow: 0 8px 0 rgba(217, 79, 92, 0.1); transform: rotate(-2deg);
-        }
-        .q-speech-bubble::after {
-            content: ''; position: absolute; bottom: -10px; left: 30px;
-            border-width: 10px 10px 0; border-style: solid; border-color: inherit transparent transparent transparent;
-        }
-
-        .hero-title { font-size: clamp(2rem, 5vw, 3.5rem); font-family: var(--font-serif); font-weight: 900; color: var(--text-main); margin: 0 0 15px 0; line-height: 1.2;}
-        .hero-subtitle { font-size: clamp(14px, 2.5vw, 16px); color: var(--text-muted); margin: 0 0 35px 0; font-weight: bold; line-height: 1.6;}
-        
-        /* 圓窗與吉祥物 */
-        .enso-frame {
-            width: 320px; height: 320px; border-radius: 50%;
-            border: 8px solid #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-            background-size: cover; background-position: center; background-repeat: no-repeat;
-        }
-        .pomeranian-mascot {
-            position: absolute; bottom: -20px; height: 200px; object-fit: contain;
-            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.3));
-            animation: floatMascot 3s ease-in-out infinite; z-index: 2;
-        }
-        @keyframes floatMascot {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-        }
-
-        .content-wrapper { max-width: 1100px; margin: 0 auto; padding: 40px 5%; position: relative; z-index: 10; }
+        .content-wrapper { max-width: 1000px; margin: 0 auto; padding: 40px 5%; position: relative; z-index: 10; }
         .view-section { display: none; padding-top: 80px; min-height: 100vh;}
         .view-section.active { display: block; animation: fadeIn 0.5s ease-out; }
         #home-view { padding-top: 0; } 
-        #home-view .content-wrapper { margin-top: -20px; } 
+        #home-view .content-wrapper { margin-top: -60px; } 
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Q版選單網格 */
-        .bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
         .bento-item {
-            background: #fff; border-radius: 24px; padding: 25px 15px; text-align: center;
-            border: 2px solid var(--border-color); cursor: pointer; transition: 0.3s;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #ffffff; border-radius: 24px; padding: 25px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03); transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+            cursor: pointer; border: 1px solid rgba(0,0,0,0.03);
         }
-        .bento-item:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(217, 79, 92, 0.08); border-color: var(--accent-red); }
-        .bento-icon { font-size: 40px; margin-bottom: 12px; transition: 0.3s; display:inline-block;}
-        .bento-item:hover .bento-icon { transform: scale(1.1) rotate(5deg); }
-        .bento-title { font-size: 16px; font-weight: bold; color: var(--text-main); margin:0 0 5px 0; }
-        .bento-desc { font-size: 12px; color: var(--text-muted); margin: 0; font-weight: bold;}
+        .bento-item:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.08); border-color: #dbe4f0; }
+        .bento-icon { font-size: 28px; margin-bottom: 12px; }
+        .bento-title { font-size: 15px; font-weight: bold; color: #132c4d; margin:0; }
         
-        .bento-main { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; text-align: left; background: var(--text-main); color: white; border: none; padding: 30px; }
+        .bento-main { grid-column: span 3; flex-direction: row; justify-content: space-between; text-align: left; background: #132c4d; color: white; border: none; padding: 30px; }
         .bento-main .bento-title { color: white; font-size: 20px; margin-bottom: 8px;}
         .bento-main-text { flex: 1; }
-        .bento-action-btn { background: #ffffff; color: var(--text-main); padding: 12px 24px; border-radius: 30px; font-weight: bold; font-size: 14px; transition: 0.3s; border: none;}
-        .bento-item.bento-main:hover .bento-action-btn { background: var(--accent-gold); color: #fff;}
+        .bento-action-btn { background: #ffffff; color: #132c4d; padding: 12px 24px; border-radius: 30px; font-weight: bold; font-size: 14px; transition: 0.3s; }
+        .bento-item.bento-main:hover .bento-action-btn { background: #eef3f8; }
 
-        .back-btn { background: #fff; color: var(--text-main); border: 2px solid var(--border-color); padding: 10px 20px; border-radius: 30px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-bottom: 25px; display: inline-flex; align-items: center; gap: 8px;}
-        .back-btn:hover { background: var(--bg-color); border-color: var(--text-muted); }
+        .back-btn { background: transparent; color: #4a5568; border: 1px solid #c6d4e1; padding: 10px 20px; border-radius: 30px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-bottom: 25px; display: inline-flex; align-items: center; gap: 8px;}
+        .back-btn:hover { background: #eef3f8; color: #132c4d; border-color: #132c4d; }
 
-        .promo-banner { text-align: center; background: rgba(217, 79, 92, 0.05); border: 2px dashed var(--accent-red); color: var(--accent-red); border-radius: 30px; padding: 12px 20px; width: 100%; box-sizing: border-box; margin: 0 auto 40px auto; font-weight: bold; font-size: 15px; }
+        .promo-banner { text-align: center; background: #eef3f8; border: 1px dashed #c6d4e1; color: #1c3f6e; border-radius: 16px; padding: 12px 20px; width: 100%; box-sizing: border-box; margin: 0 auto 30px auto; font-weight: bold; font-size: 14px; }
 
         .tabs-container { display: flex; gap: 10px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap; }
-        .tab-btn { flex: 1; min-width: 100px; max-width: 150px; padding: 12px; border-radius: 30px; border: 2px solid var(--border-color); background: #fff; color: var(--text-muted); font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.3s; }
-        .tab-btn.active { background: var(--text-main); color: #ffffff; border-color: var(--text-main); }
+        .tab-btn { flex: 1; min-width: 100px; max-width: 150px; padding: 12px; border-radius: 30px; border: 1px solid #c6d4e1; background: transparent; color: #4a5568; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s; }
+        .tab-btn.active { background: #132c4d; color: #ffffff; border-color: #132c4d; }
 
-        .modern-product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
+        .modern-product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 30px; }
         
-        /* Q版商品卡片 */
-        .modern-card { background: #fff; display: flex; flex-direction: column; transition: 0.3s; border: 2px solid var(--border-color); border-radius: 20px; padding: 15px; }
-        .modern-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); border-color: var(--accent-gold); }
+        .modern-card { background: transparent; display: flex; flex-direction: column; transition: 0.3s; }
         .modern-img-box {
-            width: 100%; padding-top: 100%; 
-            border-radius: 12px; overflow: hidden; position: relative; margin-bottom: 16px;
-            background: #f0f0f0; 
+            width: 100%; padding-top: 120%; 
+            border-radius: 20px; overflow: hidden; position: relative; margin-bottom: 16px;
+            background: #dbe4f0; border: 1px solid rgba(0,0,0,0.03);
         }
         .modern-img-box img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .modern-card:hover .modern-img-box img { transform: scale(1.08); }
+        .modern-card:hover .modern-img-box img { transform: scale(1.05); }
         
-        .modern-card-title { font-size: 16px; font-weight: 900; margin: 0 0 6px 0; color: var(--text-main); line-height: 1.4; }
-        .modern-card-price { font-size: 16px; color: var(--accent-red); margin: 0 0 15px 0; font-weight: 900;}
+        .modern-card-title { font-size: 16px; font-weight: 800; margin: 0 0 6px 0; color: #132c4d; line-height: 1.4; }
+        .modern-card-price { font-size: 15px; color: #4a5568; margin: 0 0 15px 0; font-weight: bold;}
         
-        .tag { position: absolute; top: 10px; left: 10px; background: var(--accent-red); color: #fff; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; letter-spacing: 1px;}
-        
+        .tag { position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.95); backdrop-filter: blur(5px); color: #132c4d; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
         .group-card { cursor: pointer; }
-        .group-btn { background: var(--bg-color); color: var(--text-main); border: 2px solid var(--border-color); padding: 12px 14px; border-radius: 12px; width: 100%; margin-top: auto; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
-        .group-card:hover .group-btn { background: var(--text-main); color: white; border-color: var(--text-main); }
+        .group-btn { background: #eef3f8; color: #132c4d; border: 1px solid #dbe4f0; padding: 12px 14px; border-radius: 30px; width: 100%; margin-top: auto; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        .group-card:hover .group-btn { background: #132c4d; color: white; border-color: #132c4d; }
 
         .action-row { display:flex; justify-content:space-between; align-items:center; margin-top: auto; gap: 10px; }
         
         .qty-selector { 
-            display: grid; grid-template-columns: 35px 1fr 35px; align-items: center; 
-            border: 2px solid var(--border-color); border-radius: 12px; background: #ffffff; 
-            height: 38px; flex: 1; overflow: hidden;
+            display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; 
+            border: 1px solid #c6d4e1; border-radius: 30px; background: #ffffff; 
+            height: 40px; flex: 1; overflow: hidden;
         }
         .qty-btn { 
-            background: transparent; color: var(--text-main); border: none; width: 100%; height: 100%; 
-            font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.2s; 
+            background: transparent; color: #132c4d; border: none; width: 100%; height: 100%; 
+            font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s; 
             display: flex; justify-content: center; align-items: center; padding: 0;
         }
-        .qty-btn:hover { background: var(--bg-color); }
+        .qty-btn:hover { background: #eef3f8; }
         .qty-input { 
             width: 100%; height: 100%; text-align: center; border: none; background: transparent; 
             font-size: 15px; font-weight: bold; padding: 0; margin: 0; outline: none; 
-            color: var(--text-main); box-sizing: border-box;
+            color: #132c4d; box-sizing: border-box;
         }
 
-        .add-btn { background: var(--text-main); color: white; border: none; padding: 0 15px; height: 38px; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; white-space:nowrap; transition: 0.2s;}
-        .add-btn:hover { background: var(--accent-red); }
+        .add-btn { background: #132c4d; color: white; border: none; padding: 0 20px; height: 40px; border-radius: 30px; font-weight: bold; font-size: 14px; cursor: pointer; white-space:nowrap; transition: 0.2s; box-shadow: 0 4px 10px rgba(19, 44, 77, 0.15);}
+        .add-btn:hover { background: #1c3f6e; transform: translateY(-2px); }
 
         input:not([type="checkbox"]):not([type="radio"]), select { 
             width: 100%; margin-bottom: 15px; padding: 14px; box-sizing: border-box; 
-            border: 2px solid var(--border-color); border-radius: 12px; font-size: 15px; outline: none; background: #ffffff; color: var(--text-main); transition: 0.2s; font-family: inherit;
+            border: 1px solid #c6d4e1; border-radius: 12px; font-size: 15px; outline: none; background: #ffffff; color: #132c4d; transition: 0.2s; font-family: inherit;
         }
-        input:not([type="checkbox"]):not([type="radio"]):focus, select:focus { border-color: var(--accent-gold); }
-        input[type="checkbox"] { transform: scale(1.2); accent-color: var(--accent-red); cursor: pointer; }
+        input:not([type="checkbox"]):not([type="radio"]):focus, select:focus { border-color: #132c4d; box-shadow: 0 0 0 3px rgba(19, 44, 77, 0.05); }
+        input[type="checkbox"] { transform: scale(1.2); accent-color: #132c4d; cursor: pointer; }
 
-        .profile-card { display: flex; align-items: center; background: #ffffff; padding: 20px; border-radius: 20px; margin-bottom: 25px; border: 2px solid var(--border-color); }
-        .avatar-placeholder { width: 60px; height: 60px; background: var(--bg-color); color: var(--text-main); border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 20px; font-weight:bold; }
+        .profile-card { display: flex; align-items: center; background: #ffffff; padding: 20px; border-radius: 20px; margin-bottom: 25px; border: 1px solid #dbe4f0; box-shadow: 0 10px 30px rgba(0,0,0,0.02);}
+        .avatar-placeholder { width: 60px; height: 60px; background: #eef3f8; color: #4a5568; border: 1px solid #c6d4e1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 20px; font-weight:bold; }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; margin-top: 10px; }
-        th, td { border-bottom: 1px solid var(--border-color); padding: 15px 10px; text-align: left; }
-        th { background-color: #fff; color: var(--text-muted); font-weight: bold; border-bottom: 2px solid var(--border-color);}
-        tr:hover td { background-color: var(--bg-color); }
+        th, td { border-bottom: 1px solid #dbe4f0; padding: 15px 10px; text-align: left; }
+        th { background-color: #eef3f8; color: #4a5568; font-weight: bold; border-bottom: 2px solid #c6d4e1;}
+        tr:hover td { background-color: #f4f8fb; }
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(74, 64, 54, 0.6); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(19, 44, 77, 0.6); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .modal-overlay.active { display: flex; animation: fadeIn 0.2s; }
-        .modal-content { background: #ffffff; border-radius: 24px; padding: 30px; box-sizing: border-box; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); max-height: 90vh; display: flex; flex-direction: column; border: 2px solid var(--border-color); overflow-y: auto; }
-        .modal-close { position: absolute; top: 20px; right: 25px; font-size: 28px; color: var(--text-muted); cursor: pointer; font-weight: bold; line-height: 1; z-index: 10; transition: 0.2s; }
-        .modal-close:hover { color: var(--accent-red); }
+        .modal-content { background: #ffffff; border-radius: 24px; padding: 30px; box-sizing: border-box; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); max-height: 90vh; display: flex; flex-direction: column; border: 1px solid #dbe4f0; overflow-y: auto; }
+        .modal-close { position: absolute; top: 20px; right: 25px; font-size: 28px; color: #a0aec0; cursor: pointer; font-weight: bold; line-height: 1; z-index: 10; transition: 0.2s; }
+        .modal-close:hover { color: #132c4d; }
         .modal-body { overflow-y: auto; flex: 1; padding-top: 10px; margin-top: 15px; }
         
         #cart-modal .modal-content { max-width: 600px; width: 95%; }
-        #product-group-modal .modal-content { max-width: 550px; width: 95%; background: var(--bg-color); }
+        #product-group-modal .modal-content { max-width: 550px; width: 95%; background: #f4f8fb; }
         
-        .sub-product-card { background: white; border: 2px solid var(--border-color); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; }
+        .sub-product-card { background: white; border: 1px solid #dbe4f0; border-radius: 16px; padding: 15px; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
 
-        .fast-order-box { background: #ffffff; padding: 25px; border-radius: 20px; margin-bottom: 25px; border: 2px solid var(--border-color); }
+        .fast-order-box { background: #ffffff; padding: 25px; border-radius: 20px; margin-bottom: 25px; border: 1px solid #dbe4f0; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
         .status-badge { padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; white-space: nowrap; }
 
-        .marquee-track { display: flex; align-items: center; justify-content: center; }
+        .marquee-track {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
         #notice-text-el-clone { display: none; }
-        @keyframes marquee-seamless { 0%   { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        
+        @keyframes marquee-seamless {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); } 
+        }
 
-        .summary-stats-box { background: #fff; padding:20px; border-radius:16px; margin-bottom:15px; border:2px solid var(--border-color); display:flex; flex-wrap:wrap; gap:15px; justify-content:space-between; align-items:center; }
-        .checkout-bar { display:flex; flex-wrap:wrap; gap:15px; justify-content:space-between; align-items:center; background: var(--text-main); padding: 20px; border-radius: 16px; color: white; }
+        .summary-stats-box { background:#f4f8fb; padding:20px; border-radius:16px; margin-bottom:15px; border:1px solid #dbe4f0; display:flex; flex-wrap:wrap; gap:15px; justify-content:space-between; align-items:center; }
+        .checkout-bar { display:flex; flex-wrap:wrap; gap:15px; justify-content:space-between; align-items:center; background: #132c4d; padding: 20px; border-radius: 16px; color: white; }
 
         @media (max-width: 850px) {
             .nav-brand span { display: none; } 
+            
             .top-notice-banner { flex: 1; max-width: none; margin: 0 10px; padding: 8px 0; overflow: hidden; }
             .marquee-track { width: max-content; animation: marquee-seamless 12s linear infinite; justify-content: flex-start;}
             .marquee-track span { padding-right: 40px; display: inline-block;}
             #notice-text-el-clone { display: inline-block; }
+
             .modern-cart-btn { padding: 10px 14px; font-size: 13px; }
-            .hero-content-wrapper { flex-direction: column; text-align: center; }
-            .hero-left { text-align: center; }
-            .q-speech-bubble { transform: rotate(0); margin-bottom: 25px;}
-            .q-speech-bubble::after { left: 50%; transform: translateX(-50%); }
         }
 
         @media (max-width: 600px) {
-            .enso-frame { width: 260px; height: 260px; }
-            .pomeranian-mascot { height: 160px; }
             .bento-grid { grid-template-columns: repeat(2, 1fr); }
+            .bento-main { grid-column: span 2; padding: 20px;}
             .modern-product-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
             .action-row { flex-direction: column; align-items: stretch; }
             .add-btn { width: 100%; }
+            
             .modal-content { padding: 20px; max-height: 85vh; }
             .summary-stats-box { flex-direction: column; align-items: flex-start; gap: 10px; }
             .checkout-bar { flex-direction: column; align-items: stretch; text-align: center; }
             .checkout-bar button { width: 100%; margin-top: 5px; }
+            .order-history-wrapper { padding: 15px !important; }
         }
     </style>
 </head>
@@ -304,60 +259,77 @@
 
 <!-- 1️⃣ 首頁 -->
 <div id="home-view" class="view-section active">
-    <header class="hero-section">
-        <div class="hero-content-wrapper">
-            <div class="hero-left">
-                <div class="q-speech-bubble" id="speech-bubble-el">いらっしゃいませ！歡迎光臨</div>
-                <h1 class="hero-title" id="main-title">載入中...</h1>
-                <p class="hero-subtitle" id="sub-title">...</p>
-            </div>
-            <div class="hero-right">
-                <div class="enso-frame" id="enso-frame-el"></div>
-                <img id="hero-mascot-el" class="pomeranian-mascot" src="" alt="Mascot">
-            </div>
-        </div>
+    <header class="hero-section" id="hero-section-el">
+        <h1 class="hero-title" id="main-title">載入中...</h1>
+        <p class="hero-subtitle" id="sub-title">...</p>
     </header>
 
     <main class="content-wrapper">
         <div class="promo-banner" id="promo-banner-el">載入中...</div>
         
-        <!-- Q版快捷選單 -->
         <div class="bento-grid">
             <div class="bento-item bento-main" onclick="showView('profile')" id="home-btn-profile">
                 <div class="bento-main-text">
                     <h3 class="bento-title">首次購物？請先驗證</h3>
-                    <p style="margin: 0; font-size: 13px; opacity: 0.8;">綁定 LINE 帳號，訂單不漏接</p>
+                    <p style="margin: 0; font-size: 13px; color: #a0aec0;">綁定 LINE 帳號，訂單不漏接</p>
                 </div>
-                <button class="bento-action-btn">立即綁定</button>
+                <div class="bento-action-btn">立即綁定</div>
             </div>
             
             <div class="bento-item" onclick="showView('product')" id="home-btn-product">
                 <div class="bento-icon">🛍️</div>
                 <h3 class="bento-title">瀏覽商品</h3>
-                <p class="bento-desc">嚴選日本好物</p>
             </div>
             
             <div class="bento-item" onclick="showView('order')" id="home-btn-order">
                 <div class="bento-icon">📦</div>
                 <h3 class="bento-title">查詢訂單</h3>
-                <p class="bento-desc">我的包裹在哪裡</p>
             </div>
             
             <div class="bento-item" onclick="openInfoModal('definitions')">
                 <div class="bento-icon">📖</div>
-                <h3 class="bento-title">下單需知</h3>
-                <p class="bento-desc">買前必看小規則</p>
+                <h3 class="bento-title" style="font-size:13px;">下單區釋義</h3>
             </div>
             <div class="bento-item" onclick="openInfoModal('process')">
                 <div class="bento-icon">📝</div>
-                <h3 class="bento-title">下單流程</h3>
-                <p class="bento-desc">輕鬆代購指南</p>
+                <h3 class="bento-title" style="font-size:13px;">下單流程</h3>
             </div>
             <div class="bento-item" onclick="openInfoModal('notes')">
                 <div class="bento-icon">⚠️</div>
-                <h3 class="bento-title">注意事項</h3>
-                <p class="bento-desc">維護雙方權益</p>
+                <h3 class="bento-title" style="font-size:13px;">注意事項</h3>
             </div>
+        </div>
+    </main>
+</div>
+
+<!-- 2️⃣ 綁定頁面 -->
+<div id="profile-view" class="view-section">
+    <main class="content-wrapper">
+        <button class="back-btn" onclick="showView('home')">← 返回首頁</button>
+        <h2 style="margin-top: 0; color: #132c4d;">會員身分綁定</h2>
+        
+        <div class="profile-card" id="login-card-el">
+            <div id="user-avatar-box" class="avatar-placeholder">?</div>
+            <div>
+                <div id="user-name" style="font-weight:900; font-size: 18px; color: #132c4d; margin-bottom: 5px;">載入中...</div>
+                <div id="user-id" style="font-size: 13px; color: #718096;">請稍候</div>
+            </div>
+        </div>
+        
+        <div style="background: #ffffff; padding: 25px; border-radius: 20px; border: 1px solid #dbe4f0; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
+            <h3 style="margin-top: 0; color: #132c4d; margin-bottom: 10px;">👥 LINE 群組暱稱同步設定</h3>
+            <p style="font-size: 14px; color: #718096; margin-bottom: 20px;">💡 請輸入您在代購群組內使用的暱稱（例如：+1 小明），以利小幫手精準對帳。</p>
+            <input type="text" id="custom-group-name" placeholder="請輸入您在LINE群組的暱稱">
+            <button onclick="saveGroupNickname()" style="background: #132c4d; color: white; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 15px; width: 100%; cursor: pointer; transition: 0.3s;">💾 儲存並同步</button>
+        </div>
+    </main>
+</div>
+
+<!-- 3️⃣ 商品頁面 -->
+<div id="product-view" class="view-section">
+    <main class="content-wrapper">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+            <button class="back-btn" onclick="showView('home')" style="margin-bottom:0;">← 返回首頁</button>
         </div>
         
         <div class="tabs-container">
@@ -372,61 +344,22 @@
     </main>
 </div>
 
-<!-- 2️⃣ 綁定頁面 -->
-<div id="profile-view" class="view-section">
-    <main class="content-wrapper">
-        <button class="back-btn" onclick="showView('home')">← 返回首頁</button>
-        <h2 style="margin-top: 0; color: var(--text-main);">會員身分綁定</h2>
-        
-        <div class="profile-card" id="login-card-el">
-            <div id="user-avatar-box" class="avatar-placeholder">?</div>
-            <div>
-                <div id="user-name" style="font-weight:900; font-size: 18px; color: var(--text-main); margin-bottom: 5px;">載入中...</div>
-                <div id="user-id" style="font-size: 13px; color: var(--text-muted);">請稍候</div>
-            </div>
-        </div>
-        
-        <div style="background: #ffffff; padding: 25px; border-radius: 20px; border: 2px solid var(--border-color);">
-            <h3 style="margin-top: 0; color: var(--text-main); margin-bottom: 10px;">👥 LINE 群組暱稱同步設定</h3>
-            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">💡 請輸入您在代購群組內使用的暱稱（例如：+1 小明），以利小幫手精準對帳。</p>
-            <input type="text" id="custom-group-name" placeholder="請輸入您在LINE群組的暱稱">
-            <button onclick="saveGroupNickname()" style="background: var(--text-main); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 15px; width: 100%; cursor: pointer; transition: 0.3s;">💾 儲存並同步</button>
-        </div>
-    </main>
-</div>
-
-<!-- 3️⃣ 商品頁面 -->
-<div id="product-view" class="view-section">
-    <main class="content-wrapper">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-            <button class="back-btn" onclick="showView('home')" style="margin-bottom:0;">← 返回首頁</button>
-        </div>
-        
-        <div class="tabs-container">
-            <button id="tab-btn-current-2" class="tab-btn active" onclick="switchProductTab('current')"><span id="section-title-2">本次商品</span></button>
-            <button id="tab-btn-instock-2" class="tab-btn" onclick="switchProductTab('instock')"><span id="instock-section-title-2">現貨區</span></button>
-            <button id="tab-btn-live-2" class="tab-btn" onclick="switchProductTab('live')"><span id="live-section-title-2">連線區</span></button>
-        </div>
-        <p style="text-align:center; color: var(--text-muted);">（請回首頁瀏覽即可）</p>
-    </main>
-</div>
-
 <!-- 4️⃣ 訂單頁面 -->
 <div id="order-view" class="view-section">
     <main class="content-wrapper">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <button class="back-btn" onclick="showView('home')" style="margin-bottom:0;">← 返回首頁</button>
-            <button id="sop-btn-el" onclick="openSopModal()" style="border: 2px solid var(--border-color); padding: 10px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; background: #fff; color: var(--text-main);">付款SOP</button>
+            <button id="sop-btn-el" onclick="openSopModal()" style="border: none; padding: 10px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; background: #eef3f8; color: #132c4d;">付款SOP</button>
         </div>
         
-        <div class="order-history-wrapper" style="background: #ffffff; border: 2px solid var(--border-color); padding: 25px; border-radius: 20px; overflow-x: auto;">
-            <h2 style="color: var(--text-main); margin-top: 0; font-weight: 900;">📦 我的歷史訂單</h2>
+        <div class="order-history-wrapper" style="background: #ffffff; border: 1px solid #dbe4f0; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); overflow-x: auto;">
+            <h2 style="color: #132c4d; margin-top: 0; font-weight: 900;">📦 我的歷史訂單</h2>
             <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px; flex-wrap: wrap;">
                 <input type="date" id="start-date" style="margin-bottom: 0; width: auto; flex: 1;"> 
-                <span style="font-weight: bold; color: var(--text-muted);">至</span> 
+                <span style="font-weight: bold; color: #718096;">至</span> 
                 <input type="date" id="end-date" style="margin-bottom: 0; width: auto; flex: 1;">
             </div>
-            <button onclick="fetchMyOrders()" style="background:var(--text-main); color:white; border:none; width:100%; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 15px; cursor: pointer;">🔍 查詢與結算</button>
+            <button onclick="fetchMyOrders()" style="background:#132c4d; color:white; border:none; width:100%; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 15px; cursor: pointer;">🔍 查詢與結算</button>
             
             <div id="summary-result" style="margin:25px 0 15px 0;"></div>
             <div id="order-history" style="min-width: 600px;"></div>
@@ -448,43 +381,43 @@
 <div id="cart-modal" class="modal-overlay" onclick="if(event.target===this) closeCartModal()">
     <div class="modal-content">
         <span class="modal-close" onclick="closeCartModal()">×</span>
-        <h2 style="color: var(--text-main); margin-top: 0; border-bottom: 2px solid var(--border-color); padding-bottom: 15px;">📋 我的購物清單</h2>
+        <h2 style="color: #132c4d; margin-top: 0; border-bottom: 1px solid #dbe4f0; padding-bottom: 15px;">📋 我的購物清單</h2>
         <div class="modal-body" id="cart-items" style="max-height: 55vh; padding-right: 5px; overflow-x: hidden;"></div>
         
-        <div style="border-top: 2px solid var(--border-color); margin-top: 20px; padding-top: 20px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="font-weight:bold; color: var(--text-muted);">已勾選結帳：</div>
-            <div style="color: var(--accent-red); font-size: 24px; font-weight: 900;">NT$ <span id="total-amount">0</span></div>
+        <div style="border-top: 1px solid #dbe4f0; margin-top: 20px; padding-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight:bold; color: #4a5568;">已勾選結帳：</div>
+            <div style="color: #e53e3e; font-size: 24px; font-weight: 900;">NT$ <span id="total-amount">0</span></div>
         </div>
-        <button onclick="prepareCheckout()" style="width:100%; background:var(--text-main); color:white; border:none; padding:15px; margin-top:20px; border-radius: 30px; font-weight: bold; font-size: 16px; transition: 0.2s; cursor: pointer; box-shadow: 0 10px 20px rgba(74,64,54,0.2);">下一步：選擇交貨方式 🚀</button>
+        <button onclick="prepareCheckout()" style="width:100%; background:#132c4d; color:white; border:none; padding:15px; margin-top:20px; border-radius: 30px; font-weight: bold; font-size: 16px; transition: 0.2s; cursor: pointer; box-shadow: 0 10px 20px rgba(19,44,77,0.2);">下一步：選擇交貨方式 🚀</button>
     </div>
 </div>
 
 <div id="delivery-modal" class="modal-overlay" onclick="if(event.target===this) closeDeliveryModal()">
     <div class="modal-content" style="max-width: 450px; text-align: center; width: 90%;">
         <span class="modal-close" onclick="closeDeliveryModal()">×</span>
-        <h2 style="color: var(--text-main); margin-top: 0; font-weight: 900;">🚚 請選擇交貨方式</h2>
-        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">這將幫助我們為您準備後續的寄件流程。</p>
+        <h2 style="color: #132c4d; margin-top: 0; font-weight: 900;">🚚 請選擇交貨方式</h2>
+        <p style="color: #718096; font-size: 14px; margin-bottom: 20px;">這將幫助我們為您準備後續的寄件流程。</p>
         
         <div style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
-            <label style="border: 2px solid var(--border-color); padding: 15px 20px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s;" onmouseover="this.style.borderColor='var(--accent-gold)'" onmouseout="this.style.borderColor='var(--border-color)'">
-                <input type="radio" name="deliveryMethod" value="新竹市/竹北面交" style="width: 20px; height: 20px; margin: 0; accent-color: var(--accent-red);"> 
-                <span style="font-weight: bold; color: var(--text-main); font-size: 16px;">新竹市 / 竹北面交</span>
+            <label style="border: 2px solid #dbe4f0; padding: 15px 20px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s;" onmouseover="this.style.borderColor='#132c4d'" onmouseout="this.style.borderColor='#dbe4f0'">
+                <input type="radio" name="deliveryMethod" value="新竹市/竹北面交" style="width: 20px; height: 20px; margin: 0; accent-color: #132c4d;"> 
+                <span style="font-weight: bold; color: #132c4d; font-size: 16px;">新竹市 / 竹北面交</span>
             </label>
             
-            <label style="border: 2px solid var(--border-color); padding: 15px 20px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s;" onmouseover="this.style.borderColor='var(--accent-gold)'" onmouseout="this.style.borderColor='var(--border-color)'">
-                <input type="radio" name="deliveryMethod" value="7-11 賣貨便" style="width: 20px; height: 20px; margin: 0; accent-color: var(--accent-red);"> 
-                <span style="font-weight: bold; color: var(--text-main); font-size: 16px;">7-11 賣貨便</span>
+            <label style="border: 2px solid #dbe4f0; padding: 15px 20px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s;" onmouseover="this.style.borderColor='#132c4d'" onmouseout="this.style.borderColor='#dbe4f0'">
+                <input type="radio" name="deliveryMethod" value="7-11 賣貨便" style="width: 20px; height: 20px; margin: 0; accent-color: #132c4d;"> 
+                <span style="font-weight: bold; color: #132c4d; font-size: 16px;">7-11 賣貨便</span>
             </label>
         </div>
         
-        <button id="delivery-submit-btn" onclick="confirmAndSubmitOrder()" style="width:100%; background:var(--text-main); color:white; border:none; padding:15px; margin-top:25px; border-radius: 30px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(74, 64, 54, 0.2);">確定選擇並送出訂單 🚀</button>
+        <button id="delivery-submit-btn" onclick="confirmAndSubmitOrder()" style="width:100%; background:#132c4d; color:white; border:none; padding:15px; margin-top:25px; border-radius: 30px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(19, 44, 77, 0.2);">確定選擇並送出訂單 🚀</button>
     </div>
 </div>
 
 <div id="product-group-modal" class="modal-overlay" onclick="if(event.target===this) closeGroupModal()">
     <div class="modal-content">
         <span class="modal-close" onclick="closeGroupModal()">×</span>
-        <h2 id="group-modal-title" style="margin-top: 0; color: var(--text-main); border-bottom: 2px solid var(--border-color); padding-bottom: 15px;">群組名稱</h2>
+        <h2 id="group-modal-title" style="margin-top: 0; color: #132c4d; border-bottom: 1px solid #dbe4f0; padding-bottom: 15px;">群組名稱</h2>
         <div class="modal-body sub-product-grid" id="group-modal-body"></div>
     </div>
 </div>
@@ -492,14 +425,14 @@
 <div id="calc-modal" class="modal-overlay" onclick="if(event.target===this) closeCalculator()">
     <div class="modal-content" style="max-width:320px;">
         <span class="modal-close" onclick="closeCalculator()">×</span>
-        <div style="text-align:center; margin-bottom:20px;"><h2 style="margin:0; color:var(--text-main); font-weight: 900;">🧮 匯率換算</h2></div>
-        <div style="background:var(--bg-color); padding:20px; border-radius:16px; border:2px solid var(--border-color);">
-            <label style="font-size:13px; font-weight:bold; color:var(--text-muted);">輸入日幣 (JPY)：</label>
-            <div style="display:flex; align-items:center; border-bottom:2px solid var(--text-main); margin-bottom:15px; padding-bottom: 5px;">
-                <span style="font-size:24px; color:var(--text-main); font-weight:900; margin-right:8px;">¥</span>
+        <div style="text-align:center; margin-bottom:20px;"><h2 style="margin:0; color:#132c4d; font-weight: 900;">🧮 匯率換算</h2></div>
+        <div style="background:#f4f8fb; padding:20px; border-radius:16px; border:1px solid #dbe4f0;">
+            <label style="font-size:13px; font-weight:bold; color:#718096;">輸入日幣 (JPY)：</label>
+            <div style="display:flex; align-items:center; border-bottom:2px solid #132c4d; margin-bottom:15px; padding-bottom: 5px;">
+                <span style="font-size:24px; color:#132c4d; font-weight:900; margin-right:8px;">¥</span>
                 <input type="number" id="jpy-input" placeholder="0" oninput="calculateTWD()" style="border:none; font-size:24px; background:transparent; font-weight:900; margin-bottom:0; padding:0; outline: none; box-shadow: none;">
             </div>
-            <div style="text-align:center; padding:15px; background:var(--text-main); border-radius:12px; color:#ffffff; font-weight:bold; font-size:20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+            <div style="text-align:center; padding:15px; background:#132c4d; border-radius:12px; color:#ffffff; font-weight:bold; font-size:20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
                 台幣：<span id="twd-result">NT$ 0</span>
             </div>
         </div>
@@ -509,36 +442,36 @@
 <div id="payment-modal" class="modal-overlay" onclick="if(event.target===this) closePaymentModal()">
     <div class="modal-content" style="text-align: center; max-width: 400px;">
         <span class="modal-close" onclick="closePaymentModal()">×</span>
-        <h2 style="color: var(--text-main); margin-top: 0; font-weight: 900;">💳 結帳與匯款</h2>
-        <div style="background: var(--bg-color); padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 2px solid var(--border-color);">
-            <p style="margin: 0; color: var(--text-muted); font-weight: bold; font-size: 14px;">本次結帳總額</p>
-            <div style="font-size: 32px; color: var(--accent-red); font-weight: 900; margin: 10px 0;">NT$ <span id="payment-total-amount">0</span></div>
+        <h2 style="color: #132c4d; margin-top: 0; font-weight: 900;">💳 結帳與匯款</h2>
+        <div style="background: #f4f8fb; padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #dbe4f0;">
+            <p style="margin: 0; color: #718096; font-weight: bold; font-size: 14px;">本次結帳總額</p>
+            <div style="font-size: 32px; color: #e53e3e; font-weight: 900; margin: 10px 0;">NT$ <span id="payment-total-amount">0</span></div>
             
-            <div style="margin-top: 15px; padding-top: 15px; border-top: 2px dashed var(--border-color);">
-                <p style="margin: 0; color: var(--text-muted); font-weight: bold; font-size: 14px;">本次訂金支付金額</p>
-                <div style="font-size: 24px; color: var(--text-main); font-weight: 900; margin: 5px 0;">NT$ <span id="payment-deposit-amount">0</span></div>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #c6d4e1;">
+                <p style="margin: 0; color: #718096; font-weight: bold; font-size: 14px;">本次訂金支付金額</p>
+                <div style="font-size: 24px; color: #132c4d; font-weight: 900; margin: 5px 0;">NT$ <span id="payment-deposit-amount">0</span></div>
             </div>
         </div>
-        <div style="text-align: left; background: #ffffff; padding: 20px; border-radius: 16px; border: 2px solid var(--border-color); margin-bottom: 20px;">
-            <p style="margin: 5px 0; font-size: 15px;">銀行代碼：<strong style="color: var(--text-main);" id="bank-code-el">尚未設定</strong></p>
-            <p style="margin: 5px 0; font-size: 15px;">銀行帳號：<strong style="color: var(--text-main);" id="bank-account-el">尚未設定</strong></p>
+        <div style="text-align: left; background: #ffffff; padding: 20px; border-radius: 16px; border: 1px solid #dbe4f0; margin-bottom: 20px;">
+            <p style="margin: 5px 0; font-size: 15px;">銀行代碼：<strong style="color: #132c4d;" id="bank-code-el">尚未設定</strong></p>
+            <p style="margin: 5px 0; font-size: 15px;">銀行帳號：<strong style="color: #132c4d;" id="bank-account-el">尚未設定</strong></p>
             <div style="text-align: center; margin-top: 20px;">
-                <img id="payment-qr" src="" style="width: 160px; height: 160px; border-radius: 12px; border: 2px solid var(--border-color); object-fit: contain;">
+                <img id="payment-qr" src="" style="width: 160px; height: 160px; border-radius: 12px; border: 1px solid #dbe4f0; object-fit: contain;">
             </div>
-            <div style="margin-top: 20px; border-top: 2px solid var(--border-color); padding-top: 15px;">
-                <label style="font-size: 14px; font-weight: bold; color: var(--text-main); display: block; margin-bottom: 8px;">匯款完成後請填寫：</label>
-                <input type="text" id="bank-last-5" placeholder="輸入帳號【後五碼】" maxlength="5" style="border: 2px solid var(--text-main); text-align: center; font-size: 18px; font-weight: bold;">
+            <div style="margin-top: 20px; border-top: 1px solid #dbe4f0; padding-top: 15px;">
+                <label style="font-size: 14px; font-weight: bold; color: #132c4d; display: block; margin-bottom: 8px;">匯款完成後請填寫：</label>
+                <input type="text" id="bank-last-5" placeholder="輸入帳號【後五碼】" maxlength="5" style="border: 2px solid #132c4d; text-align: center; font-size: 18px; font-weight: bold;">
             </div>
         </div>
         <a href="#" id="line-pay-link-el" target="_blank" style="display: none; background: #06c755; color: white; padding: 14px; border-radius: 12px; font-weight: bold; margin-bottom: 15px; text-decoration:none;">🟢 點我用 LINE Pay</a>
-        <button onclick="submitPaymentConfirm()" style="background: var(--text-main); color: white; border: none; width: 100%; padding: 14px; border-radius: 30px; font-weight: bold; font-size: 16px; cursor: pointer;">✅ 送出查帳</button>
+        <button onclick="submitPaymentConfirm()" style="background: #132c4d; color: white; border: none; width: 100%; padding: 14px; border-radius: 30px; font-weight: bold; font-size: 16px; cursor: pointer;">✅ 送出查帳</button>
     </div>
 </div>
 
 <div id="sop-modal" class="modal-overlay" onclick="if(event.target===this) closeSopModal()">
     <div class="modal-content" style="text-align: center; max-width: 800px; padding: 20px;">
         <span class="modal-close" onclick="closeSopModal()">×</span>
-        <h2 style="color: var(--text-main); margin-top: 0; margin-bottom: 15px; font-weight: 900;">📝 付款 SOP</h2>
+        <h2 style="color: #132c4d; margin-top: 0; margin-bottom: 15px; font-weight: 900;">📝 付款 SOP</h2>
         <img id="sop-img-el" src="" style="width: 100%; border-radius: 12px; max-height: 75vh; object-fit: contain;">
     </div>
 </div>
@@ -546,8 +479,8 @@
 <div id="info-modal" class="modal-overlay" onclick="if(event.target===this) closeInfoModal()">
     <div class="modal-content" id="info-modal-content" style="max-width: 600px; width: 95%;">
         <span class="modal-close" onclick="closeInfoModal()">×</span>
-        <h2 id="info-modal-title" style="margin-top:0; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; color: var(--text-main); font-weight: 900;"></h2>
-        <div class="modal-body" id="info-modal-body" style="line-height: 1.8; color: var(--text-main); font-size: 15px;"></div>
+        <h2 id="info-modal-title" style="margin-top:0; border-bottom: 1px solid #dbe4f0; padding-bottom: 15px; color: #132c4d; font-weight: 900;"></h2>
+        <div class="modal-body" id="info-modal-body" style="line-height: 1.8; color: #2d3748; font-size: 15px;"></div>
     </div>
 </div>
 
@@ -633,23 +566,21 @@
     };
 
     const defaultSettings = {
-        globalFont: "'Noto Sans TC', sans-serif",
-        main: { text: "日本連線代購", size: "48px", color: "#4A4036", font: "inherit" },
-        sub: { text: "嚴選日本好物，把和風質感與可愛原封不動送到您手中！⛩️", size: "16px", color: "#8C7A6B", font: "inherit" },
-        speechBubble: { text: "いらっしゃいませ！歡迎光臨", color: "#D94F5C", bg: "#ffffff" },
-        sect: { text: "本次選物", size: "15px", color: "#8C7A6B", font: "inherit" },
-        liveSect: { text: "連線快閃", size: "15px", color: "#8C7A6B", font: "inherit" },
-        inStockSect: { text: "現貨專區", size: "15px", color: "#8C7A6B", font: "inherit" },
-        promo: { text: "✨ 會員專屬：滿 NT$3,000 享國內免運 ✨", size: "15px", color: "#D94F5C", bg: "rgba(217, 79, 92, 0.05)", font: "inherit" },
-        notice: { text: "🧮 有換算計算機可以參考唷~~", size: "13px", color: "#ffffff", font: "inherit", bg: "#D4AF37" },
-        avatarUrl: "./image_afd7aa.png", // 您指定的頭像檔案
+        globalFont: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, '微軟正黑體', sans-serif",
+        main: { text: "小魔丸旅遊代購", size: "48px", color: "#ffffff", font: "inherit" },
+        sub: { text: "- Live -", size: "18px", color: "#ffffff", font: "inherit" },
+        sect: { text: "本次選物", size: "14px", color: "#ffffff", font: "inherit" },
+        liveSect: { text: "連線快閃", size: "14px", color: "#ffffff", font: "inherit" },
+        inStockSect: { text: "現貨專區", size: "14px", color: "#ffffff", font: "inherit" },
+        promo: { text: "✦ 會員專屬：滿 NT$3,000 享國內免運 ✦", size: "14px", color: "#1c3f6e", bg: "#eef3f8", font: "inherit" },
+        notice: { text: "🧮 有換算計算機可以參考唷~~", size: "13px", color: "#ffffff", font: "inherit", bg: "#2b6cb0" },
+        avatarUrl: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=150&q=80",
         heroBgUrl: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&w=1600&q=80",
-        heroMascotUrl: "https://cdn-icons-png.flaticon.com/512/3504/3504787.png", // 預設柴犬icon，可在後台換成您的博美犬
         bankCode: "822 (中國信託)", bankAccount: "1234-5678-9012", qrCodeUrl: "", linePayUrl: "", sopImgUrl: "",
-        sopBtn: { text: "付款SOP", size: "14px", color: "#4A4036", bg: "#ffffff" },
-        btnProfile: { text: "立即綁定", size: "14px", color: "#4A4036" },
-        btnProduct: { text: "瀏覽商品", size: "15px", color: "#4A4036" },
-        btnOrder: { text: "查詢訂單", size: "15px", color: "#4A4036" },
+        sopBtn: { text: "付款SOP", size: "14px", color: "#132c4d", bg: "#eef3f8" },
+        btnProfile: { text: "立即綁定", size: "14px", color: "#132c4d" },
+        btnProduct: { text: "瀏覽商品", size: "15px", color: "#132c4d" },
+        btnOrder: { text: "查詢訂單", size: "15px", color: "#132c4d" },
         
         exchangeRates: [
             { limit: 1000, rate: 0.3 },
@@ -660,26 +591,26 @@
         ],
 
         summaryBox: {
-            reg: { text: "🛒 未結案總額：", color: "#4A4036", size: "15px" },
-            chk: { text: "💰 已付訂金：", color: "#D4AF37", size: "15px" },
-            dep: { text: "💰 未付尾款：", color: "#D94F5C", size: "15px" },
-            noteTitle: { text: "狀態說明：", color: "#8C7A6B", size: "13px" }
+            reg: { text: "🛒 未結案總額：", color: "#132c4d", size: "15px" },
+            chk: { text: "💰 已付訂金：", color: "#319795", size: "15px" },
+            dep: { text: "💰 未付尾款：", color: "#d32f2f", size: "15px" },
+            noteTitle: { text: "狀態說明：", color: "#718096", size: "13px" }
         },
         summaryLabels: {
             registered: { text: "已登記: 已成立訂單", size: "13px", color: "#4a5568", font: "inherit" },
             unpurchased: { text: "未採買", size: "13px", color: "#4a5568", font: "inherit" },
-            depositPaid: { text: "已付訂金: 採買中", size: "13px", color: "#D4AF37", font: "inherit" },
+            depositPaid: { text: "已付訂金: 採買中", size: "13px", color: "#319795", font: "inherit" },
             paid: { text: "已付款", size: "13px", color: "#319795", font: "inherit" },
             shipped: { text: "已出貨: 貨已出", size: "13px", color: "#319795", font: "inherit" },
-            outOfStock: { text: "已斷貨: 聯繫退款", size: "13px", color: "#D94F5C", font: "inherit" }
+            outOfStock: { text: "已斷貨: 聯繫退款", size: "13px", color: "#d32f2f", font: "inherit" }
         },
         infoStyles: {
             btnBg: "#ffffff",
-            btnTextCol: "#4A4036",
-            btnBorder: "#EFE8DF",
+            btnTextCol: "#132c4d",
+            btnBorder: "#dbe4f0",
             modalBg: "#ffffff",
-            modalTextCol: "#4A4036",
-            modalTitleCol: "#4A4036",
+            modalTextCol: "#2d3748",
+            modalTitleCol: "#132c4d",
             fontSize: "15px"
         },
         groupCovers: {} 
@@ -803,8 +734,8 @@
             return `
             <div class="sub-product-card">
                 <div class="modern-img-box" style="padding-top:100%; border-radius:12px; margin-bottom:10px;"><img src="${formatImageUrl(p.img)}"></div>
-                <h5 style="margin: 0 0 5px 0; font-size:14px; color:var(--text-main);">${cleanName}</h5>
-                <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: bold; color: var(--accent-red);">NT$ ${p.price}</p>
+                <h5 style="margin: 0 0 5px 0; font-size:14px; color:#132c4d;">${cleanName}</h5>
+                <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: bold; color: #4a5568;">NT$ ${p.price}</p>
                 <div class="action-row" style="margin-top:auto;">
                     <div class="qty-selector" style="height:32px; border-radius:8px;">
                         <button class="qty-btn" onclick="changeQty('qty-sub-${p.id}', -1)">-</button>
@@ -900,26 +831,10 @@
     function applyStyles() {
         document.getElementById('app-body').style.fontFamily = settings.globalFont || defaultSettings.globalFont;
 
-        // Q版 對話框設置
-        const bubble = document.getElementById("speech-bubble-el");
-        if(bubble) {
-            bubble.innerText = settings.speechBubble?.text || "いらっしゃいませ！歡迎光臨";
-            bubble.style.color = settings.speechBubble?.color || "#D94F5C";
-            bubble.style.borderColor = settings.speechBubble?.color || "#D94F5C";
-            bubble.style.backgroundColor = settings.speechBubble?.bg || "#ffffff";
-        }
-        
-        // 圓窗背景設置
-        const ensoFrame = document.getElementById("enso-frame-el");
-        if(ensoFrame) {
+        const heroSection = document.getElementById("hero-section-el");
+        if (heroSection) {
             let bgUrl = settings.heroBgUrl || defaultSettings.heroBgUrl;
-            ensoFrame.style.backgroundImage = `url('${formatImageUrl(bgUrl)}')`;
-        }
-
-        // 狗狗吉祥物設置
-        const mascot = document.getElementById("hero-mascot-el");
-        if(mascot) {
-            mascot.src = formatImageUrl(settings.heroMascotUrl || defaultSettings.heroMascotUrl);
+            heroSection.style.backgroundImage = `linear-gradient(rgba(19, 44, 77, 0.2), rgba(19, 44, 77, 0.6)), url('${formatImageUrl(bgUrl)}')`;
         }
 
         const safeSet = (id, obj) => {
@@ -938,13 +853,10 @@
         safeSet("main-title", settings.main); 
         safeSet("sub-title", settings.sub);
         safeSet("section-title", settings.sect); 
-        safeSet("section-title-2", settings.sect);
         safeSet("live-section-title", settings.liveSect); 
-        safeSet("live-section-title-2", settings.liveSect); 
         safeSet("instock-section-title", settings.inStockSect);
-        safeSet("instock-section-title-2", settings.inStockSect);
         safeSet("nav-title-el", settings.main);
-        document.getElementById("nav-title-el").style.fontSize = '20px'; 
+        document.getElementById("nav-title-el").style.fontSize = '18px'; 
         
         const promo = document.getElementById("promo-banner-el");
         if(promo) { promo.innerText = settings.promo?.text||""; promo.style.fontSize = settings.promo?.size; promo.style.color = settings.promo?.color; promo.style.background = settings.promo?.bg; promo.style.fontFamily = settings.promo?.font; }
@@ -985,16 +897,9 @@
         currentProductTab = tab;
         ['current', 'instock', 'live'].forEach(t => {
             let btn = document.getElementById('tab-btn-' + t), list = document.getElementById('product-list-' + t);
-            let btn2 = document.getElementById('tab-btn-' + t + '-2');
-            
             if(btn) {
-                if(t === tab) { 
-                    btn.classList.add('active'); btn.style.color = '#fff'; btn.style.background = 'var(--text-main)';
-                    if(btn2) { btn2.classList.add('active'); btn2.style.color = '#fff'; btn2.style.background = 'var(--text-main)'; }
-                } else { 
-                    btn.classList.remove('active'); btn.style.color = 'var(--text-muted)'; btn.style.background = '#fff';
-                    if(btn2) { btn2.classList.remove('active'); btn2.style.color = 'var(--text-muted)'; btn2.style.background = '#fff'; }
-                }
+                if(t === tab) { btn.classList.add('active'); btn.style.color = settings.sect?.color || '#fff'; }
+                else { btn.classList.remove('active'); btn.style.color = '#4a5568'; }
             }
             if(list) list.style.display = t === tab ? 'grid' : 'none';
         });
@@ -1010,7 +915,6 @@
                     if (!settings.summaryBox) settings.summaryBox = defaultSettings.summaryBox; 
                     if (!settings.infoStyles) settings.infoStyles = defaultSettings.infoStyles;
                     if (!settings.exchangeRates) settings.exchangeRates = defaultSettings.exchangeRates;
-                    if (!settings.speechBubble) settings.speechBubble = defaultSettings.speechBubble;
                     applyStyles(); 
                 } catch(e){}
                 data.splice(setIdx, 1);
@@ -1085,11 +989,11 @@
                 html += `
                 <div class="modern-card group-card" onclick="openGroupModal('${gName}', '${tabName}')">
                     <div class="modern-img-box">
-                        <span class="tag">多款可選</span>
+                        <span class="tag" style="background: #132c4d; color: white;">多款可選</span>
                         <img src="${coverImg}">
                     </div>
                     <h3 class="modern-card-title">📁 ${gName}</h3>
-                    <p class="modern-card-price" style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">內含 ${groups[gName].length} 項款式</p>
+                    <p class="modern-card-price" style="font-size:13px; color:#a0aec0; margin-bottom:10px;">內含 ${groups[gName].length} 項款式</p>
                     <button class="group-btn">點擊進入選購</button>
                 </div>`;
             }
@@ -1113,7 +1017,7 @@
                     </div>
                 </div>`;
             });
-            return html || '<p style="grid-column: 1/-1; text-align:center; color:var(--text-muted); padding: 40px 0;">目前無商品</p>';
+            return html || '<p style="grid-column: 1/-1; text-align:center; color:#a0aec0; padding: 40px 0;">目前無商品</p>';
         }
 
         document.getElementById('product-list-current').innerHTML = buildTabHtml('current');
@@ -1139,9 +1043,9 @@
                 let btn = event.target;
                 let oldText = btn.innerText;
                 btn.innerText = "✅ 已加入";
-                btn.style.background = "var(--accent-red)";
+                btn.style.background = "#319795";
                 btn.style.color = "white";
-                setTimeout(() => { btn.innerText = oldText; btn.style.background = "var(--text-main)"; }, 1000);
+                setTimeout(() => { btn.innerText = oldText; btn.style.background = "#132c4d"; }, 1000);
             }
             updateCartUI(); 
             
@@ -1185,7 +1089,7 @@
     function updateCartUI() {
         document.getElementById('nav-cart-badge').innerText = myCart.length;
         if (myCart.length === 0) {
-            document.getElementById('cart-items').innerHTML = '<div style="color:var(--text-muted); text-align:center; padding: 40px 20px; font-weight:bold;">清單是空的，快去選購吧！</div>';
+            document.getElementById('cart-items').innerHTML = '<div style="color:#a0aec0; text-align:center; padding: 40px 20px; font-weight:bold;">清單是空的，快去選購吧！</div>';
             document.getElementById('total-amount').innerText = '0';
             return;
         }
@@ -1193,42 +1097,42 @@
         let allSelected = myCart.every(i => i.selected);
         
         let html = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid var(--border-color);">
-                <label style="display:flex; align-items:center; gap:8px; font-weight:bold; color:var(--text-main); cursor:pointer;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid #dbe4f0;">
+                <label style="display:flex; align-items:center; gap:8px; font-weight:bold; color:#132c4d; cursor:pointer;">
                     <input type="checkbox" id="cart-select-all" onchange="toggleCartSelectAll(this.checked)" ${allSelected ? 'checked' : ''} style="margin:0;"> 
                     全選
                 </label>
-                <button onclick="removeSelectedCartItems()" style="background:var(--accent-red); color:white; border:none; padding:8px 16px; border-radius:20px; font-size:13px; font-weight:bold; cursor:pointer; transition: 0.2s;">🗑️ 刪除選取</button>
+                <button onclick="removeSelectedCartItems()" style="background:#e53e3e; color:white; border:none; padding:8px 16px; border-radius:20px; font-size:13px; font-weight:bold; cursor:pointer; transition: 0.2s;">🗑️ 刪除選取</button>
             </div>
         `;
         
         html += myCart.map((i, idx) => `
-            <div style="background: var(--bg-color); padding: 15px; border: 2px solid var(--border-color); border-radius: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="background: #f4f8fb; padding: 15px; border: 1px solid #dbe4f0; border-radius: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px;">
                 
                 <div style="display: flex; gap: 15px; align-items: center;">
                     <input type="checkbox" class="cart-item-chk" value="${idx}" ${i.selected ? 'checked' : ''} onchange="updateCartSelection(${idx}, this.checked)" style="margin: 0; flex-shrink: 0;">
                     
-                    <div style="width: 70px; height: 70px; flex-shrink: 0; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; background: #ffffff;">
+                    <div style="width: 70px; height: 70px; flex-shrink: 0; border-radius: 12px; border: 1px solid #dbe4f0; overflow: hidden; background: #ffffff;">
                         <img src="${formatImageUrl(i.img)}" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                     
                     <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; height: 70px;">
-                        <div style="font-weight: 800; font-size: 15px; color: var(--text-main); line-height: 1.3; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${i.name}</div>
+                        <div style="font-weight: 800; font-size: 15px; color: #132c4d; line-height: 1.3; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${i.name}</div>
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div style="color: var(--accent-red); font-weight: bold; font-size: 15px;">NT$ ${i.price}</div>
+                            <div style="color: #e53e3e; font-weight: bold; font-size: 15px;">NT$ ${i.price}</div>
                             
-                            <div style="display: grid; grid-template-columns: 28px 1fr 28px; align-items: center; border: 1px solid var(--border-color); border-radius: 8px; background: #ffffff; height: 28px; width: 90px; overflow: hidden;">
-                                <button onclick="updateCartQty(${idx}, -1)" style="border: none; background: var(--bg-color); height: 100%; width: 100%; font-size: 16px; cursor: pointer; color: var(--text-main); font-weight: bold; padding: 0; display:flex; justify-content:center; align-items:center;">-</button>
-                                <input type="text" value="${i.quantity}" readonly style="width: 100%; height:100%; text-align: center; border: none; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); background: transparent; font-size: 14px; font-weight: bold; padding: 0; margin: 0; color: var(--text-main); outline: none; border-radius:0; box-sizing: border-box;">
-                                <button onclick="updateCartQty(${idx}, 1)" style="border: none; background: var(--bg-color); height: 100%; width: 100%; font-size: 14px; cursor: pointer; color: var(--text-main); font-weight: bold; padding: 0; display:flex; justify-content:center; align-items:center;">+</button>
+                            <div style="display: grid; grid-template-columns: 28px 1fr 28px; align-items: center; border: 1px solid #c6d4e1; border-radius: 8px; background: #ffffff; height: 28px; width: 90px; overflow: hidden;">
+                                <button onclick="updateCartQty(${idx}, -1)" style="border: none; background: #f4f8fb; height: 100%; width: 100%; font-size: 16px; cursor: pointer; color: #4a5568; font-weight: bold; padding: 0; display:flex; justify-content:center; align-items:center;">-</button>
+                                <input type="text" value="${i.quantity}" readonly style="width: 100%; height:100%; text-align: center; border: none; border-left: 1px solid #dbe4f0; border-right: 1px solid #dbe4f0; background: transparent; font-size: 14px; font-weight: bold; padding: 0; margin: 0; color: #132c4d; outline: none; border-radius:0; box-sizing: border-box;">
+                                <button onclick="updateCartQty(${idx}, 1)" style="border: none; background: #f4f8fb; height: 100%; width: 100%; font-size: 14px; cursor: pointer; color: #4a5568; font-weight: bold; padding: 0; display:flex; justify-content:center; align-items:center;">+</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div style="background: #ffffff; border-radius: 8px; padding: 8px 12px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 13px; color: var(--text-muted); white-space: nowrap;">📝 備註：</span>
-                    <input type="text" placeholder="填寫顏色、尺寸等需求" value="${i.remark || ''}" onchange="updateCartItemRemark(${idx}, this.value)" style="flex: 1; border: none; background: transparent; font-size: 14px; outline: none; padding: 0; margin: 0; color: var(--text-main); border-radius: 0;">
+                <div style="background: #ffffff; border-radius: 8px; padding: 8px 12px; border: 1px solid #dbe4f0; display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 13px; color: #a0aec0; white-space: nowrap;">📝 備註：</span>
+                    <input type="text" placeholder="填寫顏色、尺寸等需求" value="${i.remark || ''}" onchange="updateCartItemRemark(${idx}, this.value)" style="flex: 1; border: none; background: transparent; font-size: 14px; outline: none; padding: 0; margin: 0; color: #132c4d; border-radius: 0;">
                 </div>
 
             </div>
@@ -1321,7 +1225,7 @@
 
     function fetchMyOrders(autoPay = false) {
         if(currentUserProfile.userId === "訪客測試") return alert("請先登入 LINE 才能查詢唷！");
-        document.getElementById('order-history').innerHTML = '<p style="text-align:center; padding: 40px 0; color: var(--text-muted);">載入中...</p>';
+        document.getElementById('order-history').innerHTML = '<p style="text-align:center; padding: 40px 0; color: #a0aec0;">載入中...</p>';
         fetch(`${GAS_URL}?userId=${currentUserProfile.userId}&t=${new Date().getTime()}`).then(res => res.json()).then(data => {
             
             let ordersArray = data.orders || [];
@@ -1334,13 +1238,14 @@
             
             if(filtered.length===0) {
                 document.getElementById('summary-result').innerHTML = '';
-                return document.getElementById('order-history').innerHTML = '<p style="text-align:center; padding: 40px 0; color: var(--text-muted);">無訂單紀錄</p>';
+                return document.getElementById('order-history').innerHTML = '<p style="text-align:center; padding: 40px 0; color: #a0aec0;">無訂單紀錄</p>';
             }
             
             let html = `<table><tr><th style="width:30px; text-align:center;"><input type="checkbox" onclick="document.querySelectorAll('.user-order-chk').forEach(c=>c.checked=this.checked);calcSelectedTotal()"></th><th>日期</th><th>商品</th><th>備註</th><th>狀態</th><th>金額</th><th>已付金額</th><th>未付尾款</th></tr>`;
             filtered.forEach(o => {
                 let p = Number(o.price) || 0;
                 
+                // 🟢 修正：讀取後台傳來的「已付金額」(J欄)，並計算「未付尾款」(F欄 - J欄)
                 let deposit = Number(o.paidAmount) || 0;
                 let balance = p - deposit;       
 
@@ -1355,7 +1260,7 @@
                     chk = `<input type="checkbox" class="user-order-chk" value="${o.row}" data-price="${p}" data-deposit="${depositDisplay}" data-balance="${balanceDisplay}" data-status="${o.status}" onchange="calcSelectedTotal()">`; 
                 }
 
-                let sc='var(--bg-color)', tc='var(--text-main)';
+                let sc='#eef3f8', tc='#4a5568';
                 if(o.status==='已斷貨'){ sc='#fef2f2'; tc='#e53e3e'; }
                 else if(o.status.includes('待查帳')){ sc='#fef3c7'; tc='#d97706'; }
                 else if(o.status==='已出貨' || o.status==='已付款'){ sc='#e6fffa'; tc='#319795'; }
@@ -1367,13 +1272,13 @@
                 
                 html += `<tr>
                     <td style="text-align:center;">${chk}</td>
-                    <td style="white-space:nowrap; color: var(--text-muted);">${o.date.split(' ')[0]}</td>
-                    <td style="font-weight:bold; color: var(--text-main);">${o.product}</td>
-                    <td style="font-size:12px; color:var(--text-muted); max-width:100px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${remarkText}">${remarkText}</td>
-                    <td><span class="status-badge" style="background:${sc};color:${tc}; border: 1px solid var(--border-color);">${o.status}</span></td>
+                    <td style="white-space:nowrap; color: #718096;">${o.date.split(' ')[0]}</td>
+                    <td style="font-weight:bold; color: #132c4d;">${o.product}</td>
+                    <td style="font-size:12px; color:#a0aec0; max-width:100px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${remarkText}">${remarkText}</td>
+                    <td><span class="status-badge" style="background:${sc};color:${tc};">${o.status}</span></td>
                     <td style="font-weight:bold;">$${p}</td>
-                    <td style="color:var(--accent-gold); font-weight:bold;">${depositDisplay}</td>
-                    <td style="color:var(--accent-red); font-weight:bold;">${balanceDisplay}</td>
+                    <td style="color:#319795; font-weight:bold;">${depositDisplay}</td>
+                    <td style="color:#e53e3e; font-weight:bold;">${balanceDisplay}</td>
                 </tr>`;
             });
             document.getElementById('order-history').innerHTML = html + '</table>';
@@ -1387,7 +1292,7 @@
                     <div style="font-size:${sb.chk.size}; color:${sb.chk.color}; font-weight:bold;">${sb.chk.text} NT$ <span id="summary-total-deposit">0</span></div>
                     <div style="font-size:${sb.dep.size}; color:${sb.dep.color}; font-weight:bold;">${sb.dep.text} NT$ <span id="summary-total-balance">0</span></div>
                 </div>
-                <div style="padding:15px 20px; background:#ffffff; border:2px solid var(--border-color); border-radius:16px; font-size:13px; margin-bottom:20px; line-height:1.8;">
+                <div style="padding:15px 20px; background:#ffffff; border:1px solid #dbe4f0; border-radius:16px; font-size:13px; margin-bottom:20px; line-height:1.8;">
                     <strong style="color:${sb.noteTitle.color}; font-size:${sb.noteTitle.size}; margin-right:10px;">${sb.noteTitle.text}</strong>
                     <span style="color:${sl.registered.color}; font-size:${sl.registered.size}; display:inline-block; margin-right:10px;">• ${sl.registered.text}</span>
                     <span style="color:${sl.unpurchased.color}; font-size:${sl.unpurchased.size}; display:inline-block; margin-right:10px;">• ${sl.unpurchased.text}</span>
@@ -1397,18 +1302,18 @@
                     <span style="color:${sl.outOfStock.color}; font-size:${sl.outOfStock.size}; display:inline-block;">• ${sl.outOfStock.text}</span>
                 </div>
                 <div class="checkout-bar">
-                    <span style="font-weight:bold; font-size: 16px;">勾選結帳總額：<span style="color:var(--accent-gold); font-size: 20px; margin-left: 5px;">NT$ <span id="selected-payment-display">0</span></span></span>
-                    <button onclick="openPaymentModal()" style="background:#ffffff; color:var(--text-main); border:none; padding:10px 24px; border-radius:30px; font-weight:bold; font-size:14px; cursor: pointer; transition: 0.2s; white-space: nowrap;">前往匯款</button>
+                    <span style="font-weight:bold; font-size: 16px;">勾選結帳總額：<span style="color:#f87171; font-size: 20px; margin-left: 5px;">NT$ <span id="selected-payment-display">0</span></span></span>
+                    <button onclick="openPaymentModal()" style="background:#ffffff; color:#132c4d; border:none; padding:10px 24px; border-radius:30px; font-weight:bold; font-size:14px; cursor: pointer; transition: 0.2s; white-space: nowrap;">前往匯款</button>
                 </div>`;
             
             if (personalMyshipUrl && personalMyshipUrl.trim() !== '') {
                 let myshipHtml = `
-                <div style="background: #fffaf0; border: 2px solid var(--accent-gold); border-radius: 16px; padding: 20px; margin-top: 20px;">
-                    <label style="display: flex; align-items: center; gap: 10px; font-weight: bold; color: var(--text-main); cursor: pointer; margin-bottom: 15px; font-size: 15px;">
-                        <input type="checkbox" id="confirm-order-chk" style="width: 20px; height: 20px; accent-color: var(--accent-gold); margin: 0; cursor: pointer;" onchange="toggleMyshipBtn(this.checked)">
+                <div style="background: #fffaf0; border: 1px solid #fbd38d; border-radius: 16px; padding: 20px; margin-top: 20px;">
+                    <label style="display: flex; align-items: center; gap: 10px; font-weight: bold; color: #975a16; cursor: pointer; margin-bottom: 15px; font-size: 15px;">
+                        <input type="checkbox" id="confirm-order-chk" style="width: 20px; height: 20px; accent-color: #dd6b20; margin: 0; cursor: pointer;" onchange="toggleMyshipBtn(this.checked)">
                         我已確認訂單明細，準備填寫寄件門市
                     </label>
-                    <button id="myship-btn" disabled onclick="window.open('${personalMyshipUrl}', '_blank')" style="width: 100%; background: var(--bg-color); color: var(--text-muted); border: 2px solid var(--border-color); padding: 14px; border-radius: 30px; font-weight: bold; font-size: 15px; cursor: not-allowed; transition: all 0.3s ease;">
+                    <button id="myship-btn" disabled onclick="window.open('${personalMyshipUrl}', '_blank')" style="width: 100%; background: #fbd38d; color: #7b341e; border: none; padding: 14px; border-radius: 30px; font-weight: bold; font-size: 15px; cursor: not-allowed; transition: all 0.3s ease;">
                         📦 系統已產生專屬賣貨便結帳連結
                     </button>
                 </div>
@@ -1417,15 +1322,13 @@
                         let btn = document.getElementById('myship-btn');
                         if(isChecked) {
                             btn.disabled = false;
-                            btn.style.background = 'var(--accent-gold)';
+                            btn.style.background = '#dd6b20';
                             btn.style.color = '#ffffff';
-                            btn.style.borderColor = 'var(--accent-gold)';
                             btn.style.cursor = 'pointer';
                         } else {
                             btn.disabled = true;
-                            btn.style.background = 'var(--bg-color)';
-                            btn.style.color = 'var(--text-muted)';
-                            btn.style.borderColor = 'var(--border-color)';
+                            btn.style.background = '#fbd38d';
+                            btn.style.color = '#7b341e';
                             btn.style.cursor = 'not-allowed';
                         }
                     }
@@ -1506,12 +1409,12 @@
             if(btn) {
                 if(t === tab) { 
                     btn.classList.add('active'); 
-                    btn.style.background = 'var(--text-main)'; 
+                    btn.style.background = '#132c4d'; 
                     btn.style.color = 'white'; 
                 } else { 
                     btn.classList.remove('active'); 
                     btn.style.background = 'transparent'; 
-                    btn.style.color = 'var(--text-muted)'; 
+                    btn.style.color = '#4a5568'; 
                 }
             }
         });
@@ -1531,51 +1434,52 @@
         }
         
         let fontOptions = `
-            <option value="'Noto Sans TC', sans-serif">預設 (思源黑體)</option>
-            <option value="'Noto Serif TC', serif">思源宋體 (高級感)</option>
-            <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, '微軟正黑體', sans-serif">系統黑體 (現代感)</option>
+            <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, '微軟正黑體', sans-serif">預設 (現代蘋果/黑體)</option>
             <option value="'DFKai-sb', 'BiauKai', serif">標楷體</option>
+            <option value="'Noto Sans TC', sans-serif">思源黑體</option>
+            <option value="Georgia, serif">襯線體 (Serif)</option>
+            <option value="Courier New, monospace">等寬字體 (Monospace)</option>
         `;
 
         let uniqueGroups = [...new Set(products.filter(p => p.id !== '_SITE_SETTINGS_' && p.group && p.group.trim() !== '').map(p => p.group))];
         let groupCoverHtml = uniqueGroups.length > 0 ? uniqueGroups.map(g => `
             <div class="upload-container" style="display:flex; align-items:center; margin-bottom:12px; gap: 10px;">
-                <span style="min-width:80px; font-size:14px; font-weight:bold; color:var(--text-muted);" title="${g}">📁 ${g}</span>
+                <span style="min-width:80px; font-size:14px; font-weight:bold; color:#4a5568;" title="${g}">📁 ${g}</span>
                 <input type="text" class="g-cover-input" data-group="${g}" value="${(settings.groupCovers && settings.groupCovers[g]) ? settings.groupCovers[g] : ''}" placeholder="請貼上圖片網址" style="flex:1; margin-bottom:0; padding:10px; border-radius:8px;">
-                <label style="background:var(--bg-color); color:var(--text-main); border: 2px solid var(--border-color); padding:10px 14px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; margin-bottom:0; white-space:nowrap; transition: 0.2s;">
+                <label style="background:#eef3f8; color:#132c4d; border: 1px solid #c6d4e1; padding:10px 14px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; margin-bottom:0; white-space:nowrap; transition: 0.2s;">
                     📁上傳<input type="file" accept="image/*" style="display:none;" onchange="uploadImageToImgbb(this)">
                 </label>
             </div>
-        `).join('') : '<p style="font-size:14px; color:var(--text-muted);">目前尚未建立任何包含商品的群組。</p>';
+        `).join('') : '<p style="font-size:14px; color:#a0aec0;">目前尚未建立任何包含商品的群組。</p>';
         
         const sb = settings.summaryBox || defaultSettings.summaryBox;
         const exRates = settings.exchangeRates || defaultSettings.exchangeRates; 
 
         document.getElementById('admin-panel').innerHTML = `
-            <div style="background:var(--bg-color); padding:20px; border-radius:16px; margin-bottom:25px; font-weight:bold; color:var(--text-main); display:flex; justify-content:space-between; align-items: center; border: 2px solid var(--border-color);">
+            <div style="background:#e6fffa; padding:20px; border-radius:16px; margin-bottom:25px; font-weight:bold; color:#319795; display:flex; justify-content:space-between; align-items: center; border: 1px solid #81e6d9;">
                 <span style="font-size: 16px;">🟢 管理員登入成功</span> 
-                <button onclick="sessionStorage.clear();showView('home');" style="background:var(--accent-red); color:white; border:none; border-radius:30px; padding:8px 16px; cursor:pointer; font-weight:bold;">安全登出</button>
+                <button onclick="sessionStorage.clear();showView('home');" style="background:#e53e3e; color:white; border:none; border-radius:30px; padding:8px 16px; cursor:pointer; font-weight:bold;">安全登出</button>
             </div>
             
             <div class="fast-order-box">
-                <strong style="color:var(--text-main); font-size: 18px; display:block; margin-bottom: 5px;">⚡ 小幫手極速建單 (直播對話框紀錄)</strong>
-                <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 15px 0;">輸入客人暱稱與代碼，系統會自動尋找對應會員並建單。</p>
+                <strong style="color:#132c4d; font-size: 18px; display:block; margin-bottom: 5px;">⚡ 小幫手極速建單 (直播對話框紀錄)</strong>
+                <p style="font-size: 13px; color: #718096; margin: 0 0 15px 0;">輸入客人暱稱與代碼，系統會自動尋找對應會員並建單。</p>
                 <div style="display:flex; gap:12px; align-items: center; flex-wrap: wrap;">
                     <input type="text" id="fast-user" placeholder="客人社群暱稱" style="flex:2; min-width: 150px; margin-bottom:0;">
-                    <input type="text" id="fast-code" placeholder="商品代碼 (如 A01)" style="flex:1.5; min-width: 120px; margin-bottom:0; text-transform: uppercase; font-weight: bold; color: var(--accent-red);">
+                    <input type="text" id="fast-code" placeholder="商品代碼 (如 A01)" style="flex:1.5; min-width: 120px; margin-bottom:0; text-transform: uppercase; font-weight: bold; color: #319795;">
                     <input type="number" id="fast-qty" placeholder="數量" value="1" min="1" style="flex:1; min-width: 80px; margin-bottom:0; text-align:center;">
-                    <button onclick="submitFastOrder()" style="background:var(--text-main); color:white; border:none; border-radius:12px; font-weight:bold; padding: 14px 24px; cursor: pointer; white-space: nowrap; transition:0.2s;">送出 (Enter)</button>
+                    <button onclick="submitFastOrder()" style="background:#132c4d; color:white; border:none; border-radius:12px; font-weight:bold; padding: 14px 24px; cursor: pointer; white-space: nowrap; transition:0.2s;">送出 (Enter)</button>
                 </div>
             </div>
 
-            <div style="background:#ffffff; padding:30px; border-radius:24px; border:2px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.02); margin-bottom: 25px;">
-                <h3 style="color:var(--text-main); border-bottom:2px dashed var(--border-color); padding-bottom:15px; margin-top:0;">🎨 全站字體與版面設定</h3>
+            <div style="background:#ffffff; padding:30px; border-radius:24px; border:1px solid #dbe4f0; box-shadow: 0 10px 30px rgba(0,0,0,0.02); margin-bottom: 25px;">
+                <h3 style="color:#132c4d; border-bottom:2px solid #eef3f8; padding-bottom:15px; margin-top:0;">🎨 全站字體與版面設定</h3>
                 
-                <div style="background:var(--bg-color); padding:20px; border-radius:16px; margin-bottom:15px; border:2px solid var(--border-color);">
-                    <strong style="color:var(--text-main);">🧮 匯率計算機設定 (5個區間)</strong><br>
+                <div style="background:#f4f8fb; padding:20px; border-radius:16px; margin-bottom:15px; border:1px solid #dbe4f0;">
+                    <strong style="color:#132c4d;">🧮 匯率計算機設定 (5個區間)</strong><br>
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-                        <div style="font-weight:bold; font-size:13px; color:var(--text-muted);">區間上限 (日圓)</div>
-                        <div style="font-weight:bold; font-size:13px; color:var(--text-muted);">對應匯率倍數</div>
+                        <div style="font-weight:bold; font-size:13px; color:#4a5568;">區間上限 (日圓)</div>
+                        <div style="font-weight:bold; font-size:13px; color:#4a5568;">對應匯率倍數</div>
                         
                         <div>區間 1: ≦ <input type="number" id="er-l1" value="${exRates[0].limit}" style="width:70%; margin-bottom:0; padding:10px;"></div>
                         <div><input type="number" step="0.001" id="er-r1" value="${exRates[0].rate}" style="margin-bottom:0; padding:10px;"></div>
@@ -1592,44 +1496,39 @@
                         <div>區間 5: ≦ <input type="number" id="er-l5" value="${exRates[4].limit}" style="width:70%; margin-bottom:0; padding:10px;" placeholder="填入極大值"></div>
                         <div><input type="number" step="0.001" id="er-r5" value="${exRates[4].rate}" style="margin-bottom:0; padding:10px;"></div>
                     </div>
-                    <p style="font-size:12px; color:var(--accent-red); margin-top:10px; font-weight:bold;">⚠️ 注意：區間請由小填到大，最後一個區間上限請填極大值 (例如 9999999) 以涵蓋所有剩餘金額。</p>
+                    <p style="font-size:12px; color:#e53e3e; margin-top:10px; font-weight:bold;">⚠️ 注意：區間請由小填到大，最後一個區間上限請填極大值 (例如 9999999) 以涵蓋所有剩餘金額。</p>
                 </div>
 
-                <div style="background:var(--bg-color); padding:20px; border-radius:16px; margin-bottom:15px; border:2px solid var(--border-color);">
-                    <strong style="color:var(--text-main);">A. 全站基礎預設字型</strong><br>
+                <div style="background:#f4f8fb; padding:20px; border-radius:16px; margin-bottom:15px; border:1px solid #dbe4f0;">
+                    <strong style="color:#132c4d;">A. 全站基礎預設字型</strong><br>
                     <select id="g-font" style="margin-top:10px;">
                         <option value="${settings.globalFont}" selected>目前設定</option>
                         ${fontOptions}
                     </select>
                 </div>
 
-                <div style="background:var(--bg-color); padding:20px; border-radius:16px; margin-bottom:15px; border:2px solid var(--border-color); overflow-x: auto;">
-                    <strong style="color:var(--text-main);">B. 首頁標題與提示文字設定</strong><br>
+                <div style="background:#f4f8fb; padding:20px; border-radius:16px; margin-bottom:15px; border:1px solid #dbe4f0; overflow-x: auto;">
+                    <strong style="color:#132c4d;">B. 首頁標題與提示文字設定</strong><br>
                     <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; min-width: 600px;">
                         <div>大標題: <input value="${settings.main.text}" id="m-t"></div>
                         <div>字體: <select id="m-f" style="margin-bottom:15px;"><option value="${settings.main.font}" selected>目前</option>${fontOptions}</select></div>
-                        <div>文字顏色: <input value="${settings.main.color}" id="m-c" placeholder="#4A4036"></div>
+                        <div>文字顏色: <input value="${settings.main.color}" id="m-c" placeholder="#ffffff"></div>
                         <div>文字大小: <input value="${settings.main.size}" id="m-s" placeholder="48px"></div>
 
                         <div>小標題: <input value="${settings.sub.text}" id="s-t"></div>
                         <div></div>
-                        <div>文字顏色: <input value="${settings.sub.color}" id="s-c" placeholder="#8C7A6B"></div>
-                        <div>文字大小: <input value="${settings.sub.size}" id="s-s" placeholder="16px"></div>
+                        <div>文字顏色: <input value="${settings.sub.color}" id="s-c" placeholder="#ffffff"></div>
+                        <div>文字大小: <input value="${settings.sub.size}" id="s-s" placeholder="18px"></div>
                         
                         <div>頂部橫幅: <input value="${settings.notice.text}" id="n-t"></div>
-                        <div>背景顏色: <input value="${settings.notice.bg}" id="n-bg" placeholder="#D4AF37"></div>
+                        <div>背景顏色: <input value="${settings.notice.bg}" id="n-bg" placeholder="#2b6cb0"></div>
                         <div>文字顏色: <input value="${settings.notice.color || '#ffffff'}" id="n-c" placeholder="#ffffff"></div>
                         <div>文字大小: <input value="${settings.notice.size || '13px'}" id="n-s" placeholder="13px"></div>
-                        
-                        <div>對話框文字: <input value="${settings.speechBubble?.text || 'いらっしゃいませ！歡迎光臨'}" id="sp-t"></div>
-                        <div>對話框顏色: <input value="${settings.speechBubble?.color || '#D94F5C'}" id="sp-c"></div>
-                        <div>對話框背景: <input value="${settings.speechBubble?.bg || '#ffffff'}" id="sp-bg"></div>
-                        <div></div>
                     </div>
                 </div>
 
-                <div style="background:var(--bg-color); padding:20px; border-radius:16px; margin-bottom:15px; border:2px solid var(--border-color);">
-                    <strong style="color:var(--text-main);">C. 按鈕與區塊名稱設定</strong><br>
+                <div style="background:#f4f8fb; padding:20px; border-radius:16px; margin-bottom:15px; border:1px solid #dbe4f0;">
+                    <strong style="color:#132c4d;">C. 按鈕與區塊名稱設定</strong><br>
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
                         <div>商品分頁[一般]: <input value="${settings.sect.text}" id="sc-t"></div> 
                         <div>商品分頁[現貨]: <input value="${settings.inStockSect.text}" id="is-t"></div> 
@@ -1639,28 +1538,20 @@
                     </div>
                 </div>
 
-                <div style="background:var(--bg-color); padding:20px; border-radius:16px; margin-bottom:15px; border:2px solid var(--border-color);">
-                    <strong style="color:var(--text-main);">D. 結帳與圖片設定</strong><br>
+                <div style="background:#f4f8fb; padding:20px; border-radius:16px; margin-bottom:15px; border:1px solid #dbe4f0;">
+                    <strong style="color:#132c4d;">D. 結帳與圖片設定</strong><br>
                     <div class="upload-container" style="display:flex; gap:10px; margin-top:10px; margin-bottom:15px; align-items:center;">
                         <span style="font-size:14px; white-space:nowrap; font-weight:bold;">中央Logo/大頭貼:</span>
                         <input type="text" value="${settings.avatarUrl}" id="b-url" style="margin-bottom:0; flex:1;">
-                        <label style="background:#fff; color:var(--text-main); border:2px solid var(--border-color); padding:12px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; margin-bottom:0; white-space:nowrap;">
+                        <label style="background:#eef3f8; color:#132c4d; border:1px solid #c6d4e1; padding:12px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; margin-bottom:0; white-space:nowrap;">
                             📁上傳<input type="file" accept="image/*" style="display:none;" onchange="uploadImageToImgbb(this)">
                         </label>
                     </div>
 
                     <div class="upload-container" style="display:flex; gap:10px; margin-top:10px; margin-bottom:15px; align-items:center;">
-                        <span style="font-size:14px; white-space:nowrap; font-weight:bold;">首頁圓窗背景:</span>
+                        <span style="font-size:14px; white-space:nowrap; font-weight:bold;">首頁背景圖片:</span>
                         <input type="text" value="${settings.heroBgUrl || defaultSettings.heroBgUrl}" id="hero-bg-url" style="margin-bottom:0; flex:1;" placeholder="請貼上圖片網址">
-                        <label style="background:#fff; color:var(--text-main); border:2px solid var(--border-color); padding:12px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; margin-bottom:0; white-space:nowrap;">
-                            📁上傳<input type="file" accept="image/*" style="display:none;" onchange="uploadImageToImgbb(this)">
-                        </label>
-                    </div>
-                    
-                    <div class="upload-container" style="display:flex; gap:10px; margin-top:10px; margin-bottom:15px; align-items:center;">
-                        <span style="font-size:14px; white-space:nowrap; font-weight:bold;">吉祥物去背圖:</span>
-                        <input type="text" value="${settings.heroMascotUrl || ''}" id="mascot-url" style="margin-bottom:0; flex:1;" placeholder="請上傳可愛的去背圖片(透明背景)">
-                        <label style="background:#fff; color:var(--text-main); border:2px solid var(--border-color); padding:12px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; margin-bottom:0; white-space:nowrap;">
+                        <label style="background:#eef3f8; color:#132c4d; border:1px solid #c6d4e1; padding:12px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; margin-bottom:0; white-space:nowrap;">
                             📁上傳<input type="file" accept="image/*" style="display:none;" onchange="uploadImageToImgbb(this)">
                         </label>
                     </div>
@@ -1672,22 +1563,22 @@
                     <div class="upload-container" style="display:flex; gap:10px; align-items:center; margin-top:5px;">
                         <span style="font-size:14px; white-space:nowrap; font-weight:bold;">SOP圖片:</span>
                         <input type="text" value="${settings.sopImgUrl}" id="sop-img-url" style="margin-bottom:0; flex:1;">
-                        <label style="background:#fff; color:var(--text-main); border:2px solid var(--border-color); padding:12px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; margin-bottom:0; white-space:nowrap;">
+                        <label style="background:#eef3f8; color:#132c4d; border:1px solid #c6d4e1; padding:12px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; margin-bottom:0; white-space:nowrap;">
                             📁上傳<input type="file" accept="image/*" style="display:none;" onchange="uploadImageToImgbb(this)">
                         </label>
                     </div>
                 </div>
 
-                <div style="background:var(--bg-color); padding:20px; border-radius:16px; margin-bottom:15px; border:2px solid var(--border-color);">
-                    <strong style="color:var(--text-main);">E. 群組專屬封面設定</strong><br>
-                    <p style="font-size:13px; color:var(--text-muted); margin:5px 0 15px 0;">⚠️ 若留空白，則自動使用該群組內第一項商品的圖片作為封面。</p>
+                <div style="background:#f4f8fb; padding:20px; border-radius:16px; margin-bottom:15px; border:1px solid #dbe4f0;">
+                    <strong style="color:#132c4d;">E. 群組專屬封面設定</strong><br>
+                    <p style="font-size:13px; color:#718096; margin:5px 0 15px 0;">⚠️ 若留空白，則自動使用該群組內第一項商品的圖片作為封面。</p>
                     ${groupCoverHtml}
                 </div>
 
-                <div style="background:var(--bg-color); padding:20px; border-radius:16px; margin-bottom:15px; border:2px solid var(--border-color);">
-                    <strong style="color:var(--text-main);">F. 訂單結算與狀態文字設定</strong><br>
+                <div style="background:#f4f8fb; padding:20px; border-radius:16px; margin-bottom:15px; border:1px solid #dbe4f0;">
+                    <strong style="color:#132c4d;">F. 訂單結算與狀態文字設定</strong><br>
                     
-                    <div style="display:flex; gap:5px; margin: 15px 0 5px 0; font-size:13px; font-weight:bold; color:var(--text-muted);">
+                    <div style="display:flex; gap:5px; margin: 15px 0 5px 0; font-size:13px; font-weight:bold; color:#718096;">
                         <span style="width:80px;">項目</span><span style="flex:2;">文字</span><span style="flex:1;">色碼</span><span style="flex:1;">大小</span>
                     </div>
                     
@@ -1710,7 +1601,7 @@
                         <input id="sb-dep-s" value="${sb.dep.size}" style="flex:1; margin-bottom:0;">
                     </div>
                     
-                    <hr style="border-top:1px dashed var(--border-color); margin:20px 0;">
+                    <hr style="border-top:1px dashed #c6d4e1; margin:20px 0;">
                     
                     <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
                         <span style="width:70px; font-size:14px; font-weight:bold;">已登記:</span>
@@ -1744,16 +1635,16 @@
                     </div>
                 </div>
 
-                <button onclick="saveSettings()" style="background:var(--text-main); color:white; border:none; padding:16px; border-radius:30px; width:100%; font-weight:bold; font-size: 16px; cursor: pointer; transition: 0.2s;">💾 儲存所有設定</button>
+                <button onclick="saveSettings()" style="background:#132c4d; color:white; border:none; padding:16px; border-radius:30px; width:100%; font-weight:bold; font-size: 16px; cursor: pointer; transition: 0.2s;">💾 儲存所有設定</button>
             </div>
 
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px; margin-top: 40px;">
-                <h3 style="color:var(--text-main); margin:0; font-size: 22px; font-weight: 900;">📋 實時訂單管理</h3>
-                <input type="text" placeholder="🔍 搜尋訂購人..." oninput="filterAdminOrders(this.value)" style="width: 200px; padding: 10px 15px; border-radius: 30px; border: 2px solid var(--border-color); font-size: 14px; margin-bottom: 0;">
+                <h3 style="color:#132c4d; margin:0; font-size: 22px; font-weight: 900;">📋 實時訂單管理</h3>
+                <input type="text" placeholder="🔍 搜尋訂購人..." oninput="filterAdminOrders(this.value)" style="width: 200px; padding: 10px 15px; border-radius: 30px; border: 1px solid #c6d4e1; font-size: 14px; margin-bottom: 0;">
             </div>
             
-            <div style="background:#ffffff; padding:20px; border-radius:20px; border:2px solid var(--border-color); font-size:15px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                <span style="font-weight: bold; color: var(--text-main);">批次更改狀態為：</span>
+            <div style="background:#ffffff; padding:20px; border-radius:20px; border:1px solid #dbe4f0; font-size:15px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <span style="font-weight: bold;">批次更改狀態為：</span>
                 
                 <select id="batch-status-select" style="width:auto; margin-bottom:0; padding: 8px 12px; border-radius: 8px;">
                     <option value="已登記">已登記</option>
@@ -1765,23 +1656,23 @@
                     <option value="已付款">已付款</option>
                     <option value="已斷貨">已斷貨</option>
                 </select>
-                <button onclick="executeBatchStatusUpdate()" style="background:var(--text-main); color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor: pointer;">確認更改</button>
+                <button onclick="executeBatchStatusUpdate()" style="background:#132c4d; color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor: pointer;">確認更改</button>
             </div>
             
-            <div id="admin-orders-table-container" style="overflow-x:auto; background:white; padding:15px; border-radius:20px; border:2px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
+            <div id="admin-orders-table-container" style="overflow-x:auto; background:white; padding:15px; border-radius:20px; border:1px solid #dbe4f0; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
                 載入中...
             </div>
             <div id="admin-pagination-container" style="display:flex; justify-content:center; align-items:center; gap:20px; margin-top:25px; margin-bottom:25px;"></div>
 
-            <h3 style="color:var(--text-main); font-size: 22px; font-weight: 900; margin-top: 40px; border-bottom: 2px dashed var(--border-color); padding-bottom: 10px;">📦 庫存與【群組分類】編輯</h3>
+            <h3 style="color:#132c4d; font-size: 22px; font-weight: 900; margin-top: 40px; border-bottom: 2px solid #dbe4f0; padding-bottom: 10px;">📦 庫存與【群組分類】編輯</h3>
             
             <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; align-items:center;">
-                <button id="admin-inv-tab-all" onclick="switchAdminInvTab('all')" class="tab-btn active" style="background:var(--text-main); color:white;">全部商品</button>
+                <button id="admin-inv-tab-all" onclick="switchAdminInvTab('all')" class="tab-btn active" style="background:#132c4d; color:white;">全部商品</button>
                 <button id="admin-inv-tab-current" onclick="switchAdminInvTab('current')" class="tab-btn">本次一般</button>
                 <button id="admin-inv-tab-instock" onclick="switchAdminInvTab('instock')" class="tab-btn">現貨區 [批貨]</button>
                 <button id="admin-inv-tab-live" onclick="switchAdminInvTab('live')" class="tab-btn">連線區 [連線]</button>
                 
-                <input type="text" placeholder="🔍 搜尋商品代碼或名稱..." oninput="searchAdminInv(this.value)" style="flex:1; min-width:220px; margin-bottom:0; border-radius:30px; padding:10px 15px; border:2px solid var(--border-color); font-size:14px; height: 42px;">
+                <input type="text" placeholder="🔍 搜尋商品代碼或名稱..." oninput="searchAdminInv(this.value)" style="flex:1; min-width:220px; margin-bottom:0; border-radius:30px; padding:10px 15px; border:1px solid #c6d4e1; font-size:14px; height: 42px;">
             </div>
 
             <div id="admin-inventory-container">載入中...</div>
@@ -1821,7 +1712,7 @@
         });
 
         if (filteredProducts.length === 0) {
-            document.getElementById('admin-inventory-container').innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:40px;">🔍 找不到符合條件的商品</p>';
+            document.getElementById('admin-inventory-container').innerHTML = '<p style="text-align:center; color:#a0aec0; padding:40px;">🔍 找不到符合條件的商品</p>';
             document.getElementById('admin-inventory-pagination').innerHTML = '';
             return;
         }
@@ -1835,29 +1726,29 @@
 
         let html = pageItems.map(p => {
             return `
-            <div style="margin-bottom:20px; border:2px solid var(--border-color); background:#ffffff; padding: 25px; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+            <div style="margin-bottom:20px; border:1px solid #dbe4f0; background:#ffffff; padding: 25px; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
                 
-                <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); display: flex; align-items: center;">
-                    <span style="font-size: 13px; color: var(--text-muted); font-weight: bold;">商品代碼：</span>
-                    <span style="color: var(--accent-red); font-size: 16px; font-weight: 900; background: #fef2f2; padding: 4px 10px; border-radius: 6px; margin-left: 8px; letter-spacing: 1px;">${p.id}</span>
+                <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #dbe4f0; display: flex; align-items: center;">
+                    <span style="font-size: 13px; color: #718096; font-weight: bold;">商品代碼：</span>
+                    <span style="color: #e53e3e; font-size: 16px; font-weight: 900; background: #fef2f2; padding: 4px 10px; border-radius: 6px; margin-left: 8px; letter-spacing: 1px;">${p.id}</span>
                 </div>
 
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div><strong style="font-size:13px; color:var(--text-muted);">名稱:</strong> <input type="text" value="${p.name || ''}" id="name-${p.id}"></div>
-                    <div><strong style="font-size:13px; color:var(--text-muted);">價格:</strong> <input type="text" value="${p.price || 0}" id="price-${p.id}"></div>
+                    <div><strong style="font-size:13px; color:#718096;">名稱:</strong> <input type="text" value="${p.name || ''}" id="name-${p.id}"></div>
+                    <div><strong style="font-size:13px; color:#718096;">價格:</strong> <input type="text" value="${p.price || 0}" id="price-${p.id}"></div>
                 </div>
-                <div><strong style="font-size:13px; color:var(--text-muted);">群組(分類):</strong> <input type="text" value="${p.group || ''}" id="group-${p.id}" placeholder="留白則為單獨卡片" style="border-color:var(--text-main);"></div>
+                <div><strong style="font-size:13px; color:#718096;">群組(分類):</strong> <input type="text" value="${p.group || ''}" id="group-${p.id}" placeholder="留白則為單獨卡片" style="border-color:#132c4d;"></div>
                 
                 <div class="upload-container" style="display:flex; gap:10px; margin-bottom:20px; align-items:center;">
-                    <strong style="white-space:nowrap; font-size:13px; color:var(--text-muted);">圖片連結:</strong>
+                    <strong style="white-space:nowrap; font-size:13px; color:#718096;">圖片連結:</strong>
                     <input type="text" value="${p.img || ''}" id="img-${p.id}" style="margin-bottom:0; flex:1;"> 
-                    <label style="background:var(--bg-color); color:var(--text-main); border: 2px solid var(--border-color); padding:12px 18px; border-radius:12px; cursor:pointer; font-size:13px; font-weight:bold; white-space:nowrap; margin-bottom:0; transition: 0.2s;">
+                    <label style="background:#eef3f8; color:#132c4d; border: 1px solid #c6d4e1; padding:12px 18px; border-radius:12px; cursor:pointer; font-size:13px; font-weight:bold; white-space:nowrap; margin-bottom:0; transition: 0.2s;">
                         📁 上傳新圖<input type="file" accept="image/*" style="display:none;" onchange="uploadImageToImgbb(this)">
                     </label>
                 </div>
                 <div style="display:flex; gap: 10px;">
-                    <button onclick="updateProductById('${p.id}')" style="flex:1; background:var(--text-main); color:white; border:none; padding:14px; border-radius:12px; font-weight:bold; cursor:pointer; transition: 0.2s;">💾 儲存此商品</button>
-                    <button onclick="deleteProductById('${p.id}')" style="background:var(--accent-red); color:white; border:none; padding:14px; border-radius:12px; font-weight:bold; cursor:pointer; transition: 0.2s;">🗑️ 刪除</button>
+                    <button onclick="updateProductById('${p.id}')" style="flex:1; background:#132c4d; color:white; border:none; padding:14px; border-radius:12px; font-weight:bold; cursor:pointer; transition: 0.2s;">💾 儲存此商品</button>
+                    <button onclick="deleteProductById('${p.id}')" style="background:#e53e3e; color:white; border:none; padding:14px; border-radius:12px; font-weight:bold; cursor:pointer; transition: 0.2s;">🗑️ 刪除</button>
                 </div>
             </div>
             `;
@@ -1866,9 +1757,9 @@
         document.getElementById('admin-inventory-container').innerHTML = html;
 
         document.getElementById('admin-inventory-pagination').innerHTML = `
-            <button onclick="currentInventoryPage--;renderAdminInventoryTable()" ${currentInventoryPage <= 1 ? 'disabled' : ''} style="padding:10px 20px; border-radius:30px; border:2px solid var(--border-color); background:${currentInventoryPage <= 1 ? 'var(--bg-color)' : '#fff'}; color: var(--text-main); font-weight:bold; cursor:${currentInventoryPage <= 1 ? 'not-allowed' : 'pointer'};">⬅️ 上一頁</button>
-            <span style="font-weight:900; color:var(--text-main); font-size:16px;">第 ${currentInventoryPage} / ${totalPages} 頁</span>
-            <button onclick="currentInventoryPage++;renderAdminInventoryTable()" ${currentInventoryPage >= totalPages ? 'disabled' : ''} style="padding:10px 20px; border-radius:30px; border:2px solid var(--border-color); background:${currentInventoryPage >= totalPages ? 'var(--bg-color)' : '#fff'}; color: var(--text-main); font-weight:bold; cursor:${currentInventoryPage >= totalPages ? 'not-allowed' : 'pointer'};">下一頁 ➡️</button>
+            <button onclick="currentInventoryPage--;renderAdminInventoryTable()" ${currentInventoryPage <= 1 ? 'disabled' : ''} style="padding:10px 20px; border-radius:30px; border:1px solid #c6d4e1; background:${currentInventoryPage <= 1 ? '#f4f8fb' : '#fff'}; color: #132c4d; font-weight:bold; cursor:${currentInventoryPage <= 1 ? 'not-allowed' : 'pointer'};">⬅️ 上一頁</button>
+            <span style="font-weight:900; color:#132c4d; font-size:16px;">第 ${currentInventoryPage} / ${totalPages} 頁</span>
+            <button onclick="currentInventoryPage++;renderAdminInventoryTable()" ${currentInventoryPage >= totalPages ? 'disabled' : ''} style="padding:10px 20px; border-radius:30px; border:1px solid #c6d4e1; background:${currentInventoryPage >= totalPages ? '#f4f8fb' : '#fff'}; color: #132c4d; font-weight:bold; cursor:${currentInventoryPage >= totalPages ? 'not-allowed' : 'pointer'};">下一頁 ➡️</button>
         `;
     }
 
@@ -1927,20 +1818,12 @@
         settings.notice.bg = document.getElementById("n-bg").value;
         settings.notice.color = document.getElementById("n-c").value;
         settings.notice.size = document.getElementById("n-s").value;
-
-        settings.speechBubble = {
-            text: document.getElementById("sp-t").value,
-            color: document.getElementById("sp-c").value,
-            bg: document.getElementById("sp-bg").value,
-            size: "15px"
-        };
         
         settings.sect.text = document.getElementById("sc-t").value; settings.inStockSect.text = document.getElementById("is-t").value; settings.liveSect.text = document.getElementById("ls-t").value;
         settings.promo.text = document.getElementById("p-t").value; settings.promo.bg = document.getElementById("p-bg").value;
         
         settings.avatarUrl = document.getElementById("b-url").value; 
         settings.heroBgUrl = document.getElementById("hero-bg-url").value;
-        settings.heroMascotUrl = document.getElementById("mascot-url").value;
         
         settings.bankCode = document.getElementById("bank-c").value; settings.bankAccount = document.getElementById("bank-a").value; settings.sopImgUrl = document.getElementById("sop-img-url").value;
         
@@ -1998,7 +1881,7 @@
         }
 
         if (filteredOrders.length === 0) {
-            document.getElementById('admin-orders-table-container').innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:40px;">🔍 無符合條件的訂單</p>';
+            document.getElementById('admin-orders-table-container').innerHTML = '<p style="text-align:center; color:#a0aec0; padding:40px;">🔍 無符合條件的訂單</p>';
             document.getElementById('admin-pagination-container').innerHTML = '';
             return;
         }
@@ -2016,15 +1899,15 @@
             let remarkText = o.remark || '';
             html += `<tr>
                 <td style="text-align:center;"><input type="checkbox" class="admin-order-chk" value="${o.row}"></td>
-                <td style="font-size:12px; color:var(--text-muted); white-space:nowrap;">${o.date}</td>
-                <td style="color:var(--text-main); font-weight:bold; white-space:nowrap;">${o.displayName || '未登入'}</td>
+                <td style="font-size:12px; color:#718096; white-space:nowrap;">${o.date}</td>
+                <td style="color:#132c4d; font-weight:bold; white-space:nowrap;">${o.displayName || '未登入'}</td>
                 <td style="font-weight:bold;">${o.product}</td>
-                <td style="font-size:12px; color:var(--text-muted); max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${remarkText}">${remarkText}</td>
+                <td style="font-size:12px; color:#a0aec0; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${remarkText}">${remarkText}</td>
                 <td style="font-weight:bold;">$${o.price}</td>
-                <td><span class="status-badge" style="background:var(--bg-color); color:var(--text-main); border: 1px solid var(--border-color);">${o.status}</span></td>
-                <td style="font-size:13px; font-weight:bold; color:var(--accent-gold); white-space:nowrap;">${o.deliveryMethod || '-'}</td>
+                <td><span class="status-badge" style="background:#eef3f8; color:#4a5568;">${o.status}</span></td>
+                <td style="font-size:13px; font-weight:bold; color:#d97706; white-space:nowrap;">${o.deliveryMethod || '-'}</td>
                 <td>
-                    <button onclick="setPersonalMyship('${o.uid}', '${o.myshipUrl || ''}')" style="background:${o.myshipUrl ? 'var(--text-main)' : 'var(--bg-color)'}; color:${o.myshipUrl ? '#fff' : 'var(--text-muted)'}; border:2px solid var(--border-color); padding:6px 12px; border-radius:20px; font-size:12px; font-weight:bold; cursor:pointer; white-space:nowrap; transition:0.2s;">
+                    <button onclick="setPersonalMyship('${o.uid}', '${o.myshipUrl || ''}')" style="background:${o.myshipUrl ? '#319795' : '#132c4d'}; color:white; border:none; padding:6px 12px; border-radius:20px; font-size:12px; font-weight:bold; cursor:pointer; white-space:nowrap; transition:0.2s;">
                         ${o.myshipUrl ? '🔗 已設(修改)' : '➕ 新增連結'}
                     </button>
                 </td>
@@ -2034,9 +1917,9 @@
         
         let totalPages = Math.ceil(filteredOrders.length / ITEMS_PER_PAGE);
         document.getElementById('admin-pagination-container').innerHTML = `
-            <button onclick="currentAdminPage--;renderAdminOrdersTable()" ${currentAdminPage <= 1 ? 'disabled' : ''} style="padding:10px 20px; border-radius:30px; border:2px solid var(--border-color); background:${currentAdminPage <= 1 ? 'var(--bg-color)' : '#fff'}; color: var(--text-main); font-weight:bold; cursor:${currentAdminPage <= 1 ? 'not-allowed' : 'pointer'};">⬅️ 上一頁</button>
-            <span style="font-weight:900; color:var(--text-main); font-size:16px;">第 ${currentAdminPage} / ${totalPages} 頁</span>
-            <button onclick="currentAdminPage++;renderAdminOrdersTable()" ${currentAdminPage >= totalPages ? 'disabled' : ''} style="padding:10px 20px; border-radius:30px; border:2px solid var(--border-color); background:${currentAdminPage >= totalPages ? 'var(--bg-color)' : '#fff'}; color: var(--text-main); font-weight:bold; cursor:${currentAdminPage >= totalPages ? 'not-allowed' : 'pointer'};">下一頁 ➡️</button>
+            <button onclick="currentAdminPage--;renderAdminOrdersTable()" ${currentAdminPage <= 1 ? 'disabled' : ''} style="padding:10px 20px; border-radius:30px; border:1px solid #c6d4e1; background:${currentAdminPage <= 1 ? '#f4f8fb' : '#fff'}; color: #132c4d; font-weight:bold; cursor:${currentAdminPage <= 1 ? 'not-allowed' : 'pointer'};">⬅️ 上一頁</button>
+            <span style="font-weight:900; color:#132c4d; font-size:16px;">第 ${currentAdminPage} / ${totalPages} 頁</span>
+            <button onclick="currentAdminPage++;renderAdminOrdersTable()" ${currentAdminPage >= totalPages ? 'disabled' : ''} style="padding:10px 20px; border-radius:30px; border:1px solid #c6d4e1; background:${currentAdminPage >= totalPages ? '#f4f8fb' : '#fff'}; color: #132c4d; font-weight:bold; cursor:${currentAdminPage >= totalPages ? 'not-allowed' : 'pointer'};">下一頁 ➡️</button>
         `;
     }
     
@@ -2115,11 +1998,11 @@
             document.getElementById('fast-code').focus(); 
             
             event.target.innerText = "✅ 成功";
-            event.target.style.background = "var(--text-main)"; 
+            event.target.style.background = "#319795"; 
             
             setTimeout(() => {
                 event.target.innerText = originalBtnText;
-                event.target.style.background = "var(--text-main)";
+                event.target.style.background = "#132c4d";
                 event.target.disabled = false;
             }, 1000);
             
