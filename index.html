@@ -12,7 +12,7 @@
 
     <script>
         (function() {
-            const version = "v10.9-BalanceFix"; 
+            const version = "v10.9-DynamicStatus"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -160,6 +160,7 @@
 
         .add-btn { background: #132c4d; color: white; border: none; padding: 0 20px; height: 40px; border-radius: 30px; font-weight: bold; font-size: 14px; cursor: pointer; white-space:nowrap; transition: 0.2s; box-shadow: 0 4px 10px rgba(19, 44, 77, 0.15);}
         .add-btn:hover { background: #1c3f6e; transform: translateY(-2px); }
+        .add-btn:disabled { background: #a0aec0 !important; cursor: not-allowed; box-shadow: none; transform: none; }
 
         input:not([type="checkbox"]):not([type="radio"]), select { 
             width: 100%; margin-bottom: 15px; padding: 14px; box-sizing: border-box; 
@@ -207,6 +208,19 @@
         .summary-stats-box { background:#f4f8fb; padding:20px; border-radius:16px; margin-bottom:15px; border:1px solid #dbe4f0; display:flex; flex-wrap:wrap; gap:15px; justify-content:space-between; align-items:center; }
         .checkout-bar { display:flex; flex-wrap:wrap; gap:15px; justify-content:space-between; align-items:center; background: #132c4d; padding: 20px; border-radius: 16px; color: white; }
 
+        /* 🛒 1. 懸浮跳動購物車 CSS */
+        .floating-cart {
+            position: fixed; bottom: 30px; right: 30px; background: #d32f2f; color: white;
+            border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: 900;
+            box-shadow: 0 10px 25px rgba(211,47,47,0.5); display: none; z-index: 1500;
+            cursor: pointer; align-items: center; gap: 10px; border: 2px solid #fff;
+            animation: bounce-in 0.5s ease-out, bounce-cart 2s infinite 0.5s;
+            transition: 0.3s;
+        }
+        .floating-cart:hover { transform: scale(1.05); background: #b71c1c; animation: none; }
+        @keyframes bounce-in { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes bounce-cart { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-12px);} 60% {transform: translateY(-6px);} }
+
         @media (max-width: 850px) {
             .nav-brand span { display: none; } 
             
@@ -231,20 +245,6 @@
             .checkout-bar button { width: 100%; margin-top: 5px; }
             .order-history-wrapper { padding: 15px !important; }
         }
-        
-        /* 🛒 1. 新增：懸浮跳動購物車 CSS */
-        .floating-cart {
-            position: fixed; bottom: 30px; right: 30px; background: #d32f2f; color: white;
-            border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: 900;
-            box-shadow: 0 10px 25px rgba(211,47,47,0.5); display: none; z-index: 1500;
-            cursor: pointer; align-items: center; gap: 10px; border: 2px solid #fff;
-            animation: bounce-in 0.5s ease-out, bounce-cart 2s infinite 0.5s;
-            transition: 0.3s;
-        }
-        .floating-cart:hover { transform: scale(1.05); background: #b71c1c; animation: none; }
-        @keyframes bounce-in { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        @keyframes bounce-cart { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-12px);} 60% {transform: translateY(-6px);} }
-
     </style>
 </head>
 <body id="app-body">
@@ -335,7 +335,6 @@
             <p style="font-size: 14px; color: #718096; margin-bottom: 20px;">💡 請輸入您在代購群組內使用的暱稱，並可自行開關自動通知。</p>
             <input type="text" id="custom-group-name" placeholder="請輸入您在LINE群組的暱稱">
             
-            <!-- 🟢 3. 新增個人自動回覆開關 -->
             <label style="display:flex; align-items:center; gap:8px; margin-bottom: 20px; font-weight:bold; color:#132c4d; cursor:pointer;">
                 <input type="checkbox" id="auto-reply-switch" style="width:20px; height:20px; margin:0;" checked> 
                 接收 LINE 官方帳號自動推播與私訊回覆
@@ -505,7 +504,7 @@
     </div>
 </div>
 
-<!-- 🛒 1. 新增：懸浮跳動購物車按鈕 -->
+<!-- 🛒 懸浮跳動購物車按鈕 -->
 <div id="floating-cart" class="floating-cart" onclick="openCartModal()">
     🛒 去結帳 (<span id="float-cart-count">0</span>)
 </div>
@@ -622,14 +621,8 @@
             dep: { text: "💰 未付尾款：", color: "#d32f2f", size: "15px" },
             noteTitle: { text: "狀態說明：", color: "#718096", size: "13px" }
         },
-        summaryLabels: {
-            registered: { text: "已登記: 已成立訂單", size: "13px", color: "#4a5568", font: "inherit" },
-            unpurchased: { text: "未採買", size: "13px", color: "#4a5568", font: "inherit" },
-            depositPaid: { text: "已付訂金: 採買中", size: "13px", color: "#319795", font: "inherit" },
-            paid: { text: "已付款", size: "13px", color: "#319795", font: "inherit" },
-            shipped: { text: "已出貨: 貨已出", size: "13px", color: "#319795", font: "inherit" },
-            outOfStock: { text: "已斷貨: 聯繫退款", size: "13px", color: "#d32f2f", font: "inherit" }
-        },
+        // 🟢 動態狀態說明的陣列
+        statusLegend: [], 
         infoStyles: {
             btnBg: "#ffffff",
             btnTextCol: "#132c4d",
@@ -642,6 +635,39 @@
         groupCovers: {} 
     };
     let settings = defaultSettings;
+
+    // 🟢 用於後台狀態說明的全域函式
+    window.addStatusLegendRow = function() {
+        if(!settings.statusLegend) settings.statusLegend = [];
+        settings.statusLegend.push({text: "新狀態: 說明文字", color: "#475569"});
+        renderStatusLegendAdmin();
+    };
+
+    window.removeStatusLegendRow = function(idx) {
+        settings.statusLegend.splice(idx, 1);
+        renderStatusLegendAdmin();
+    };
+
+    window.renderStatusLegendAdmin = function() {
+        let container = document.getElementById('admin-status-legend-container');
+        if(!container) return;
+        
+        let html = '';
+        if(settings.statusLegend && settings.statusLegend.length > 0) {
+            settings.statusLegend.forEach((item, idx) => {
+                html += `<div class="status-legend-row" style="display:flex; gap:10px; margin-bottom:10px; align-items:center; background:#ffffff; padding:10px; border-radius:8px; border:1px solid #c6d4e1;">
+                    <span style="font-weight:bold; color:#718096; cursor:ns-resize;">≡</span>
+                    <input type="text" class="sl-text" value="${item.text}" style="flex:2; margin-bottom:0; border:none; background:#f4f8fb; padding:8px; border-radius:6px;" placeholder="例如：已出貨: 貨已出">
+                    <input type="text" class="sl-color" value="${item.color}" style="flex:1; margin-bottom:0; border:none; background:#f4f8fb; padding:8px; border-radius:6px;" placeholder="#色碼">
+                    <div style="width:20px; height:20px; border-radius:50%; background:${item.color}; border:1px solid #dbe4f0;"></div>
+                    <button onclick="removeStatusLegendRow(${idx})" style="background:#e53e3e; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:13px;">刪除</button>
+                </div>`;
+            });
+        } else {
+            html = '<p style="color:#a0aec0; font-size:13px;">目前無狀態說明，請點擊上方按鈕新增列位。</p>';
+        }
+        container.innerHTML = html;
+    };
 
     async function uploadImageToImgbb(fileInput) {
         const file = fileInput.files[0];
@@ -679,7 +705,6 @@
                 .then(res => res.json())
                 .then(data => { 
                     cachedUserOrders = data.orders || []; 
-                    // 🟢 3. 讀取個人的自動回覆設定
                     if(data.autoReplySwitch) {
                         document.getElementById('auto-reply-switch').checked = (data.autoReplySwitch !== "OFF");
                     }
@@ -687,7 +712,6 @@
         }
     }
 
-    // 🟢 2. 替換原本的 changeQty 以支援庫存判斷
     function changeQty(elementId, delta, stockLimitStr) {
         let el = document.getElementById(elementId);
         let current = parseInt(el.value) || 1;
@@ -768,7 +792,6 @@
         let html = groupItems.map(p => {
             let cleanName = p.name.replace(/\[連線\]|【連線】|\[批貨\]|【批貨】/g, '').trim();
             
-            // 🟢 2. 加入子商品的庫存售完判斷
             let maxStockStr = (p.stock === undefined || p.stock === "") ? "" : p.stock;
             let isSoldOut = maxStockStr !== "" && Number(maxStockStr) <= 0;
             
@@ -846,7 +869,6 @@
             return alert("⚠️ 請先點擊大頭照區域登入 LINE！");
         }
         
-        // 🟢 3. 取得自動回覆開關狀態
         const autoReply = document.getElementById('auto-reply-switch').checked ? "ON" : "OFF";
 
         localStorage.setItem("customGroupNickname", nick);
@@ -858,7 +880,7 @@
                 userId: currentUserProfile.userId,
                 realName: currentUserProfile.realName,
                 displayName: nick,
-                autoReplySwitch: autoReply // 🟢 3. 傳送開關設定
+                autoReplySwitch: autoReply 
             })
         })
         .then(res => res.text())
@@ -964,6 +986,18 @@
                     if (!settings.summaryBox) settings.summaryBox = defaultSettings.summaryBox; 
                     if (!settings.infoStyles) settings.infoStyles = defaultSettings.infoStyles;
                     if (!settings.exchangeRates) settings.exchangeRates = defaultSettings.exchangeRates;
+                    
+                    // 🟢 狀態說明的陣列轉換 (舊版轉新版陣列)
+                    if (!settings.statusLegend || settings.statusLegend.length === 0) {
+                        settings.statusLegend = [
+                            { text: settings.summaryLabels?.registered?.text || "已登記: 已成立訂單", color: settings.summaryLabels?.registered?.color || "#475569" },
+                            { text: settings.summaryLabels?.unpurchased?.text || "未採買", color: settings.summaryLabels?.unpurchased?.color || "#475569" },
+                            { text: settings.summaryLabels?.depositPaid?.text || "已付訂金: 採買中", color: settings.summaryLabels?.depositPaid?.color || "#475569" },
+                            { text: settings.summaryLabels?.paid?.text || "已付款", color: settings.summaryLabels?.paid?.color || "#475569" },
+                            { text: settings.summaryLabels?.shipped?.text || "已出貨: 貨已出", color: settings.summaryLabels?.shipped?.color || "#475569" },
+                            { text: settings.summaryLabels?.outOfStock?.text || "已斷貨: 聯繫退款", color: settings.summaryLabels?.outOfStock?.color || "#e11d48" }
+                        ];
+                    }
                     applyStyles(); 
                 } catch(e){}
                 data.splice(setIdx, 1);
@@ -973,6 +1007,7 @@
             
             if(document.getElementById('admin-view').classList.contains('active')) {
                 renderAdminInventoryTable();
+                renderStatusLegendAdmin();
             }
             
             const urlParams = new URLSearchParams(window.location.search);
@@ -1056,7 +1091,6 @@
             standalones.forEach(p => {
                 let cleanName = p.name.replace(/\[連線\]|【連線】|\[批貨\]|【批貨】/g, '').trim();
                 
-                // 🟢 2. 加入庫存與售完判斷
                 let maxStockStr = (p.stock === undefined || p.stock === "") ? "" : p.stock; 
                 let isSoldOut = maxStockStr !== "" && Number(maxStockStr) <= 0;
                 
@@ -1089,14 +1123,12 @@
         document.getElementById('product-list-live').innerHTML = buildTabHtml('live');
     }
 
-    // 🟢 2. addToCart 加入庫存檢查參數
     function addToCart(id, qtyId, isFromModal = false, stockLimitStr = "") {
         const p = products.find(x => String(x.id) === String(id));
         if (p) { 
             let qty = parseInt(document.getElementById(qtyId).value) || 1;
             let cleanName = p.name.replace(/\[連線\]|【連線】|\[批貨\]|【批貨】/g, '').trim();
             
-            // 🟢 檢查購物車內既有數量
             let existingItem = myCart.find(i => i.id === id);
             let currentCartQty = existingItem ? existingItem.quantity : 0;
             if (stockLimitStr !== "" && (currentCartQty + qty) > Number(stockLimitStr)) {
@@ -1150,7 +1182,6 @@
         updateCartUI(); 
     }
 
-    // 🟢 2. 購物車內修改數量也須判斷庫存
     function updateCartQty(idx, delta) {
         if (!myCart[idx]) return;
         let next = myCart[idx].quantity + delta;
@@ -1174,7 +1205,6 @@
     function updateCartUI() {
         document.getElementById('nav-cart-badge').innerText = myCart.length;
         
-        // 🟢 1. 懸浮購物車顯示與更新邏輯
         let floatCart = document.getElementById('floating-cart');
         let floatCartCount = document.getElementById('float-cart-count');
         if(floatCart && floatCartCount) {
@@ -1339,7 +1369,6 @@
             filtered.forEach(o => {
                 let p = Number(o.price) || 0;
                 
-                // 🟢 修正：讀取後台傳來的「已付金額」(J欄)，並計算「未付尾款」(F欄 - J欄)
                 let deposit = Number(o.paidAmount) || 0;
                 let balance = p - deposit;       
 
@@ -1378,7 +1407,14 @@
             document.getElementById('order-history').innerHTML = html + '</table>';
 
             const sb = settings.summaryBox || defaultSettings.summaryBox;
-            const sl = settings.summaryLabels;
+            
+            // 🟢 替換為動態陣列的渲染方式
+            let legendHtml = '';
+            if(settings.statusLegend && settings.statusLegend.length > 0) {
+                legendHtml = settings.statusLegend.map(item => 
+                    `<span style="color:${item.color}; font-size:13px; display:inline-block; margin-right:10px;">• ${item.text}</span>`
+                ).join('');
+            }
             
             document.getElementById('summary-result').innerHTML = `
                 <div class="summary-stats-box">
@@ -1388,12 +1424,7 @@
                 </div>
                 <div style="padding:15px 20px; background:#ffffff; border:1px solid #dbe4f0; border-radius:16px; font-size:13px; margin-bottom:20px; line-height:1.8;">
                     <strong style="color:${sb.noteTitle.color}; font-size:${sb.noteTitle.size}; margin-right:10px;">${sb.noteTitle.text}</strong>
-                    <span style="color:${sl.registered.color}; font-size:${sl.registered.size}; display:inline-block; margin-right:10px;">• ${sl.registered.text}</span>
-                    <span style="color:${sl.unpurchased.color}; font-size:${sl.unpurchased.size}; display:inline-block; margin-right:10px;">• ${sl.unpurchased.text}</span>
-                    <span style="color:${sl.depositPaid.color}; font-size:${sl.depositPaid.size}; display:inline-block; margin-right:10px;">• ${sl.depositPaid.text}</span>
-                    <span style="color:${sl.paid.color}; font-size:${sl.paid.size}; display:inline-block; margin-right:10px;">• ${sl.paid.text}</span>
-                    <span style="color:${sl.shipped.color}; font-size:${sl.shipped.size}; display:inline-block; margin-right:10px;">• ${sl.shipped.text}</span>
-                    <span style="color:${sl.outOfStock.color}; font-size:${sl.outOfStock.size}; display:inline-block;">• ${sl.outOfStock.text}</span>
+                    ${legendHtml}
                 </div>
                 <div class="checkout-bar">
                     <span style="font-weight:bold; font-size: 16px;">勾選結帳總額：<span style="color:#f87171; font-size: 20px; margin-left: 5px;">NT$ <span id="selected-payment-display">0</span></span></span>
@@ -1697,36 +1728,14 @@
                     
                     <hr style="border-top:1px dashed #c6d4e1; margin:20px 0;">
                     
-                    <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
-                        <span style="width:70px; font-size:14px; font-weight:bold;">已登記:</span>
-                        <input id="sl-reg-t" value="${settings.summaryLabels.registered.text}" style="flex:2; margin-bottom:0;">
-                        <input id="sl-reg-c" value="${settings.summaryLabels.registered.color}" style="flex:1; margin-bottom:0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <strong style="font-size:14px; color:#132c4d;">自訂狀態說明列 (顯示於前台訂單底部)</strong>
+                        <button onclick="addStatusLegendRow()" style="background:#319795; color:white; border:none; padding:6px 12px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;">+ 新增狀態列</button>
                     </div>
-                    <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
-                        <span style="width:70px; font-size:14px; font-weight:bold;">未採買:</span>
-                        <input id="sl-unp-t" value="${settings.summaryLabels.unpurchased.text}" style="flex:2; margin-bottom:0;">
-                        <input id="sl-unp-c" value="${settings.summaryLabels.unpurchased.color}" style="flex:1; margin-bottom:0;">
-                    </div>
-                    <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
-                        <span style="width:70px; font-size:14px; font-weight:bold;">已付訂金:</span>
-                        <input id="sl-dep-t" value="${settings.summaryLabels.depositPaid.text}" style="flex:2; margin-bottom:0;">
-                        <input id="sl-dep-c" value="${settings.summaryLabels.depositPaid.color}" style="flex:1; margin-bottom:0;">
-                    </div>
-                    <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
-                        <span style="width:70px; font-size:14px; font-weight:bold;">已付款:</span>
-                        <input id="sl-paid-t" value="${settings.summaryLabels.paid.text}" style="flex:2; margin-bottom:0;">
-                        <input id="sl-paid-c" value="${settings.summaryLabels.paid.color}" style="flex:1; margin-bottom:0;">
-                    </div>
-                    <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
-                        <span style="width:70px; font-size:14px; font-weight:bold;">已出貨:</span>
-                        <input id="sl-ship-t" value="${settings.summaryLabels.shipped.text}" style="flex:2; margin-bottom:0;">
-                        <input id="sl-ship-c" value="${settings.summaryLabels.shipped.color}" style="flex:1; margin-bottom:0;">
-                    </div>
-                    <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
-                        <span style="width:70px; font-size:14px; font-weight:bold;">已斷貨:</span>
-                        <input id="sl-out-t" value="${settings.summaryLabels.outOfStock.text}" style="flex:2; margin-bottom:0;">
-                        <input id="sl-out-c" value="${settings.summaryLabels.outOfStock.color}" style="flex:1; margin-bottom:0;">
-                    </div>
+                    
+                    <!-- 🟢 動態狀態說明的容器 -->
+                    <div id="admin-status-legend-container"></div>
+                    
                 </div>
 
                 <button onclick="saveSettings()" style="background:#132c4d; color:white; border:none; padding:16px; border-radius:30px; width:100%; font-weight:bold; font-size: 16px; cursor: pointer; transition: 0.2s;">💾 儲存所有設定</button>
@@ -1774,6 +1783,7 @@
         `;
         showView('admin');
         loadAllOrdersForAdmin();
+        renderStatusLegendAdmin(); // 🟢 渲染動態狀態列
         
         if (products.length > 0) {
             renderAdminInventoryTable();
@@ -1869,7 +1879,7 @@
             price: document.getElementById(`price-${id}`).value, 
             img: document.getElementById(`img-${id}`).value, 
             group: document.getElementById(`group-${id}`).value,
-            stock: document.getElementById(`stock-${id}`).value // 🟢 2. 送出庫存資料
+            stock: document.getElementById(`stock-${id}`).value 
         };
         
         let btn = event.target;
@@ -1940,12 +1950,14 @@
         settings.summaryBox.chk = { text: document.getElementById('sb-chk-t').value, color: document.getElementById('sb-chk-c').value, size: document.getElementById('sb-chk-s').value };
         settings.summaryBox.dep = { text: document.getElementById('sb-dep-t').value, color: document.getElementById('sb-dep-c').value, size: document.getElementById('sb-dep-s').value };
         
-        settings.summaryLabels.registered = { text: document.getElementById('sl-reg-t').value, color: document.getElementById('sl-reg-c').value, size: "13px", font: "inherit" };
-        settings.summaryLabels.unpurchased = { text: document.getElementById('sl-unp-t').value, color: document.getElementById('sl-unp-c').value, size: "13px", font: "inherit" };
-        settings.summaryLabels.depositPaid = { text: document.getElementById('sl-dep-t').value, color: document.getElementById('sl-dep-c').value, size: "13px", font: "inherit" };
-        settings.summaryLabels.paid = { text: document.getElementById('sl-paid-t').value, color: document.getElementById('sl-paid-c').value, size: "13px", font: "inherit" };
-        settings.summaryLabels.shipped = { text: document.getElementById('sl-ship-t').value, color: document.getElementById('sl-ship-c').value, size: "13px", font: "inherit" };
-        settings.summaryLabels.outOfStock = { text: document.getElementById('sl-out-t').value, color: document.getElementById('sl-out-c').value, size: "13px", font: "inherit" };
+        // 🟢 儲存動態的狀態陣列
+        let newLegend = [];
+        document.querySelectorAll('.status-legend-row').forEach(row => {
+            let t = row.querySelector('.sl-text').value.trim();
+            let c = row.querySelector('.sl-color').value.trim();
+            if(t !== "") newLegend.push({ text: t, color: c });
+        });
+        settings.statusLegend = newLegend;
 
         settings.exchangeRates = [
             { limit: Number(document.getElementById('er-l1').value) || 0, rate: Number(document.getElementById('er-r1').value) || 0 },
