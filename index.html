@@ -12,7 +12,7 @@
 
     <script>
         (function() {
-            const version = "v11.0-ModifiedCheckout"; 
+            const version = "v11.1-FixDuplicate"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -424,9 +424,9 @@
                 <span style="font-weight: bold; color: #132c4d; font-size: 16px;">新竹市 / 竹北面交</span>
             </label>
             
-            <!-- ⭐ 修改點 1：7-11選項改為點擊直接觸發儲存並跳轉 -->
-            <label style="border: 2px solid #dbe4f0; padding: 15px 20px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s;" onmouseover="this.style.borderColor='#132c4d'" onmouseout="this.style.borderColor='#dbe4f0'" onclick="handle711DirectClick()">
-                <input type="radio" name="deliveryMethod" id="radio-711" value="前往7-11賣貨便賣場直接下單" style="width: 20px; height: 20px; margin: 0; accent-color: #132c4d;"> 
+            <!-- ⭐ 重大修正：將 onclick 嚴格綁定在 input 上，避免 label 產生兩次點擊事件 -->
+            <label style="border: 2px solid #dbe4f0; padding: 15px 20px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s;" onmouseover="this.style.borderColor='#132c4d'" onmouseout="this.style.borderColor='#dbe4f0'">
+                <input type="radio" name="deliveryMethod" id="radio-711" value="前往7-11賣貨便賣場直接下單" style="width: 20px; height: 20px; margin: 0; accent-color: #132c4d;" onclick="handle711DirectClick(event)"> 
                 <span style="font-weight: bold; color: #132c4d; font-size: 16px;">前往7-11賣貨便賣場直接下單</span>
             </label>
         </div>
@@ -459,8 +459,6 @@
         </div>
     </div>
 </div>
-
-<!-- ❌ 這裡將結帳匯款視窗整個拔除，因為不需要了 -->
 
 <div id="sop-modal" class="modal-overlay" onclick="if(event.target===this) closeSopModal()">
     <div class="modal-content" style="text-align: center; max-width: 800px; padding: 20px;">
@@ -495,6 +493,9 @@
     let currentUserProfile = { userId: "訪客測試", displayName: "訪客", realName: "訪客" };
     let selectedPaymentTotal = 0; 
     let pendingCheckoutItems = []; 
+    
+    // ⭐ 新增：全域鎖定變數，防禦手抖連點或雙重觸發
+    let isSubmittingOrder = false;
     
     let currentAdminPage = 1;
     let adminOrderSearch = "";
@@ -1248,14 +1249,20 @@
         document.getElementById('delivery-modal').classList.add('active');
     }
     
-    // ⭐ 修改點 2：增加一個專屬函數給 7-11 選項，點擊後自動送出並轉跳
-    function handle711DirectClick() {
-        document.getElementById('radio-711').checked = true;
-        
-        if (!confirm('您即將送出訂單並前往賣貨便，確認繼續？')) {
+    // ⭐ 新增功能：嚴格鎖定保護的 7-11 點擊跳轉事件
+    function handle711DirectClick(event) {
+        // 如果正在送出中，或是點擊的不是 input，就不理會 (防止連點與冒泡)
+        if (isSubmittingOrder || (event && event.target.tagName !== 'INPUT')) {
+            if (event) event.preventDefault();
             return;
         }
 
+        if (!confirm('您即將送出訂單並前往賣貨便，確認繼續？')) {
+            if (event) event.preventDefault(); // 使用者取消則恢復未勾選
+            return;
+        }
+
+        isSubmittingOrder = true; // 鎖定！不讓後續任何點擊進來
         const finalCustomName = localStorage.getItem("customGroupNickname") || "";
         let btn = document.getElementById("delivery-submit-btn");
         btn.innerText = "⏳ 背景建立訂單並轉跳中...";
@@ -1276,28 +1283,33 @@
             myCart = myCart.filter(i => !i.selected);
             updateCartUI();
             closeDeliveryModal();
-            // 送出成功後直接轉跳
+            // 直接跳轉到指定的賣貨便頁面
             window.location.href = 'https://myship.7-11.com.tw/myship/list1';
         })
         .catch(err => {
             alert("訂單送出失敗，請檢查網路連線後重試");
             btn.innerText = "確定選擇並送出訂單 🚀";
             btn.disabled = false;
+            isSubmittingOrder = false; // 解除鎖定
         });
     }
 
     function confirmAndSubmitOrder() {
+        if (isSubmittingOrder) return; // 防禦連點
+
         const selectedMethod = document.querySelector('input[name="deliveryMethod"]:checked');
         if (!selectedMethod) return alert("⚠️ 請先選擇一種交貨方式！");
         
         if (selectedMethod.value === "前往7-11賣貨便賣場直接下單") {
-            return handle711DirectClick();
+            // 這個防呆用，理論上直接按選項已經觸發了，若有意外落網才走這
+            return handle711DirectClick(null);
         }
 
         if (!confirm(`您選擇的交貨方式為「${selectedMethod.value}」\n確定是否選擇此方式並送出訂單？`)) {
             return;
         }
 
+        isSubmittingOrder = true; // 鎖定
         const finalCustomName = localStorage.getItem("customGroupNickname") || "";
 
         let btn = document.getElementById("delivery-submit-btn");
@@ -1328,6 +1340,7 @@
         .finally(() => {
             btn.innerText = originalText;
             btn.disabled = false;
+            isSubmittingOrder = false; // 解除鎖定
         });
     }
 
@@ -1357,8 +1370,6 @@
 
                 let depositDisplay = deposit;
                 let balanceDisplay = balance;
-
-                // ⭐ 修改點 3：移除了此處隱藏「已登記」金額的 if 判斷，讓金額永遠顯示
 
                 let chk = '';
                 if(o.status !== '已付款') { 
@@ -1397,7 +1408,6 @@
                 ).join('');
             }
             
-            // ⭐ 修改點 4：把結帳與匯款按鈕拿掉
             document.getElementById('summary-result').innerHTML = `
                 <div class="summary-stats-box">
                     <div style="font-size:${sb.reg.size}; color:${sb.reg.color}; font-weight:bold;">${sb.reg.text} NT$ <span id="summary-total-price">0</span></div>
