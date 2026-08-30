@@ -12,7 +12,7 @@
 
     <script>
         (function() {
-            const version = "v11.2-DynamicDeliveryOptions"; 
+            const version = "v12.0-GatekeeperCheckout"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -208,7 +208,6 @@
         .summary-stats-box { background:#f4f8fb; padding:20px; border-radius:16px; margin-bottom:15px; border:1px solid #dbe4f0; display:flex; flex-wrap:wrap; gap:15px; justify-content:space-between; align-items:center; }
         .checkout-bar { display:flex; flex-wrap:wrap; gap:15px; justify-content:space-between; align-items:center; background: #132c4d; padding: 20px; border-radius: 16px; color: white; }
 
-        /* 🛒 1. 懸浮跳動購物車 CSS */
         .floating-cart {
             position: fixed; bottom: 30px; right: 30px; background: #d32f2f; color: white;
             border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: 900;
@@ -290,7 +289,7 @@
                 <div class="bento-action-btn">立即綁定</div>
             </div>
             
-            <div class="bento-item" onclick="showView('product')" id="home-btn-product">
+            <div class="bento-item" onclick="handleCategoryClick('product')" id="home-btn-product">
                 <div class="bento-icon">🛍️</div>
                 <h3 class="bento-title">瀏覽商品</h3>
             </div>
@@ -352,10 +351,11 @@
             <button class="back-btn" onclick="showView('home')" style="margin-bottom:0;">← 返回首頁</button>
         </div>
         
+        <!-- ⭐ 修改點1：三個分類按鈕改為先觸發交貨選項視窗 -->
         <div class="tabs-container">
-            <button id="tab-btn-current" class="tab-btn active" onclick="switchProductTab('current')"><span id="section-title">本次商品</span></button>
-            <button id="tab-btn-instock" class="tab-btn" onclick="switchProductTab('instock')"><span id="instock-section-title">現貨區</span></button>
-            <button id="tab-btn-live" class="tab-btn" onclick="switchProductTab('live')"><span id="live-section-title">連線區</span></button>
+            <button id="tab-btn-current" class="tab-btn active" onclick="handleCategoryClick('current')"><span id="section-title">本次商品</span></button>
+            <button id="tab-btn-instock" class="tab-btn" onclick="handleCategoryClick('instock')"><span id="instock-section-title">現貨區</span></button>
+            <button id="tab-btn-live" class="tab-btn" onclick="handleCategoryClick('live')"><span id="live-section-title">連線區</span></button>
         </div>
 
         <div id="product-list-current" class="modern-product-grid"></div>
@@ -398,6 +398,21 @@
 <!-- =========================================================
      彈跳視窗 (Modals)
 ========================================================= -->
+
+<!-- ⭐ 修改點2：守門員交貨選擇視窗 (用在點擊分類時) -->
+<div id="gatekeeper-modal" class="modal-overlay" onclick="if(event.target===this) closeGatekeeperModal()">
+    <div class="modal-content" style="max-width: 450px; text-align: center; width: 90%;">
+        <span class="modal-close" onclick="closeGatekeeperModal()">×</span>
+        <h2 style="color: #132c4d; margin-top: 0; font-weight: 900;">🛒 請選擇購物方式</h2>
+        <p style="color: #718096; font-size: 14px; margin-bottom: 20px;">這將決定您接下來要瀏覽與下單的平台。</p>
+        
+        <div id="gatekeeper-options-container" style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
+            <!-- 將由 renderDeliveryOptions('gatekeeper') 覆蓋 -->
+        </div>
+        
+    </div>
+</div>
+
 <div id="cart-modal" class="modal-overlay" onclick="if(event.target===this) closeCartModal()">
     <div class="modal-content">
         <span class="modal-close" onclick="closeCartModal()">×</span>
@@ -408,22 +423,7 @@
             <div style="font-weight:bold; color: #4a5568;">已勾選結帳：</div>
             <div style="color: #e53e3e; font-size: 24px; font-weight: 900;">NT$ <span id="total-amount">0</span></div>
         </div>
-        <button onclick="prepareCheckout()" style="width:100%; background:#132c4d; color:white; border:none; padding:15px; margin-top:20px; border-radius: 30px; font-weight: bold; font-size: 16px; transition: 0.2s; cursor: pointer; box-shadow: 0 10px 20px rgba(19,44,77,0.2);">下一步：選擇交貨方式 🚀</button>
-    </div>
-</div>
-
-<div id="delivery-modal" class="modal-overlay" onclick="if(event.target===this) closeDeliveryModal()">
-    <div class="modal-content" style="max-width: 450px; text-align: center; width: 90%;">
-        <span class="modal-close" onclick="closeDeliveryModal()">×</span>
-        <h2 style="color: #132c4d; margin-top: 0; font-weight: 900;">🚚 請選擇交貨方式</h2>
-        <p style="color: #718096; font-size: 14px; margin-bottom: 20px;">這將幫助我們為您準備後續的寄件流程。</p>
-        
-        <!-- 動態生成的選項將插入於此 -->
-        <div id="delivery-options-container" style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
-            <!-- 將由 renderDeliveryOptions() 覆蓋 -->
-        </div>
-        
-        <button id="delivery-submit-btn" onclick="confirmAndSubmitOrder()" style="width:100%; background:#132c4d; color:white; border:none; padding:15px; margin-top:25px; border-radius: 30px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(19, 44, 77, 0.2);">確定選擇並送出訂單 🚀</button>
+        <button onclick="confirmAndSubmitOrder()" style="width:100%; background:#132c4d; color:white; border:none; padding:15px; margin-top:20px; border-radius: 30px; font-weight: bold; font-size: 16px; transition: 0.2s; cursor: pointer; box-shadow: 0 10px 20px rgba(19,44,77,0.2);">確定送出訂單 🚀</button>
     </div>
 </div>
 
@@ -486,8 +486,8 @@
     let selectedPaymentTotal = 0; 
     let pendingCheckoutItems = []; 
     
-    // ⭐ 新增：全域鎖定變數，防禦手抖連點或雙重觸發
     let isSubmittingOrder = false;
+    let pendingTargetCategory = 'current'; // 記錄點擊分類時想去的目標區塊
     
     let currentAdminPage = 1;
     let adminOrderSearch = "";
@@ -599,7 +599,8 @@
             fontSize: "15px"
         },
         groupCovers: {},
-        // ⭐ 預設的 3 個賣貨便專區設定
+        // ⭐ 修改點 3：增加面交文字自訂設定
+        localDeliveryText: "新竹市 / 竹北面交", 
         myshipLinks: [
             { name: "前往7-11賣貨便下單 (三麗鷗專區)", url: "https://myship.7-11.com.tw/general/detail/GM2608154676319" },
             { name: "前往7-11賣貨便下單 (蒙奇奇專區)", url: "https://myship.7-11.com.tw/general/detail/GM2608064097645" },
@@ -737,6 +738,43 @@
         if(viewId === 'product') switchProductTab(currentProductTab);
     }
     
+    // ⭐ 修改點 4：處理首頁點擊「瀏覽商品」或「三大分區」時的邏輯
+    function handleCategoryClick(category) {
+        pendingTargetCategory = category === 'product' ? currentProductTab : category;
+        openGatekeeperModal(); 
+    }
+
+    function openGatekeeperModal() {
+        renderDeliveryOptions('gatekeeper');
+        document.getElementById('gatekeeper-modal').classList.add('active');
+    }
+
+    function closeGatekeeperModal() {
+        document.getElementById('gatekeeper-modal').classList.remove('active');
+    }
+
+    function processGatekeeperChoice(event, isLocal, url) {
+        if (event && event.target.tagName !== 'INPUT') {
+            event.preventDefault();
+            return;
+        }
+
+        if (isLocal) {
+            // 如果選面交，關閉視窗，跳轉到商品區
+            closeGatekeeperModal();
+            showView('product');
+            switchProductTab(pendingTargetCategory);
+        } else {
+            // 如果選其他賣場，直接新開分頁跳走
+            if(confirm('將為您開啟外部賣場連結，確認前往？')) {
+                window.open(url, '_blank');
+                closeGatekeeperModal(); 
+            } else {
+                if (event) event.preventDefault();
+            }
+        }
+    }
+    
     function openCalculator() { document.getElementById('calc-modal').classList.add('active'); }
     function closeCalculator() { document.getElementById('calc-modal').classList.remove('active'); }
     function openSopModal() { document.getElementById('sop-modal').classList.add('active'); }
@@ -756,7 +794,8 @@
     }
     function closeCartModal() { document.getElementById('cart-modal').classList.remove('active'); }
     
-    function closeDeliveryModal() { document.getElementById('delivery-modal').classList.remove('active'); }
+    // ⭐ 購物車結帳已經不需要彈出選交貨方式了，因為被守門員擋過了，這邊把 delivery-modal 關閉與相關邏輯移除
+    function closeDeliveryModal() { /* 保留空函數避免報錯 */ }
 
     function openGroupModal(groupName, tab) {
         document.getElementById('group-modal-title').innerHTML = `📁 ${groupName}`;
@@ -880,13 +919,17 @@
         return match ? `https://drive.google.com/uc?id=${match[1]}` : url;
     }
 
-    // ⭐ 動態渲染交貨選項 (將面交與後台設定的連結同時輸出)
-    function renderDeliveryOptions() {
-        let container = document.getElementById('delivery-options-container');
+    // ⭐ 修改點 5：動態渲染交貨選項 給守門員視窗用
+    function renderDeliveryOptions(targetContainerId) {
+        let container = document.getElementById(`${targetContainerId}-options-container`);
+        if(!container) return;
+
+        let localText = settings.localDeliveryText || defaultSettings.localDeliveryText;
+        
         let html = `
             <label style="border: 2px solid #dbe4f0; padding: 15px 20px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s;" onmouseover="this.style.borderColor='#132c4d'" onmouseout="this.style.borderColor='#dbe4f0'">
-                <input type="radio" name="deliveryMethod" value="新竹市/竹北面交" style="width: 20px; height: 20px; margin: 0; accent-color: #132c4d;"> 
-                <span style="font-weight: bold; color: #132c4d; font-size: 16px;">新竹市 / 竹北面交</span>
+                <input type="radio" name="${targetContainerId}Method" value="${localText}" style="width: 20px; height: 20px; margin: 0; accent-color: #132c4d;" onclick="processGatekeeperChoice(event, true, null)"> 
+                <span style="font-weight: bold; color: #132c4d; font-size: 16px;">🏪 留在此網站瀏覽下單 <br><span style="font-size:12px; color:#718096; font-weight:normal;">(僅支援: ${localText})</span></span>
             </label>
         `;
         
@@ -894,14 +937,14 @@
             settings.myshipLinks.forEach((link, idx) => {
                 html += `
                     <label style="border: 2px solid #dbe4f0; padding: 15px 20px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s;" onmouseover="this.style.borderColor='#132c4d'" onmouseout="this.style.borderColor='#dbe4f0'">
-                        <input type="radio" name="deliveryMethod" id="radio-711-${idx}" value="${link.name}" data-url="${link.url}" data-name="${link.name}" style="width: 20px; height: 20px; margin: 0; accent-color: #132c4d;" onclick="handle711DirectClick(event)"> 
-                        <span style="font-weight: bold; color: #132c4d; font-size: 16px;">${link.name}</span>
+                        <input type="radio" name="${targetContainerId}Method" id="radio-gk-${idx}" value="${link.name}" data-url="${link.url}" data-name="${link.name}" style="width: 20px; height: 20px; margin: 0; accent-color: #132c4d;" onclick="processGatekeeperChoice(event, false, '${link.url}')"> 
+                        <span style="font-weight: bold; color: #132c4d; font-size: 16px;">📦 ${link.name} <br><span style="font-size:12px; color:#e53e3e; font-weight:normal;">(將跳轉至外部賣場)</span></span>
                     </label>
                 `;
             });
         }
         
-        if (container) container.innerHTML = html;
+        container.innerHTML = html;
     }
 
     function applyStyles() {
@@ -986,6 +1029,7 @@
                     if (!settings.infoStyles) settings.infoStyles = defaultSettings.infoStyles;
                     if (!settings.exchangeRates) settings.exchangeRates = defaultSettings.exchangeRates;
                     if (!settings.myshipLinks || settings.myshipLinks.length === 0) settings.myshipLinks = defaultSettings.myshipLinks;
+                    if (!settings.localDeliveryText) settings.localDeliveryText = defaultSettings.localDeliveryText;
                     
                     if (!settings.statusLegend || settings.statusLegend.length === 0) {
                         settings.statusLegend = [
@@ -1003,7 +1047,8 @@
             }
             products = data; 
             renderStore(); 
-            renderDeliveryOptions(); 
+            // 預先準備好選項
+            renderDeliveryOptions('gatekeeper'); 
             
             if(document.getElementById('admin-view').classList.contains('active')) {
                 renderAdminInventoryTable();
@@ -1303,90 +1348,24 @@
         }
         
         pendingCheckoutItems = selectedItems;
-        closeCartModal();
-        document.getElementById('delivery-modal').classList.add('active');
+        // ⭐ 修改點 6：不需要再打開交貨選擇視窗了，因為一開始就選好了
+        // 直接執行原本 confirmAndSubmitOrder 裡送出訂單的邏輯
+        submitFinalCartOrder();
     }
     
-    // ⭐ 將點擊事件改為接受手動傳入的 URL 與 名稱，且包含連點防護
-    function handle711DirectClick(event, manualUrl, manualName) {
-        if (isSubmittingOrder) {
-            if (event) event.preventDefault();
-            return;
-        }
-
-        let targetUrl = manualUrl;
-        let optionName = manualName;
-
-        if (event && event.target) {
-            if (event.target.tagName !== 'INPUT') {
-                event.preventDefault();
-                return;
-            }
-            targetUrl = targetUrl || event.target.dataset.url;
-            optionName = optionName || event.target.dataset.name;
-        }
-
-        if (!confirm(`您即將送出訂單並前往【${optionName}】，確認繼續？`)) {
-            if (event) event.preventDefault(); 
-            return;
-        }
-
-        isSubmittingOrder = true; 
-        const finalCustomName = localStorage.getItem("customGroupNickname") || "";
-        let btn = document.getElementById("delivery-submit-btn");
-        btn.innerText = "⏳ 背景建立訂單並轉跳中...";
-        btn.disabled = true;
-
-        fetch(GAS_URL, {
-            method: "POST",
-            body: JSON.stringify({
-                action: "submitOrder",
-                cart: pendingCheckoutItems,
-                userId: currentUserProfile.userId,
-                realName: currentUserProfile.realName,
-                customName: finalCustomName,
-                deliveryMethod: optionName
-            })
-        })
-        .then(() => {
-            myCart = myCart.filter(i => !i.selected);
-            updateCartUI();
-            closeDeliveryModal();
-            // 直接跳轉到指定的專區連結
-            window.location.href = targetUrl;
-        })
-        .catch(err => {
-            alert("訂單送出失敗，請檢查網路連線後重試");
-            btn.innerText = "確定選擇並送出訂單 🚀";
-            btn.disabled = false;
-            isSubmittingOrder = false; 
-        });
-    }
-
-    function confirmAndSubmitOrder() {
+    // ⭐ 修改點 7：把實際送出購物車的邏輯拉出來獨立
+    function submitFinalCartOrder() {
         if (isSubmittingOrder) return; 
 
-        const selectedMethod = document.querySelector('input[name="deliveryMethod"]:checked');
-        if (!selectedMethod) return alert("⚠️ 請先選擇一種交貨方式！");
-        
-        // 檢查使用者選的是不是動態的賣貨便連結
-        let myshipMatch = settings.myshipLinks.find(link => link.name === selectedMethod.value);
-        if (myshipMatch) {
-            return handle711DirectClick(null, myshipMatch.url, myshipMatch.name);
-        }
-
-        // 如果是一般的面交等項目，走這裡
-        if (!confirm(`您選擇的交貨方式為「${selectedMethod.value}」\n確定是否選擇此方式並送出訂單？`)) {
-            return;
-        }
-
         isSubmittingOrder = true; 
         const finalCustomName = localStorage.getItem("customGroupNickname") || "";
+        let finalMethod = settings.localDeliveryText || defaultSettings.localDeliveryText; // 面交字串
 
-        let btn = document.getElementById("delivery-submit-btn");
-        let originalText = btn.innerText;
-        btn.innerText = "⏳ 訂單建立中，請稍候...";
-        btn.disabled = true;
+        let btn = document.querySelector("#cart-modal button");
+        if (btn) {
+            btn.innerText = "⏳ 訂單建立中，請稍候...";
+            btn.disabled = true;
+        }
 
         fetch(GAS_URL, { 
             method: "POST", 
@@ -1396,23 +1375,29 @@
                 userId: currentUserProfile.userId, 
                 realName: currentUserProfile.realName,
                 customName: finalCustomName,
-                deliveryMethod: selectedMethod.value 
+                deliveryMethod: finalMethod 
             }) 
         })
         .then(() => { 
             myCart = myCart.filter(i => !i.selected);
             updateCartUI(); 
-            closeDeliveryModal(); 
+            closeCartModal(); 
             
             showView('order');
             fetchMyOrders(true); 
             fetchUserOrdersBackground(); 
         })
         .finally(() => {
-            btn.innerText = originalText;
-            btn.disabled = false;
+            if (btn) {
+                btn.innerText = "確定送出訂單 🚀";
+                btn.disabled = false;
+            }
             isSubmittingOrder = false; 
         });
+    }
+
+    function confirmAndSubmitOrder() {
+        prepareCheckout();
     }
 
     function fetchMyOrders(autoPay = false) {
@@ -1603,6 +1588,7 @@
         
         const sb = settings.summaryBox || defaultSettings.summaryBox;
         const exRates = settings.exchangeRates || defaultSettings.exchangeRates; 
+        const locTxt = settings.localDeliveryText || defaultSettings.localDeliveryText;
 
         document.getElementById('admin-panel').innerHTML = `
             <div style="background:#e6fffa; padding:20px; border-radius:16px; margin-bottom:25px; font-weight:bold; color:#319795; display:flex; justify-content:space-between; align-items: center; border: 1px solid #81e6d9;">
@@ -1761,13 +1747,19 @@
                     
                 </div>
                 
-                <!-- ⭐ 新增後台設定：G. 賣貨便專場連結設定 -->
                 <div style="background:#f4f8fb; padding:20px; border-radius:16px; margin-bottom:25px; border:1px solid #dbe4f0;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <strong style="color:#132c4d;">G. 賣貨便專屬賣場連結設定</strong>
+                        <strong style="color:#132c4d;">G. 購物前入口 / 賣場選項設定</strong>
                         <button onclick="addMyshipLinkRow()" style="background:#319795; color:white; border:none; padding:6px 12px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;">+ 新增賣場連結</button>
                     </div>
-                    <p style="font-size:13px; color:#718096; margin:5px 0 15px 0;">此處設定的連結將會顯示在顧客結帳的交貨方式中，讓客人可以直接跳轉。</p>
+                    <p style="font-size:13px; color:#718096; margin:5px 0 15px 0;">此處設定的選項將會在顧客點擊瀏覽商品時「優先彈出」供選擇。</p>
+                    
+                    <!-- ⭐ 新增：自訂面交文字欄位 -->
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #c6d4e1;">
+                        <span style="font-weight:bold; font-size:14px; color:#132c4d; white-space:nowrap;">🏪 面交/本站下單文字:</span>
+                        <input type="text" id="local-delivery-text" value="${locTxt}" placeholder="例如：新竹市 / 竹北面交" style="margin-bottom:0; flex:1;">
+                    </div>
+
                     <div id="admin-myship-links-container"></div>
                 </div>
 
@@ -1817,7 +1809,7 @@
         showView('admin');
         loadAllOrdersForAdmin();
         renderStatusLegendAdmin(); 
-        renderMyshipLinksAdmin(); // ⭐ 渲染後台網址設定
+        renderMyshipLinksAdmin(); 
         
         if (products.length > 0) {
             renderAdminInventoryTable();
@@ -1991,7 +1983,8 @@
         });
         settings.statusLegend = newLegend;
 
-        // ⭐ 儲存賣貨便動態連結
+        // ⭐ 儲存賣貨便動態連結與面交文字
+        settings.localDeliveryText = document.getElementById('local-delivery-text').value.trim();
         let newMyshipLinks = [];
         document.querySelectorAll('.myship-link-row').forEach(row => {
             let n = row.querySelector('.ml-name').value.trim();
