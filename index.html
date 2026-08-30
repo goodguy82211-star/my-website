@@ -12,7 +12,7 @@
 
     <script>
         (function() {
-            const version = "v10.9-DynamicStatus"; 
+            const version = "v11.0-ModifiedCheckout"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -424,9 +424,10 @@
                 <span style="font-weight: bold; color: #132c4d; font-size: 16px;">新竹市 / 竹北面交</span>
             </label>
             
-            <label style="border: 2px solid #dbe4f0; padding: 15px 20px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s;" onmouseover="this.style.borderColor='#132c4d'" onmouseout="this.style.borderColor='#dbe4f0'">
-                <input type="radio" name="deliveryMethod" value="7-11 賣貨便" style="width: 20px; height: 20px; margin: 0; accent-color: #132c4d;"> 
-                <span style="font-weight: bold; color: #132c4d; font-size: 16px;">7-11 賣貨便</span>
+            <!-- ⭐ 修改點 1：7-11選項改為點擊直接觸發儲存並跳轉 -->
+            <label style="border: 2px solid #dbe4f0; padding: 15px 20px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s;" onmouseover="this.style.borderColor='#132c4d'" onmouseout="this.style.borderColor='#dbe4f0'" onclick="handle711DirectClick()">
+                <input type="radio" name="deliveryMethod" id="radio-711" value="前往7-11賣貨便賣場直接下單" style="width: 20px; height: 20px; margin: 0; accent-color: #132c4d;"> 
+                <span style="font-weight: bold; color: #132c4d; font-size: 16px;">前往7-11賣貨便賣場直接下單</span>
             </label>
         </div>
         
@@ -459,34 +460,7 @@
     </div>
 </div>
 
-<div id="payment-modal" class="modal-overlay" onclick="if(event.target===this) closePaymentModal()">
-    <div class="modal-content" style="text-align: center; max-width: 400px;">
-        <span class="modal-close" onclick="closePaymentModal()">×</span>
-        <h2 style="color: #132c4d; margin-top: 0; font-weight: 900;">💳 結帳與匯款</h2>
-        <div style="background: #f4f8fb; padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #dbe4f0;">
-            <p style="margin: 0; color: #718096; font-weight: bold; font-size: 14px;">本次結帳總額</p>
-            <div style="font-size: 32px; color: #e53e3e; font-weight: 900; margin: 10px 0;">NT$ <span id="payment-total-amount">0</span></div>
-            
-            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #c6d4e1;">
-                <p style="margin: 0; color: #718096; font-weight: bold; font-size: 14px;">本次訂金支付金額</p>
-                <div style="font-size: 24px; color: #132c4d; font-weight: 900; margin: 5px 0;">NT$ <span id="payment-deposit-amount">0</span></div>
-            </div>
-        </div>
-        <div style="text-align: left; background: #ffffff; padding: 20px; border-radius: 16px; border: 1px solid #dbe4f0; margin-bottom: 20px;">
-            <p style="margin: 5px 0; font-size: 15px;">銀行代碼：<strong style="color: #132c4d;" id="bank-code-el">尚未設定</strong></p>
-            <p style="margin: 5px 0; font-size: 15px;">銀行帳號：<strong style="color: #132c4d;" id="bank-account-el">尚未設定</strong></p>
-            <div style="text-align: center; margin-top: 20px;">
-                <img id="payment-qr" src="" style="width: 160px; height: 160px; border-radius: 12px; border: 1px solid #dbe4f0; object-fit: contain;">
-            </div>
-            <div style="margin-top: 20px; border-top: 1px solid #dbe4f0; padding-top: 15px;">
-                <label style="font-size: 14px; font-weight: bold; color: #132c4d; display: block; margin-bottom: 8px;">匯款完成後請填寫：</label>
-                <input type="text" id="bank-last-5" placeholder="輸入帳號【後五碼】" maxlength="5" style="border: 2px solid #132c4d; text-align: center; font-size: 18px; font-weight: bold;">
-            </div>
-        </div>
-        <a href="#" id="line-pay-link-el" target="_blank" style="display: none; background: #06c755; color: white; padding: 14px; border-radius: 12px; font-weight: bold; margin-bottom: 15px; text-decoration:none;">🟢 點我用 LINE Pay</a>
-        <button onclick="submitPaymentConfirm()" style="background: #132c4d; color: white; border: none; width: 100%; padding: 14px; border-radius: 30px; font-weight: bold; font-size: 16px; cursor: pointer;">✅ 送出查帳</button>
-    </div>
-</div>
+<!-- ❌ 這裡將結帳匯款視窗整個拔除，因為不需要了 -->
 
 <div id="sop-modal" class="modal-overlay" onclick="if(event.target===this) closeSopModal()">
     <div class="modal-content" style="text-align: center; max-width: 800px; padding: 20px;">
@@ -621,7 +595,6 @@
             dep: { text: "💰 未付尾款：", color: "#d32f2f", size: "15px" },
             noteTitle: { text: "狀態說明：", color: "#718096", size: "13px" }
         },
-        // 🟢 動態狀態說明的陣列
         statusLegend: [], 
         infoStyles: {
             btnBg: "#ffffff",
@@ -636,7 +609,6 @@
     };
     let settings = defaultSettings;
 
-    // 🟢 用於後台狀態說明的全域函式
     window.addStatusLegendRow = function() {
         if(!settings.statusLegend) settings.statusLegend = [];
         settings.statusLegend.push({text: "新狀態: 說明文字", color: "#475569"});
@@ -745,29 +717,6 @@
         document.getElementById('info-modal').classList.add('active');
     }
     function closeInfoModal() { document.getElementById('info-modal').classList.remove('active'); }
-
-    function openPaymentModal() {
-        const checkedBoxes = document.querySelectorAll('.user-order-chk:checked');
-        if (checkedBoxes.length === 0) return alert("⚠️ 請先勾選您要結帳的訂單！");
-        
-        let invalid = Array.from(checkedBoxes).some(cb => cb.dataset.status !== '已登記');
-        if (invalid) {
-            return alert("請重新選擇僅為已登記的品項");
-        }
-        
-        let sumPrice = 0;
-        checkedBoxes.forEach(c => {
-            sumPrice += Number(c.dataset.price) || 0;
-        });
-        
-        let sumDeposit = Math.round(sumPrice / 2);
-        
-        document.getElementById('payment-total-amount').innerText = sumPrice;
-        document.getElementById('payment-deposit-amount').innerText = sumDeposit;
-        
-        document.getElementById('payment-modal').classList.add('active');
-    }
-    function closePaymentModal() { document.getElementById('payment-modal').classList.remove('active'); }
     
     function openCartModal() { 
         updateCartUI(); 
@@ -950,12 +899,6 @@
         document.getElementById("top-notice-banner-el").style.background = settings.notice?.bg;
 
         document.getElementById("nav-avatar-el").src = formatImageUrl(settings.avatarUrl || defaultSettings.avatarUrl);
-        document.getElementById("bank-code-el").innerText = settings.bankCode || "";
-        document.getElementById("bank-account-el").innerText = settings.bankAccount || "";
-        document.getElementById("payment-qr").src = formatImageUrl(settings.qrCodeUrl);
-        
-        const lpEl = document.getElementById("line-pay-link-el");
-        if(settings.linePayUrl) { lpEl.href = settings.linePayUrl; lpEl.style.display = "block"; } else lpEl.style.display = "none";
         
         const sopBtn = document.getElementById("sop-btn-el");
         sopBtn.innerText = settings.sopBtn?.text; sopBtn.style.color = settings.sopBtn?.color; sopBtn.style.background = settings.sopBtn?.bg;
@@ -987,7 +930,6 @@
                     if (!settings.infoStyles) settings.infoStyles = defaultSettings.infoStyles;
                     if (!settings.exchangeRates) settings.exchangeRates = defaultSettings.exchangeRates;
                     
-                    // 🟢 狀態說明的陣列轉換 (舊版轉新版陣列)
                     if (!settings.statusLegend || settings.statusLegend.length === 0) {
                         settings.statusLegend = [
                             { text: settings.summaryLabels?.registered?.text || "已登記: 已成立訂單", color: settings.summaryLabels?.registered?.color || "#475569" },
@@ -1305,10 +1247,52 @@
         closeCartModal();
         document.getElementById('delivery-modal').classList.add('active');
     }
+    
+    // ⭐ 修改點 2：增加一個專屬函數給 7-11 選項，點擊後自動送出並轉跳
+    function handle711DirectClick() {
+        document.getElementById('radio-711').checked = true;
+        
+        if (!confirm('您即將送出訂單並前往賣貨便，確認繼續？')) {
+            return;
+        }
+
+        const finalCustomName = localStorage.getItem("customGroupNickname") || "";
+        let btn = document.getElementById("delivery-submit-btn");
+        btn.innerText = "⏳ 背景建立訂單並轉跳中...";
+        btn.disabled = true;
+
+        fetch(GAS_URL, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "submitOrder",
+                cart: pendingCheckoutItems,
+                userId: currentUserProfile.userId,
+                realName: currentUserProfile.realName,
+                customName: finalCustomName,
+                deliveryMethod: "前往7-11賣貨便賣場直接下單"
+            })
+        })
+        .then(() => {
+            myCart = myCart.filter(i => !i.selected);
+            updateCartUI();
+            closeDeliveryModal();
+            // 送出成功後直接轉跳
+            window.location.href = 'https://myship.7-11.com.tw/myship/list1';
+        })
+        .catch(err => {
+            alert("訂單送出失敗，請檢查網路連線後重試");
+            btn.innerText = "確定選擇並送出訂單 🚀";
+            btn.disabled = false;
+        });
+    }
 
     function confirmAndSubmitOrder() {
         const selectedMethod = document.querySelector('input[name="deliveryMethod"]:checked');
         if (!selectedMethod) return alert("⚠️ 請先選擇一種交貨方式！");
+        
+        if (selectedMethod.value === "前往7-11賣貨便賣場直接下單") {
+            return handle711DirectClick();
+        }
 
         if (!confirm(`您選擇的交貨方式為「${selectedMethod.value}」\n確定是否選擇此方式並送出訂單？`)) {
             return;
@@ -1368,15 +1352,13 @@
             let html = `<table><tr><th style="width:30px; text-align:center;"><input type="checkbox" onclick="document.querySelectorAll('.user-order-chk').forEach(c=>c.checked=this.checked);calcSelectedTotal()"></th><th>日期</th><th>商品</th><th>備註</th><th>狀態</th><th>金額</th><th>已付金額</th><th>未付尾款</th></tr>`;
             filtered.forEach(o => {
                 let p = Number(o.price) || 0;
-                
                 let deposit = Number(o.paidAmount) || 0;
                 let balance = p - deposit;       
 
                 let depositDisplay = deposit;
                 let balanceDisplay = balance;
 
-                if (o.status === '已登記') { depositDisplay = ''; balanceDisplay = ''; } 
-                else if (o.status === '已斷貨') { balanceDisplay = ''; }
+                // ⭐ 修改點 3：移除了此處隱藏「已登記」金額的 if 判斷，讓金額永遠顯示
 
                 let chk = '';
                 if(o.status !== '已付款') { 
@@ -1408,7 +1390,6 @@
 
             const sb = settings.summaryBox || defaultSettings.summaryBox;
             
-            // 🟢 替換為動態陣列的渲染方式
             let legendHtml = '';
             if(settings.statusLegend && settings.statusLegend.length > 0) {
                 legendHtml = settings.statusLegend.map(item => 
@@ -1416,6 +1397,7 @@
                 ).join('');
             }
             
+            // ⭐ 修改點 4：把結帳與匯款按鈕拿掉
             document.getElementById('summary-result').innerHTML = `
                 <div class="summary-stats-box">
                     <div style="font-size:${sb.reg.size}; color:${sb.reg.color}; font-weight:bold;">${sb.reg.text} NT$ <span id="summary-total-price">0</span></div>
@@ -1428,7 +1410,6 @@
                 </div>
                 <div class="checkout-bar">
                     <span style="font-weight:bold; font-size: 16px;">勾選結帳總額：<span style="color:#f87171; font-size: 20px; margin-left: 5px;">NT$ <span id="selected-payment-display">0</span></span></span>
-                    <button onclick="openPaymentModal()" style="background:#ffffff; color:#132c4d; border:none; padding:10px 24px; border-radius:30px; font-weight:bold; font-size:14px; cursor: pointer; transition: 0.2s; white-space: nowrap;">前往匯款</button>
                 </div>`;
             
             if (personalMyshipUrl && personalMyshipUrl.trim() !== '') {
@@ -1464,29 +1445,7 @@
             calcSelectedTotal();
 
             if (autoPay === true) {
-                let checkboxes = document.querySelectorAll('.user-order-chk');
-                let hasEligible = false;
-                
-                checkboxes.forEach(c => {
-                    if (c.dataset.status === '已登記') {
-                        c.checked = true;
-                        hasEligible = true;
-                    }
-                });
-                
-                let selectAllChk = document.querySelector('th input[type="checkbox"]');
-                if (selectAllChk) {
-                    let allChks = document.querySelectorAll('.user-order-chk');
-                    let allChecked = Array.from(allChks).every(c => c.checked);
-                    selectAllChk.checked = allChecked && allChks.length > 0;
-                }
-
-                if (hasEligible) {
-                    calcSelectedTotal(); 
-                    openPaymentModal();  
-                } else {
-                    alert("🎉 訂單送出成功！(目前無待結帳的『已登記』訂單)");
-                }
+                alert("🎉 訂單已送出成功！");
             }
         });
     }
@@ -1508,22 +1467,6 @@
         if (document.getElementById('summary-total-deposit')) document.getElementById('summary-total-deposit').innerText = sumDeposit;
         if (document.getElementById('summary-total-balance')) document.getElementById('summary-total-balance').innerText = sumBalance;
         if (document.getElementById('selected-payment-display')) document.getElementById('selected-payment-display').innerText = sumPrice;
-    }
-
-    function submitPaymentConfirm() {
-        const last5 = document.getElementById('bank-last-5').value.trim();
-        if(last5.length < 4) return alert("請輸入正確的帳號後五碼！");
-        const updates = Array.from(document.querySelectorAll('.user-order-chk:checked')).map(cb => ({ row: parseInt(cb.value), status: `待查帳(${last5})` }));
-        
-        let originalBtnText = event.target.innerText;
-        event.target.innerText = "⏳ 傳送中...";
-        
-        fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "batchUpdateStatus", updates }) }).then(() => {
-            alert("查帳通知已成功送出！"); 
-            closePaymentModal(); 
-            fetchMyOrders();
-            event.target.innerText = originalBtnText;
-        });
     }
 
     function switchAdminInvTab(tab) {
@@ -1733,7 +1676,6 @@
                         <button onclick="addStatusLegendRow()" style="background:#319795; color:white; border:none; padding:6px 12px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;">+ 新增狀態列</button>
                     </div>
                     
-                    <!-- 🟢 動態狀態說明的容器 -->
                     <div id="admin-status-legend-container"></div>
                     
                 </div>
@@ -1783,7 +1725,7 @@
         `;
         showView('admin');
         loadAllOrdersForAdmin();
-        renderStatusLegendAdmin(); // 🟢 渲染動態狀態列
+        renderStatusLegendAdmin(); 
         
         if (products.length > 0) {
             renderAdminInventoryTable();
@@ -1844,7 +1786,6 @@
                 
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top:15px;">
                     <div><strong style="font-size:13px; color:#718096;">群組(分類):</strong> <input type="text" value="${p.group || ''}" id="group-${p.id}" placeholder="留白則為單獨卡片" style="border-color:#132c4d;"></div>
-                    <!-- 🟢 2. 新增後台庫存上限欄位 -->
                     <div><strong style="font-size:13px; color:#718096;">庫存上限:</strong> <input type="number" value="${p.stock || ''}" id="stock-${p.id}" placeholder="留白代表不限" style="border-color:#132c4d;"></div>
                 </div>
                 
@@ -1950,7 +1891,6 @@
         settings.summaryBox.chk = { text: document.getElementById('sb-chk-t').value, color: document.getElementById('sb-chk-c').value, size: document.getElementById('sb-chk-s').value };
         settings.summaryBox.dep = { text: document.getElementById('sb-dep-t').value, color: document.getElementById('sb-dep-c').value, size: document.getElementById('sb-dep-s').value };
         
-        // 🟢 儲存動態的狀態陣列
         let newLegend = [];
         document.querySelectorAll('.status-legend-row').forEach(row => {
             let t = row.querySelector('.sl-text').value.trim();
