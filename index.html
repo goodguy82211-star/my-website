@@ -321,25 +321,34 @@
         <button class="back-btn" onclick="showView('home')">← 返回首頁</button>
         <h2 style="margin-top: 0; color: #132c4d;">會員身分綁定</h2>
         
-        <div class="profile-card" id="login-card-el">
-            <div id="user-avatar-box" class="avatar-placeholder">?</div>
-            <div>
-                <div id="user-name" style="font-weight:900; font-size: 18px; color: #132c4d; margin-bottom: 5px;">載入中...</div>
-                <div id="user-id" style="font-size: 13px; color: #718096;">請稍候</div>
+        <!-- 步驟 1：登入區塊 -->
+        <div style="margin-bottom: 20px;">
+            <div style="font-weight: bold; color: #e53e3e; margin-bottom: 8px;">☝️ 第一步：請先點擊下方區塊登入 LINE</div>
+            <div class="profile-card" id="login-card-el" style="cursor: pointer; border: 2px dashed #c6d4e1; margin-bottom: 0;">
+                <div id="user-avatar-box" class="avatar-placeholder">?</div>
+                <div>
+                    <div id="user-name" style="font-weight:900; font-size: 18px; color: #132c4d; margin-bottom: 5px;">尚未登入 (點我登入 LINE)</div>
+                    <div id="user-id" style="font-size: 13px; color: #718096;">請稍候</div>
+                </div>
             </div>
         </div>
         
-        <div style="background: #ffffff; padding: 25px; border-radius: 20px; border: 1px solid #dbe4f0; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
-            <h3 style="margin-top: 0; color: #132c4d; margin-bottom: 10px;">👥 LINE 群組暱稱同步設定</h3>
-            <p style="font-size: 14px; color: #718096; margin-bottom: 20px;">💡 請輸入您在代購群組內使用的暱稱，並可自行開關自動通知。</p>
-            <input type="text" id="custom-group-name" placeholder="請輸入您在LINE群組的暱稱">
-            
-            <label style="display:flex; align-items:center; gap:8px; margin-bottom: 20px; font-weight:bold; color:#132c4d; cursor:pointer;">
-                <input type="checkbox" id="auto-reply-switch" style="width:20px; height:20px; margin:0;" checked> 
-                接收 LINE 官方帳號自動推播與私訊回覆
-            </label>
+        <!-- 步驟 2：設定區塊 (未登入前預設反灰鎖定) -->
+        <div id="step2-container" style="opacity: 0.4; pointer-events: none; transition: 0.3s;">
+            <div style="font-weight: bold; color: #132c4d; margin-bottom: 8px;">✌️ 第二步：確認並同步資料</div>
+            <div style="background: #ffffff; padding: 25px; border-radius: 20px; border: 1px solid #dbe4f0; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
+                <h3 style="margin-top: 0; color: #132c4d; margin-bottom: 10px;">👥 LINE 群組暱稱同步設定</h3>
+                <p style="font-size: 14px; color: #718096; margin-bottom: 20px;">💡 請輸入您在代購群組內使用的暱稱，並可自行開關自動通知。</p>
+                <input type="text" id="custom-group-name" placeholder="請輸入您在LINE群組的暱稱">
+                
+                <label style="display:flex; align-items:center; gap:8px; margin-bottom: 20px; font-weight:bold; color:#132c4d; cursor:pointer;">
+                    <input type="checkbox" id="auto-reply-switch" style="width:20px; height:20px; margin:0;" checked> 
+                    接收 LINE 官方帳號自動推播與私訊回覆
+                </label>
 
-            <button onclick="saveGroupNickname()" style="background: #132c4d; color: white; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 15px; width: 100%; cursor: pointer; transition: 0.3s;">💾 儲存並同步</button>
+                <!-- 加上 ID 以便 JS 控制按鈕狀態 -->
+                <button id="save-profile-btn" onclick="saveGroupNickname()" style="background: #132c4d; color: white; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 15px; width: 100%; cursor: pointer; transition: 0.3s;">💾 儲存並同步</button>
+            </div>
         </div>
     </main>
 </div>
@@ -867,6 +876,17 @@
                     document.getElementById('user-id').innerText = "UID: " + profile.userId;
                     document.getElementById('user-avatar-box').innerText = profile.displayName.charAt(0);
                     
+                    // 【新增：將登入框的虛線邊框改為實線，表示已完成】
+                    let loginCard = document.getElementById('login-card-el');
+                    if (loginCard) loginCard.style.border = "1px solid #dbe4f0";
+                    
+                    // 【新增：解鎖步驟二】
+                    let step2 = document.getElementById('step2-container');
+                    if (step2) {
+                        step2.style.opacity = "1";
+                        step2.style.pointerEvents = "auto";
+                    }
+                    
                     let savedName = localStorage.getItem("customGroupNickname");
                     if (savedName) {
                         document.getElementById('custom-group-name').value = savedName;
@@ -890,8 +910,16 @@
         }
         
         const autoReply = document.getElementById('auto-reply-switch').checked ? "ON" : "OFF";
-
         localStorage.setItem("customGroupNickname", nick);
+
+        // 【新增：改變按鈕狀態，讓使用者知道正在處理】
+        const saveBtn = document.getElementById('save-profile-btn');
+        let originalText = "💾 儲存並同步";
+        if (saveBtn) {
+            originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = "⏳ 同步中請稍候...";
+            saveBtn.disabled = true;
+        }
 
         fetch(GAS_URL, {
             method: "POST",
@@ -905,11 +933,27 @@
         })
         .then(res => res.text())
         .then(() => {
-            alert("🎉 設定並成功同步至後端資料庫！");
+            if (saveBtn) {
+                saveBtn.style.background = "#319795"; // 變成成功綠色
+                saveBtn.innerHTML = "✅ 同步成功！(可隨時再次修改)";
+                
+                // 3秒後恢復按鈕原始狀態，讓客戶可以隨時再次修改儲存
+                setTimeout(() => {
+                    saveBtn.style.background = "#132c4d";
+                    saveBtn.innerHTML = originalText;
+                    saveBtn.disabled = false;
+                }, 3000);
+            } else {
+                alert("🎉 設定並成功同步至後端資料庫！");
+            }
         })
         .catch(err => {
             console.error("同步失敗:", err);
             alert("⚠️ 畫面已更新，但同步至後台失敗，請檢查網路。");
+            if (saveBtn) {
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+            }
         });
     }
 
