@@ -18,7 +18,7 @@
 
     <script>
         (function() {
-            const version = "v13.0-CuteDoggoVersion"; 
+            const version = "v14.0-PerfectCentered"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -78,16 +78,23 @@
         .admin-btn { background: none; border: none; font-size: 22px; cursor: pointer; padding: 0; transition: transform 0.2s; color: var(--text-main); font-family: inherit;}
         .admin-btn:hover { transform: scale(1.1); }
         
+        /* 跑馬燈修復區塊 */
         .top-notice-banner {
-            padding: 8px 20px; 
-            border-radius: 30px; 
-            font-size: 13px; font-weight: 700; letter-spacing: 1px; 
-            margin: 0 auto; 
-            display: flex; justify-content: center; align-items: center;
-            max-width: fit-content;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-            overflow: hidden; 
-            white-space: nowrap;
+            flex: 1; max-width: 50%; /* 限制電腦版寬度，避免擠壓按鈕 */
+            padding: 8px 20px; border-radius: 30px; font-size: 13px; font-weight: 700; letter-spacing: 1px; 
+            margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            overflow: hidden; white-space: nowrap; position: relative;
+        }
+        .marquee-track {
+            display: inline-block; white-space: nowrap;
+            animation: marquee-seamless 12s linear infinite;
+        }
+        .marquee-track span { padding-right: 40px; display: inline-block; }
+        #notice-text-el-clone { display: inline-block; }
+
+        @keyframes marquee-seamless {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); } 
         }
 
         .modern-cart-btn {
@@ -100,7 +107,7 @@
         .modern-cart-btn:hover { transform: translateY(3px); box-shadow: 0 2px 0 var(--btn-shadow-main); }
         .cart-dot { background: #ff4d4d; width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 2px solid #fff;} 
 
-        /* ================= 🌸 頂部夢幻大圖區 & 雙犬探頭設計 ================= */
+        /* ================= 🌸 頂部大圖區 & 固定探頭狗狗 ================= */
         .hero-section {
             height: 50vh; min-height: 420px; width: 100%;
             background-size: cover; background-position: center 30%;
@@ -109,17 +116,12 @@
             position: relative;
         }
         
-        .hero-center-box { position: relative; margin-top: 40px; cursor: pointer; }
+        .hero-center-box { position: relative; margin-top: 40px; }
 
         .hero-title-card {
-            position: relative;
-            z-index: 2;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(8px);
-            padding: 20px 45px;
-            border-radius: 50px;
-            border: 3px dashed var(--btn-shadow-pink);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            position: relative; z-index: 2; background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px); padding: 20px 45px; border-radius: 50px;
+            border: 3px dashed var(--btn-shadow-pink); box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
 
         .hero-title { 
@@ -134,23 +136,18 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: inline-block;
         }
 
+        /* 狗狗固定探頭，移除hover跳動效果 */
         .hero-peeking-dogs {
             position: absolute; bottom: 65%; left: 0; width: 100%;
             display: flex; justify-content: center; gap: 30px; 
             z-index: 1; pointer-events: none;
         }
-
         .hero-dog {
             width: 135px; height: auto; object-fit: contain;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             filter: drop-shadow(0 -4px 6px rgba(107, 89, 96, 0.15));
         }
-
-        .hero-dog.dog-left { transform: translateY(45px) rotate(-8deg); }
-        .hero-dog.dog-right { transform: translateY(40px) rotate(8deg); }
-
-        .hero-center-box:hover .dog-left { transform: translateY(-5px) rotate(-3deg); }
-        .hero-center-box:hover .dog-right { transform: translateY(-5px) rotate(3deg); }
+        .hero-dog.dog-left { transform: translateY(5px) rotate(-3deg); }
+        .hero-dog.dog-right { transform: translateY(5px) rotate(3deg); }
 
         .content-wrapper { max-width: 1000px; margin: 0 auto; padding: 40px 5%; position: relative; z-index: 10; }
         .view-section { display: none; padding-top: 80px; min-height: 100vh;}
@@ -163,7 +160,7 @@
             100% { opacity: 1; transform: translateY(0) scale(1); } 
         }
 
-        /* ================= 🐾 首頁選單 (超Q立體版) ================= */
+        /* ================= 🐾 首頁選單 ================= */
         .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 30px; }
         .bento-item {
             background: var(--card-bg); border-radius: 35px; padding: 25px 20px;
@@ -189,10 +186,9 @@
         .deco-paw { position: absolute; right: 200px; top: -10px; font-size: 100px; opacity: 0.15; transform: rotate(15deg); pointer-events: none;}
         
         .peeking-dog-small {
-            position: absolute; right: 220px; bottom: -5px; width: 100px; z-index: 1;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+            position: absolute; right: 220px; bottom: -5px; width: 100px; z-index: 1; pointer-events: none; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+            transform: translateY(-25px) rotate(-8deg); /* 預設探頭狀態 */
         }
-        .bento-main:hover .peeking-dog-small { transform: translateY(-30px) rotate(-8deg); }
 
         .promo-banner { text-align: center; background: var(--card-bg); border: 2px dashed var(--btn-shadow-pink); color: var(--text-main); border-radius: 20px; padding: 12px 20px; width: 100%; box-sizing: border-box; margin: 0 auto 30px auto; font-weight: 700; font-size: 15px; box-shadow: 0 4px 0 var(--btn-shadow-pink);}
 
@@ -221,9 +217,28 @@
         .group-card:hover .group-btn { background: var(--primary); color: white; border-color: var(--primary); }
 
         .action-row { display:flex; justify-content:space-between; align-items:center; margin-top: auto; gap: 10px; }
-        .qty-selector { display: grid; grid-template-columns: 35px 1fr 35px; align-items: center; border-radius: 20px; background: var(--bg-color); height: 40px; flex: 1; border: 2px solid #fce1d8;}
-        .qty-btn { font-family: inherit; background: transparent; border: none; font-weight: 700; color: var(--text-main); cursor: pointer; font-size: 18px; }
-        .qty-input { font-family: inherit; width: 100%; text-align: center; border: none; background: transparent; font-weight: 700; color: var(--text-main); outline: none; }
+        
+        /* 數量增減器完美置中修復 */
+        .qty-selector { 
+            display: flex; align-items: center; justify-content: space-between; 
+            border-radius: 20px; background: var(--bg-color); height: 40px; flex: 1; border: 2px solid #fce1d8;
+            overflow: hidden; box-sizing: border-box; padding: 0;
+        }
+        .qty-btn { 
+            flex: 0 0 40px; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            background: transparent; border: none; font-weight: 800; color: var(--text-main); 
+            cursor: pointer; font-size: 20px; padding: 0; margin: 0; font-family: inherit; line-height: 1;
+        }
+        .qty-input { 
+            flex: 1; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center; text-align: center; 
+            border: none; background: #ffffff; font-weight: 800; color: var(--text-main); outline: none; 
+            padding: 0; margin: 0; font-family: inherit; font-size: 16px; 
+            border-left: 2px solid #fce1d8; border-right: 2px solid #fce1d8; 
+            box-sizing: border-box; border-radius: 0; -webkit-appearance: none; line-height: normal;
+        }
+        
         .add-btn { font-family: inherit; background: var(--text-main); color: white; border: none; padding: 0 20px; height: 40px; border-radius: 20px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s;}
         .add-btn:hover { background: var(--primary); }
         .add-btn:disabled { background: #dbe4f0 !important; cursor: not-allowed; }
@@ -277,26 +292,23 @@
         .floating-cart:hover { transform: scale(1.05); background: var(--primary-dark); animation: none; }
         @keyframes bounce-cart { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-12px);} 60% {transform: translateY(-6px);} }
 
+        /* ================= 📱 手機版 RWD 調整 ================= */
         @media (max-width: 850px) {
             .nav-brand span { display: none; } 
-            .top-notice-banner { flex: 1; max-width: none; margin: 0 10px; padding: 8px 0; overflow: hidden; }
-            .marquee-track { width: max-content; animation: marquee-seamless 12s linear infinite; justify-content: flex-start;}
-            .marquee-track span { padding-right: 40px; display: inline-block;}
-            #notice-text-el-clone { display: inline-block; }
+            .top-notice-banner { max-width: 100%; margin: 0 10px; }
             .modern-cart-btn { padding: 10px 14px; font-size: 13px; }
         }
 
         @media (max-width: 600px) {
-            .hero-dog { width: 100px; } 
-            .hero-peeking-dogs { gap: 10px; bottom: 65%; }
+            .hero-dog { width: 110px; } 
+            .hero-peeking-dogs { gap: 10px; bottom: 60%; }
             .hero-title { font-size: 26px; }
 
             .bento-grid { grid-template-columns: repeat(2, 1fr); gap: 15px;}
             .bento-main { grid-column: span 2; padding: 30px 20px 20px 20px; flex-direction: column; align-items: center; text-align: center; gap: 15px; margin-top: 20px;}
             .deco-paw { right: 50%; transform: translateX(50%) rotate(15deg); top: 10px; font-size: 120px;}
             
-            .peeking-dog-small { right: auto; left: 50%; margin-left: -45px; bottom: auto; top: -60px; width: 90px; transform: translateY(30px); }
-            .bento-main:hover .peeking-dog-small { transform: translateY(0) rotate(5deg); }
+            .peeking-dog-small { right: auto; left: 50%; margin-left: -45px; bottom: auto; top: -55px; width: 90px; transform: translateY(0) rotate(5deg); }
 
             .modern-product-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
             .action-row { flex-direction: column; align-items: stretch; }
@@ -315,7 +327,8 @@
 <nav class="glass-nav">
     <div class="nav-brand" onclick="showView('home')">
         <img id="nav-avatar-el" src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=150&q=80" alt="Logo">
-        <span id="nav-title-el">載入中...</span>
+        <!-- 修正左上角載入中，預設直接顯示站名 -->
+        <span id="nav-title-el">小魔丸 🐾</span>
     </div>
     
     <div class="top-notice-banner" id="top-notice-banner-el">
@@ -338,12 +351,10 @@
 <div id="home-view" class="view-section active">
     <header class="hero-section" id="hero-section-el">
         <div class="hero-center-box">
-            <!-- 🐕 兩隻專屬照片探頭狗狗 -->
+            <!-- 🐕 兩隻專屬照片探頭狗狗 (加入ID方便後台替換) -->
             <div class="hero-peeking-dogs">
-                <!-- 左邊淺色博美 -->
-                <img src="https://i.ibb.co/5Wn9FCyV/image.png" class="hero-dog dog-left" alt="淺色博美">
-                <!-- 右邊深色博美 -->
-                <img src="https://i.ibb.co/Y7Sxx1g7/image.png" class="hero-dog dog-right" alt="深色博美">
+                <img id="hero-dog-left-el" src="https://i.ibb.co/5Wn9FCyV/image.png" class="hero-dog dog-left" alt="淺色博美">
+                <img id="hero-dog-right-el" src="https://i.ibb.co/Y7Sxx1g7/image.png" class="hero-dog dog-right" alt="深色博美">
             </div>
 
             <div class="hero-title-card">
@@ -360,7 +371,6 @@
             <div class="bento-item bento-main" onclick="showView('profile')" id="home-btn-profile">
                 <div class="deco-paw">🐾</div>
                 
-                <!-- 🐕 下方綁定區塊：淺色博美探頭 -->
                 <img src="https://i.ibb.co/5Wn9FCyV/image.png" class="peeking-dog-small" alt="探頭狗狗">
                 
                 <div style="position: relative; z-index: 2;">
@@ -644,6 +654,11 @@
         notice: { text: "🧮 有換算計算機可以參考唷~~", size: "14px", color: "#ffffff", font: "inherit", bg: "#ffb5a7" },
         avatarUrl: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=150&q=80",
         heroBgUrl: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&w=1600&q=80",
+        
+        // ⭐ 新增：後台可控的狗狗圖片網址
+        dogLeftUrl: "https://i.ibb.co/5Wn9FCyV/image.png",
+        dogRightUrl: "https://i.ibb.co/Y7Sxx1g7/image.png",
+
         bankCode: "822 (中國信託)", bankAccount: "1234-5678-9012", qrCodeUrl: "", linePayUrl: "", sopImgUrl: "",
         sopBtn: { text: "付款SOP", size: "14px", color: "#ffb5a7", bg: "#ffffff" },
         
@@ -1044,6 +1059,13 @@
             heroSection.style.backgroundImage = `linear-gradient(rgba(255, 181, 167, 0.45), rgba(255, 249, 245, 1)), url('${formatImageUrl(bgUrl)}')`;
         }
 
+        // ⭐ 這裡將後台儲存的狗狗圖片載入到畫面上
+        const dogLeftEl = document.getElementById("hero-dog-left-el");
+        if(dogLeftEl) dogLeftEl.src = formatImageUrl(settings.dogLeftUrl || defaultSettings.dogLeftUrl);
+        
+        const dogRightEl = document.getElementById("hero-dog-right-el");
+        if(dogRightEl) dogRightEl.src = formatImageUrl(settings.dogRightUrl || defaultSettings.dogRightUrl);
+
         const safeSet = (id, obj) => {
             const el = document.getElementById(id);
             if(el && obj) { 
@@ -1372,10 +1394,11 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div style="color: var(--primary-dark); font-weight: 800; font-size: 16px;">NT$ ${i.price}</div>
                             
-                            <div style="display: grid; grid-template-columns: 28px 1fr 28px; align-items: center; border: 2px solid var(--btn-shadow-pink); border-radius: 12px; background: #ffffff; height: 30px; width: 95px; overflow: hidden;">
-                                <button onclick="updateCartQty(${idx}, -1)" style="border: none; background: var(--bg-color); height: 100%; width: 100%; font-size: 16px; cursor: pointer; color: var(--text-main); font-weight: 800; padding: 0; display:flex; justify-content:center; align-items:center; font-family: inherit;">-</button>
-                                <input type="text" value="${i.quantity}" readonly style="width: 100%; height:100%; text-align: center; border: none; border-left: 2px solid var(--btn-shadow-pink); border-right: 2px solid var(--btn-shadow-pink); background: transparent; font-size: 14px; font-weight: 800; padding: 0; margin: 0; color: var(--text-main); outline: none; border-radius:0; box-sizing: border-box; font-family: inherit;">
-                                <button onclick="updateCartQty(${idx}, 1)" style="border: none; background: var(--bg-color); height: 100%; width: 100%; font-size: 14px; cursor: pointer; color: var(--text-main); font-weight: 800; padding: 0; display:flex; justify-content:center; align-items:center; font-family: inherit;">+</button>
+                            <!-- 購物車內的完美置中數量選擇器 -->
+                            <div style="display: flex; align-items: center; border: 2px solid var(--btn-shadow-pink); border-radius: 12px; background: #ffffff; height: 32px; width: 100px; overflow: hidden; box-sizing: border-box;">
+                                <button onclick="updateCartQty(${idx}, -1)" style="flex: 0 0 32px; border: none; background: var(--bg-color); height: 100%; font-size: 18px; cursor: pointer; color: var(--text-main); font-weight: 800; padding: 0; margin: 0; display: flex; justify-content: center; align-items: center; font-family: inherit; line-height: 1;">-</button>
+                                <input type="text" value="${i.quantity}" readonly style="flex: 1; height: 100%; width: 100%; text-align: center; border: none; border-left: 2px solid var(--btn-shadow-pink); border-right: 2px solid var(--btn-shadow-pink); background: #ffffff; font-size: 15px; font-weight: 800; padding: 0; margin: 0; color: var(--text-main); outline: none; border-radius: 0; box-sizing: border-box; font-family: inherit; -webkit-appearance: none; line-height: normal;">
+                                <button onclick="updateCartQty(${idx}, 1)" style="flex: 0 0 32px; border: none; background: var(--bg-color); height: 100%; font-size: 18px; cursor: pointer; color: var(--text-main); font-weight: 800; padding: 0; margin: 0; display: flex; justify-content: center; align-items: center; font-family: inherit; line-height: 1;">+</button>
                             </div>
                         </div>
                     </div>
@@ -1756,8 +1779,28 @@
                     </div>
                 </div>
 
+                <!-- ⭐ 在這裡設定狗狗圖片 -->
                 <div style="background:var(--bg-color); padding:20px; border-radius:20px; margin-bottom:15px; border:2px dashed var(--btn-shadow-pink);">
-                    <strong style="color:var(--text-main);">D. 結帳與圖片設定</strong><br>
+                    <strong style="color:var(--text-main);">D. 結帳與圖片設定 (含狗狗切換)</strong><br>
+                    
+                    <div class="upload-container" style="display:flex; gap:10px; margin-top:15px; margin-bottom:15px; align-items:center;">
+                        <span style="font-size:15px; white-space:nowrap; font-weight:800; color:var(--text-main);">左側狗狗圖:</span>
+                        <input type="text" value="${settings.dogLeftUrl || defaultSettings.dogLeftUrl}" id="dog-left-url" style="margin-bottom:0; flex:1;">
+                        <label style="background:white; color:var(--text-main); border:2px solid var(--btn-shadow-pink); padding:12px 16px; border-radius:15px; cursor:pointer; font-size:14px; font-weight:800; margin-bottom:0; white-space:nowrap;">
+                            📁上傳<input type="file" accept="image/*" style="display:none;" onchange="uploadImageToImgbb(this)">
+                        </label>
+                    </div>
+
+                    <div class="upload-container" style="display:flex; gap:10px; margin-top:15px; margin-bottom:15px; align-items:center;">
+                        <span style="font-size:15px; white-space:nowrap; font-weight:800; color:var(--text-main);">右側狗狗圖:</span>
+                        <input type="text" value="${settings.dogRightUrl || defaultSettings.dogRightUrl}" id="dog-right-url" style="margin-bottom:0; flex:1;">
+                        <label style="background:white; color:var(--text-main); border:2px solid var(--btn-shadow-pink); padding:12px 16px; border-radius:15px; cursor:pointer; font-size:14px; font-weight:800; margin-bottom:0; white-space:nowrap;">
+                            📁上傳<input type="file" accept="image/*" style="display:none;" onchange="uploadImageToImgbb(this)">
+                        </label>
+                    </div>
+
+                    <hr style="border-top:2px dashed var(--btn-shadow-pink); margin:20px 0;">
+
                     <div class="upload-container" style="display:flex; gap:10px; margin-top:15px; margin-bottom:15px; align-items:center;">
                         <span style="font-size:15px; white-space:nowrap; font-weight:800; color:var(--text-main);">中央Logo/大頭貼:</span>
                         <input type="text" value="${settings.avatarUrl}" id="b-url" style="margin-bottom:0; flex:1;">
@@ -2041,6 +2084,10 @@
         
         settings.avatarUrl = document.getElementById("b-url").value; 
         settings.heroBgUrl = document.getElementById("hero-bg-url").value;
+        
+        // ⭐ 儲存左右狗狗的圖片
+        settings.dogLeftUrl = document.getElementById("dog-left-url").value;
+        settings.dogRightUrl = document.getElementById("dog-right-url").value;
         
         settings.bankCode = document.getElementById("bank-c").value; settings.bankAccount = document.getElementById("bank-a").value; settings.sopImgUrl = document.getElementById("sop-img-url").value;
         
