@@ -18,7 +18,7 @@
 
     <script>
         (function() {
-            const version = "v14.0-PerfectCentered"; 
+            const version = "v15.0-MobileFix"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -45,7 +45,6 @@
             --text-muted: #8c7a80;    /* 淺棕色文字 */
             --card-bg: #ffffff;
             
-            /* 立體按鈕的陰影顏色 */
             --btn-shadow-pink: #fce1d8;
             --btn-shadow-main: #e6a296;
         }
@@ -78,24 +77,23 @@
         .admin-btn { background: none; border: none; font-size: 22px; cursor: pointer; padding: 0; transition: transform 0.2s; color: var(--text-main); font-family: inherit;}
         .admin-btn:hover { transform: scale(1.1); }
         
-        /* 跑馬燈修復區塊 */
+        /* ⭐ 修復：跑馬燈區塊重寫，確保沒有空白且流暢滾動 */
         .top-notice-banner {
-            flex: 1; max-width: 50%; /* 限制電腦版寬度，避免擠壓按鈕 */
-            padding: 8px 20px; border-radius: 30px; font-size: 13px; font-weight: 700; letter-spacing: 1px; 
-            margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            flex: 1 1 auto; max-width: 450px;
+            padding: 8px 15px; border-radius: 30px; font-size: 13px; font-weight: 700; letter-spacing: 1px; 
+            margin: 0 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
             overflow: hidden; white-space: nowrap; position: relative;
         }
         .marquee-track {
             display: inline-block; white-space: nowrap;
-            animation: marquee-seamless 12s linear infinite;
+            padding-left: 100%; /* 從最右側邊緣開始 */
+            animation: marquee-scroll 15s linear infinite;
         }
-        .marquee-track span { padding-right: 40px; display: inline-block; }
-        #notice-text-el-clone { display: inline-block; }
-
-        @keyframes marquee-seamless {
-            0%   { transform: translateX(0); }
-            100% { transform: translateX(-50%); } 
+        @keyframes marquee-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); } /* 滾動到最左側消失 */
         }
+        #notice-text-el-clone { display: none; } /* 隱藏舊版的複製文字 */
 
         .modern-cart-btn {
             background: var(--primary); color: #fff; border: none;
@@ -136,9 +134,9 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: inline-block;
         }
 
-        /* 狗狗固定探頭，移除hover跳動效果 */
+        /* ⭐ 修復：將狗狗錨點固定在標題白框的「正上方」，永遠不怕被文字換行遮住 */
         .hero-peeking-dogs {
-            position: absolute; bottom: 65%; left: 0; width: 100%;
+            position: absolute; top: -65px; left: 0; width: 100%;
             display: flex; justify-content: center; gap: 30px; 
             z-index: 1; pointer-events: none;
         }
@@ -146,8 +144,8 @@
             width: 135px; height: auto; object-fit: contain;
             filter: drop-shadow(0 -4px 6px rgba(107, 89, 96, 0.15));
         }
-        .hero-dog.dog-left { transform: translateY(5px) rotate(-3deg); }
-        .hero-dog.dog-right { transform: translateY(5px) rotate(3deg); }
+        .hero-dog.dog-left { transform: translateY(35px) rotate(-8deg); }
+        .hero-dog.dog-right { transform: translateY(35px) rotate(8deg); }
 
         .content-wrapper { max-width: 1000px; margin: 0 auto; padding: 40px 5%; position: relative; z-index: 10; }
         .view-section { display: none; padding-top: 80px; min-height: 100vh;}
@@ -300,8 +298,18 @@
         }
 
         @media (max-width: 600px) {
-            .hero-dog { width: 110px; } 
-            .hero-peeking-dogs { gap: 10px; bottom: 60%; }
+            .glass-nav { padding: 0 10px; gap: 8px; }
+            .nav-brand img { width: 38px; height: 38px; }
+            .admin-btn { font-size: 18px; }
+            .modern-cart-btn { padding: 8px 12px; font-size: 13px; gap: 5px;}
+            .top-notice-banner { padding: 6px 12px; margin: 0 5px;}
+            
+            .hero-dog { width: 100px; } 
+            /* ⭐ 修復：手機版的狗狗也是錨定在白色卡片正上方 */
+            .hero-peeking-dogs { top: -50px; gap: 15px; }
+            .hero-dog.dog-left { transform: translateY(15px) rotate(-8deg); }
+            .hero-dog.dog-right { transform: translateY(15px) rotate(8deg); }
+            
             .hero-title { font-size: 26px; }
 
             .bento-grid { grid-template-columns: repeat(2, 1fr); gap: 15px;}
@@ -327,14 +335,13 @@
 <nav class="glass-nav">
     <div class="nav-brand" onclick="showView('home')">
         <img id="nav-avatar-el" src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=150&q=80" alt="Logo">
-        <!-- 修正左上角載入中，預設直接顯示站名 -->
+        <!-- ⭐ 修復：移除「載入中」，直接顯示固定店名 -->
         <span id="nav-title-el">小魔丸 🐾</span>
     </div>
     
     <div class="top-notice-banner" id="top-notice-banner-el">
         <div class="marquee-track">
             <span id="notice-text-el">🧮 有換算計算機可以參考唷~~</span>
-            <span id="notice-text-el-clone">🧮 有換算計算機可以參考唷~~</span>
         </div>
     </div>
 
@@ -371,6 +378,7 @@
             <div class="bento-item bento-main" onclick="showView('profile')" id="home-btn-profile">
                 <div class="deco-paw">🐾</div>
                 
+                <!-- 🐕 下方綁定區塊：淺色博美探頭 -->
                 <img src="https://i.ibb.co/5Wn9FCyV/image.png" class="peeking-dog-small" alt="探頭狗狗">
                 
                 <div style="position: relative; z-index: 2;">
@@ -655,7 +663,6 @@
         avatarUrl: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=150&q=80",
         heroBgUrl: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&w=1600&q=80",
         
-        // ⭐ 新增：後台可控的狗狗圖片網址
         dogLeftUrl: "https://i.ibb.co/5Wn9FCyV/image.png",
         dogRightUrl: "https://i.ibb.co/Y7Sxx1g7/image.png",
 
@@ -887,12 +894,12 @@
             
             let actionHtml = isSoldOut ? 
                 `<button class="add-btn" disabled style="width:100%; box-shadow:none; cursor:not-allowed;">已售完</button>` :
-                `<div class="qty-selector" style="height:35px; border-radius:12px;">
+                `<div class="qty-selector">
                     <button class="qty-btn" onclick="changeQty('qty-sub-${p.id}', -1, '${maxStockStr}')">-</button>
                     <input class="qty-input" type="text" id="qty-sub-${p.id}" value="1" readonly>
                     <button class="qty-btn" onclick="changeQty('qty-sub-${p.id}', 1, '${maxStockStr}')">+</button>
                 </div>
-                <button class="add-btn" onclick="addToCart('${p.id}', 'qty-sub-${p.id}', true, '${maxStockStr}')" style="height:35px; border-radius:12px; padding:0 15px; box-shadow:none;">加購</button>`;
+                <button class="add-btn" onclick="addToCart('${p.id}', 'qty-sub-${p.id}', true, '${maxStockStr}')" style="height:40px; border-radius:20px; padding:0 15px; box-shadow:none;">加購</button>`;
             
             return `
             <div class="sub-product-card">
@@ -1059,7 +1066,6 @@
             heroSection.style.backgroundImage = `linear-gradient(rgba(255, 181, 167, 0.45), rgba(255, 249, 245, 1)), url('${formatImageUrl(bgUrl)}')`;
         }
 
-        // ⭐ 這裡將後台儲存的狗狗圖片載入到畫面上
         const dogLeftEl = document.getElementById("hero-dog-left-el");
         if(dogLeftEl) dogLeftEl.src = formatImageUrl(settings.dogLeftUrl || defaultSettings.dogLeftUrl);
         
@@ -1086,19 +1092,11 @@
         if(promo) { promo.innerText = settings.promo?.text||""; promo.style.fontSize = settings.promo?.size; promo.style.color = settings.promo?.color; promo.style.background = settings.promo?.bg; promo.style.fontFamily = settings.promo?.font; }
         
         const nEl = document.getElementById("notice-text-el");
-        const nElClone = document.getElementById("notice-text-el-clone");
-        
         if(nEl) { 
             nEl.innerText = settings.notice?.text||""; 
             nEl.style.fontSize = settings.notice?.size; 
             nEl.style.color = settings.notice?.color; 
             nEl.style.fontFamily = settings.notice?.font; 
-        }
-        if(nElClone) { 
-            nElClone.innerText = settings.notice?.text||""; 
-            nElClone.style.fontSize = settings.notice?.size; 
-            nElClone.style.color = settings.notice?.color; 
-            nElClone.style.fontFamily = settings.notice?.font; 
         }
         document.getElementById("top-notice-banner-el").style.background = settings.notice?.bg;
 
@@ -1395,10 +1393,10 @@
                             <div style="color: var(--primary-dark); font-weight: 800; font-size: 16px;">NT$ ${i.price}</div>
                             
                             <!-- 購物車內的完美置中數量選擇器 -->
-                            <div style="display: flex; align-items: center; border: 2px solid var(--btn-shadow-pink); border-radius: 12px; background: #ffffff; height: 32px; width: 100px; overflow: hidden; box-sizing: border-box;">
-                                <button onclick="updateCartQty(${idx}, -1)" style="flex: 0 0 32px; border: none; background: var(--bg-color); height: 100%; font-size: 18px; cursor: pointer; color: var(--text-main); font-weight: 800; padding: 0; margin: 0; display: flex; justify-content: center; align-items: center; font-family: inherit; line-height: 1;">-</button>
+                            <div style="display: flex; align-items: center; justify-content: space-between; border: 2px solid var(--btn-shadow-pink); border-radius: 12px; background: #ffffff; height: 32px; width: 100px; overflow: hidden; box-sizing: border-box; padding: 0;">
+                                <button onclick="updateCartQty(${idx}, -1)" style="flex: 0 0 30px; border: none; background: var(--bg-color); height: 100%; font-size: 18px; cursor: pointer; color: var(--text-main); font-weight: 800; padding: 0; margin: 0; display: flex; justify-content: center; align-items: center; font-family: inherit; line-height: 1;">-</button>
                                 <input type="text" value="${i.quantity}" readonly style="flex: 1; height: 100%; width: 100%; text-align: center; border: none; border-left: 2px solid var(--btn-shadow-pink); border-right: 2px solid var(--btn-shadow-pink); background: #ffffff; font-size: 15px; font-weight: 800; padding: 0; margin: 0; color: var(--text-main); outline: none; border-radius: 0; box-sizing: border-box; font-family: inherit; -webkit-appearance: none; line-height: normal;">
-                                <button onclick="updateCartQty(${idx}, 1)" style="flex: 0 0 32px; border: none; background: var(--bg-color); height: 100%; font-size: 18px; cursor: pointer; color: var(--text-main); font-weight: 800; padding: 0; margin: 0; display: flex; justify-content: center; align-items: center; font-family: inherit; line-height: 1;">+</button>
+                                <button onclick="updateCartQty(${idx}, 1)" style="flex: 0 0 30px; border: none; background: var(--bg-color); height: 100%; font-size: 16px; cursor: pointer; color: var(--text-main); font-weight: 800; padding: 0; margin: 0; display: flex; justify-content: center; align-items: center; font-family: inherit; line-height: 1;">+</button>
                             </div>
                         </div>
                     </div>
@@ -1779,7 +1777,6 @@
                     </div>
                 </div>
 
-                <!-- ⭐ 在這裡設定狗狗圖片 -->
                 <div style="background:var(--bg-color); padding:20px; border-radius:20px; margin-bottom:15px; border:2px dashed var(--btn-shadow-pink);">
                     <strong style="color:var(--text-main);">D. 結帳與圖片設定 (含狗狗切換)</strong><br>
                     
@@ -2085,7 +2082,6 @@
         settings.avatarUrl = document.getElementById("b-url").value; 
         settings.heroBgUrl = document.getElementById("hero-bg-url").value;
         
-        // ⭐ 儲存左右狗狗的圖片
         settings.dogLeftUrl = document.getElementById("dog-left-url").value;
         settings.dogRightUrl = document.getElementById("dog-right-url").value;
         
