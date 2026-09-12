@@ -18,7 +18,7 @@
 
     <script>
         (function() {
-            const version = "v15.0-MobileFix"; 
+            const version = "v16.0-FixedPeekingDogs"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -45,6 +45,7 @@
             --text-muted: #8c7a80;    /* 淺棕色文字 */
             --card-bg: #ffffff;
             
+            /* 立體按鈕的陰影顏色 */
             --btn-shadow-pink: #fce1d8;
             --btn-shadow-main: #e6a296;
         }
@@ -77,7 +78,7 @@
         .admin-btn { background: none; border: none; font-size: 22px; cursor: pointer; padding: 0; transition: transform 0.2s; color: var(--text-main); font-family: inherit;}
         .admin-btn:hover { transform: scale(1.1); }
         
-        /* ⭐ 修復：跑馬燈區塊重寫，確保沒有空白且流暢滾動 */
+        /* 跑馬燈區塊 */
         .top-notice-banner {
             flex: 1 1 auto; max-width: 450px;
             padding: 8px 15px; border-radius: 30px; font-size: 13px; font-weight: 700; letter-spacing: 1px; 
@@ -86,14 +87,14 @@
         }
         .marquee-track {
             display: inline-block; white-space: nowrap;
-            padding-left: 100%; /* 從最右側邊緣開始 */
+            padding-left: 100%; 
             animation: marquee-scroll 15s linear infinite;
         }
         @keyframes marquee-scroll {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); } /* 滾動到最左側消失 */
+            100% { transform: translateX(-100%); } 
         }
-        #notice-text-el-clone { display: none; } /* 隱藏舊版的複製文字 */
+        #notice-text-el-clone { display: none; }
 
         .modern-cart-btn {
             background: var(--primary); color: #fff; border: none;
@@ -105,7 +106,7 @@
         .modern-cart-btn:hover { transform: translateY(3px); box-shadow: 0 2px 0 var(--btn-shadow-main); }
         .cart-dot { background: #ff4d4d; width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 2px solid #fff;} 
 
-        /* ================= 🌸 頂部大圖區 & 固定探頭狗狗 ================= */
+        /* ================= 🌸 頂部大圖區 & 狗狗探頭修復 ================= */
         .hero-section {
             height: 50vh; min-height: 420px; width: 100%;
             background-size: cover; background-position: center 30%;
@@ -134,18 +135,19 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: inline-block;
         }
 
-        /* ⭐ 修復：將狗狗錨點固定在標題白框的「正上方」，永遠不怕被文字換行遮住 */
+        /* ⭐ 終極修復：將定位綁定在卡片「正上方邊緣 (top)」，永遠不會被遮住 */
         .hero-peeking-dogs {
-            position: absolute; top: -65px; left: 0; width: 100%;
-            display: flex; justify-content: center; gap: 30px; 
+            position: absolute; top: -85px; left: 0; width: 100%;
+            display: flex; justify-content: center; gap: 40px; 
             z-index: 1; pointer-events: none;
         }
         .hero-dog {
-            width: 135px; height: auto; object-fit: contain;
+            width: 140px; height: auto; object-fit: contain;
             filter: drop-shadow(0 -4px 6px rgba(107, 89, 96, 0.15));
         }
-        .hero-dog.dog-left { transform: translateY(35px) rotate(-8deg); }
-        .hero-dog.dog-right { transform: translateY(35px) rotate(8deg); }
+        /* 稍微轉個角度，看起來比較生動 */
+        .hero-dog.dog-left { transform: rotate(-5deg); }
+        .hero-dog.dog-right { transform: rotate(5deg); }
 
         .content-wrapper { max-width: 1000px; margin: 0 auto; padding: 40px 5%; position: relative; z-index: 10; }
         .view-section { display: none; padding-top: 80px; min-height: 100vh;}
@@ -183,9 +185,10 @@
         
         .deco-paw { position: absolute; right: 200px; top: -10px; font-size: 100px; opacity: 0.15; transform: rotate(15deg); pointer-events: none;}
         
+        /* 綁定區塊的小狗狗：也改為從正上方固定探出頭 */
         .peeking-dog-small {
-            position: absolute; right: 220px; bottom: -5px; width: 100px; z-index: 1; pointer-events: none; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
-            transform: translateY(-25px) rotate(-8deg); /* 預設探頭狀態 */
+            position: absolute; right: 100px; top: -65px; width: 100px; z-index: 1; pointer-events: none; 
+            filter: drop-shadow(0 -4px 6px rgba(0,0,0,0.15)); transform: rotate(5deg);
         }
 
         .promo-banner { text-align: center; background: var(--card-bg); border: 2px dashed var(--btn-shadow-pink); color: var(--text-main); border-radius: 20px; padding: 12px 20px; width: 100%; box-sizing: border-box; margin: 0 auto 30px auto; font-weight: 700; font-size: 15px; box-shadow: 0 4px 0 var(--btn-shadow-pink);}
@@ -304,11 +307,9 @@
             .modern-cart-btn { padding: 8px 12px; font-size: 13px; gap: 5px;}
             .top-notice-banner { padding: 6px 12px; margin: 0 5px;}
             
-            .hero-dog { width: 100px; } 
-            /* ⭐ 修復：手機版的狗狗也是錨定在白色卡片正上方 */
-            .hero-peeking-dogs { top: -50px; gap: 15px; }
-            .hero-dog.dog-left { transform: translateY(15px) rotate(-8deg); }
-            .hero-dog.dog-right { transform: translateY(15px) rotate(8deg); }
+            /* ⭐ 修復手機版：大標題的狗狗完美固定在卡片上緣 */
+            .hero-dog { width: 105px; } 
+            .hero-peeking-dogs { top: -65px; gap: 15px; }
             
             .hero-title { font-size: 26px; }
 
@@ -316,7 +317,8 @@
             .bento-main { grid-column: span 2; padding: 30px 20px 20px 20px; flex-direction: column; align-items: center; text-align: center; gap: 15px; margin-top: 20px;}
             .deco-paw { right: 50%; transform: translateX(50%) rotate(15deg); top: 10px; font-size: 120px;}
             
-            .peeking-dog-small { right: auto; left: 50%; margin-left: -45px; bottom: auto; top: -55px; width: 90px; transform: translateY(0) rotate(5deg); }
+            /* ⭐ 修復手機版：下方綁定框的狗狗完美固定在卡片正上方 */
+            .peeking-dog-small { right: auto; left: 50%; margin-left: -45px; top: -60px; width: 90px; }
 
             .modern-product-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
             .action-row { flex-direction: column; align-items: stretch; }
@@ -335,13 +337,13 @@
 <nav class="glass-nav">
     <div class="nav-brand" onclick="showView('home')">
         <img id="nav-avatar-el" src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=150&q=80" alt="Logo">
-        <!-- ⭐ 修復：移除「載入中」，直接顯示固定店名 -->
         <span id="nav-title-el">小魔丸 🐾</span>
     </div>
     
     <div class="top-notice-banner" id="top-notice-banner-el">
         <div class="marquee-track">
             <span id="notice-text-el">🧮 有換算計算機可以參考唷~~</span>
+            <span id="notice-text-el-clone">🧮 有換算計算機可以參考唷~~</span>
         </div>
     </div>
 
@@ -378,7 +380,7 @@
             <div class="bento-item bento-main" onclick="showView('profile')" id="home-btn-profile">
                 <div class="deco-paw">🐾</div>
                 
-                <!-- 🐕 下方綁定區塊：淺色博美探頭 -->
+                <!-- 🐕 下方綁定區塊：淺色博美固定探頭 -->
                 <img src="https://i.ibb.co/5Wn9FCyV/image.png" class="peeking-dog-small" alt="探頭狗狗">
                 
                 <div style="position: relative; z-index: 2;">
@@ -694,7 +696,6 @@
     };
     let settings = defaultSettings;
 
-    // ----- Admin 動態狀態列設定 -----
     window.addStatusLegendRow = function() {
         if(!settings.statusLegend) settings.statusLegend = [];
         settings.statusLegend.push({text: "新狀態: 說明文字", color: "#6b5960"});
@@ -727,7 +728,6 @@
         container.innerHTML = html;
     };
 
-    // ----- Admin 動態賣場連結設定 -----
     window.addMyshipLinkRow = function() {
         if(!settings.myshipLinks) settings.myshipLinks = [];
         settings.myshipLinks.push({name: "新專區名稱", url: "https://"});
@@ -894,12 +894,12 @@
             
             let actionHtml = isSoldOut ? 
                 `<button class="add-btn" disabled style="width:100%; box-shadow:none; cursor:not-allowed;">已售完</button>` :
-                `<div class="qty-selector">
+                `<div class="qty-selector" style="height:35px; border-radius:12px;">
                     <button class="qty-btn" onclick="changeQty('qty-sub-${p.id}', -1, '${maxStockStr}')">-</button>
                     <input class="qty-input" type="text" id="qty-sub-${p.id}" value="1" readonly>
                     <button class="qty-btn" onclick="changeQty('qty-sub-${p.id}', 1, '${maxStockStr}')">+</button>
                 </div>
-                <button class="add-btn" onclick="addToCart('${p.id}', 'qty-sub-${p.id}', true, '${maxStockStr}')" style="height:40px; border-radius:20px; padding:0 15px; box-shadow:none;">加購</button>`;
+                <button class="add-btn" onclick="addToCart('${p.id}', 'qty-sub-${p.id}', true, '${maxStockStr}')" style="height:35px; border-radius:12px; padding:0 15px; box-shadow:none;">加購</button>`;
             
             return `
             <div class="sub-product-card">
@@ -1092,11 +1092,19 @@
         if(promo) { promo.innerText = settings.promo?.text||""; promo.style.fontSize = settings.promo?.size; promo.style.color = settings.promo?.color; promo.style.background = settings.promo?.bg; promo.style.fontFamily = settings.promo?.font; }
         
         const nEl = document.getElementById("notice-text-el");
+        const nElClone = document.getElementById("notice-text-el-clone");
+        
         if(nEl) { 
             nEl.innerText = settings.notice?.text||""; 
             nEl.style.fontSize = settings.notice?.size; 
             nEl.style.color = settings.notice?.color; 
             nEl.style.fontFamily = settings.notice?.font; 
+        }
+        if(nElClone) { 
+            nElClone.innerText = settings.notice?.text||""; 
+            nElClone.style.fontSize = settings.notice?.size; 
+            nElClone.style.color = settings.notice?.color; 
+            nElClone.style.fontFamily = settings.notice?.font; 
         }
         document.getElementById("top-notice-banner-el").style.background = settings.notice?.bg;
 
