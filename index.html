@@ -18,7 +18,7 @@
 
     <script>
         (function() {
-            const version = "v17.0-BindFlowFix"; 
+            const version = "v16.0-FixedPeekingDogs"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -106,7 +106,7 @@
         .modern-cart-btn:hover { transform: translateY(3px); box-shadow: 0 2px 0 var(--btn-shadow-main); }
         .cart-dot { background: #ff4d4d; width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 2px solid #fff;} 
 
-        /* ================= 🌸 頂部大圖區 ================= */
+        /* ================= 🌸 頂部大圖區 & 狗狗探頭修復 ================= */
         .hero-section {
             height: 50vh; min-height: 420px; width: 100%;
             background-size: cover; background-position: center 30%;
@@ -135,6 +135,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: inline-block;
         }
 
+        /* ⭐ 終極修復：將定位綁定在卡片「正上方邊緣 (top)」，永遠不會被遮住 */
         .hero-peeking-dogs {
             position: absolute; top: -85px; left: 0; width: 100%;
             display: flex; justify-content: center; gap: 40px; 
@@ -144,6 +145,7 @@
             width: 140px; height: auto; object-fit: contain;
             filter: drop-shadow(0 -4px 6px rgba(107, 89, 96, 0.15));
         }
+        /* 稍微轉個角度，看起來比較生動 */
         .hero-dog.dog-left { transform: rotate(-5deg); }
         .hero-dog.dog-right { transform: rotate(5deg); }
 
@@ -183,6 +185,7 @@
         
         .deco-paw { position: absolute; right: 200px; top: -10px; font-size: 100px; opacity: 0.15; transform: rotate(15deg); pointer-events: none;}
         
+        /* 綁定區塊的小狗狗：也改為從正上方固定探出頭 */
         .peeking-dog-small {
             position: absolute; right: 100px; top: -65px; width: 100px; z-index: 1; pointer-events: none; 
             filter: drop-shadow(0 -4px 6px rgba(0,0,0,0.15)); transform: rotate(5deg);
@@ -340,6 +343,7 @@
     <div class="top-notice-banner" id="top-notice-banner-el">
         <div class="marquee-track">
             <span id="notice-text-el">🧮 有換算計算機可以參考唷~~</span>
+            <span id="notice-text-el-clone">🧮 有換算計算機可以參考唷~~</span>
         </div>
     </div>
 
@@ -930,13 +934,6 @@
 
     window.onload = function() {
         applyStyles();
-        
-        // ⭐ Check if returning from LINE Login specifically for binding
-        if (localStorage.getItem('returnToProfile') === 'true') {
-            localStorage.removeItem('returnToProfile');
-            showView('profile');
-        }
-
         liff.init({ liffId: "2010605445-uN1Lgzz8" }).then(() => {
             if (liff.isLoggedIn()) {
                 liff.getProfile().then(profile => {
@@ -968,11 +965,7 @@
                 });
             } else {
                 document.getElementById('user-name').innerText = "尚未登入 (點我登入 LINE)";
-                document.getElementById('login-card-el').onclick = () => {
-                    // ⭐ 點擊登入時，先設定標記，讓跳轉回來後留在綁定頁
-                    localStorage.setItem('returnToProfile', 'true');
-                    liff.login({ redirectUri: window.location.href });
-                };
+                document.getElementById('login-card-el').onclick = () => liff.login({ redirectUri: window.location.href });
             }
         });
         loadProducts();
@@ -1010,20 +1003,15 @@
         .then(() => {
             if (saveBtn) {
                 saveBtn.style.background = "var(--secondary)"; 
-                saveBtn.innerHTML = "✅ 同步成功！";
+                saveBtn.innerHTML = "✅ 同步成功！(可隨時再次修改)";
                 
                 setTimeout(() => {
-                    // ⭐ 加入可愛的 Alert 彈跳視窗，確定後再跳轉回首頁
-                    alert("🎉 綁定成功！汪！\n您的暱稱與設定已完成同步，將為您返回首頁繼續選購～");
-                    showView('home');
-                    
                     saveBtn.style.background = "var(--text-main)";
                     saveBtn.innerHTML = originalText;
                     saveBtn.disabled = false;
-                }, 500);
+                }, 3000);
             } else {
-                alert("🎉 綁定成功！汪！\n您的暱稱與設定已完成同步，將為您返回首頁繼續選購～");
-                showView('home');
+                alert("🎉 設定並成功同步至後端資料庫！");
             }
         })
         .catch(err => {
@@ -1104,11 +1092,19 @@
         if(promo) { promo.innerText = settings.promo?.text||""; promo.style.fontSize = settings.promo?.size; promo.style.color = settings.promo?.color; promo.style.background = settings.promo?.bg; promo.style.fontFamily = settings.promo?.font; }
         
         const nEl = document.getElementById("notice-text-el");
+        const nElClone = document.getElementById("notice-text-el-clone");
+        
         if(nEl) { 
             nEl.innerText = settings.notice?.text||""; 
             nEl.style.fontSize = settings.notice?.size; 
             nEl.style.color = settings.notice?.color; 
             nEl.style.fontFamily = settings.notice?.font; 
+        }
+        if(nElClone) { 
+            nElClone.innerText = settings.notice?.text||""; 
+            nElClone.style.fontSize = settings.notice?.size; 
+            nElClone.style.color = settings.notice?.color; 
+            nElClone.style.fontFamily = settings.notice?.font; 
         }
         document.getElementById("top-notice-banner-el").style.background = settings.notice?.bg;
 
@@ -1404,6 +1400,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div style="color: var(--primary-dark); font-weight: 800; font-size: 16px;">NT$ ${i.price}</div>
                             
+                            <!-- 購物車內的完美置中數量選擇器 -->
                             <div style="display: flex; align-items: center; justify-content: space-between; border: 2px solid var(--btn-shadow-pink); border-radius: 12px; background: #ffffff; height: 32px; width: 100px; overflow: hidden; box-sizing: border-box; padding: 0;">
                                 <button onclick="updateCartQty(${idx}, -1)" style="flex: 0 0 30px; border: none; background: var(--bg-color); height: 100%; font-size: 18px; cursor: pointer; color: var(--text-main); font-weight: 800; padding: 0; margin: 0; display: flex; justify-content: center; align-items: center; font-family: inherit; line-height: 1;">-</button>
                                 <input type="text" value="${i.quantity}" readonly style="flex: 1; height: 100%; width: 100%; text-align: center; border: none; border-left: 2px solid var(--btn-shadow-pink); border-right: 2px solid var(--btn-shadow-pink); background: #ffffff; font-size: 15px; font-weight: 800; padding: 0; margin: 0; color: var(--text-main); outline: none; border-radius: 0; box-sizing: border-box; font-family: inherit; -webkit-appearance: none; line-height: normal;">
