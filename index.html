@@ -18,7 +18,7 @@
 
     <script>
         (function() {
-            const version = "v16.0-FixedPeekingDogs"; 
+            const version = "v18.0-UltimateFix"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -45,7 +45,6 @@
             --text-muted: #8c7a80;    /* 淺棕色文字 */
             --card-bg: #ffffff;
             
-            /* 立體按鈕的陰影顏色 */
             --btn-shadow-pink: #fce1d8;
             --btn-shadow-main: #e6a296;
         }
@@ -78,7 +77,7 @@
         .admin-btn { background: none; border: none; font-size: 22px; cursor: pointer; padding: 0; transition: transform 0.2s; color: var(--text-main); font-family: inherit;}
         .admin-btn:hover { transform: scale(1.1); }
         
-        /* 跑馬燈區塊 */
+        /* ⭐ 跑馬燈完美修復：確保平滑無限滾動 */
         .top-notice-banner {
             flex: 1 1 auto; max-width: 450px;
             padding: 8px 15px; border-radius: 30px; font-size: 13px; font-weight: 700; letter-spacing: 1px; 
@@ -87,14 +86,14 @@
         }
         .marquee-track {
             display: inline-block; white-space: nowrap;
-            padding-left: 100%; 
+            padding-left: 100%; /* 從最右側邊緣開始 */
             animation: marquee-scroll 15s linear infinite;
         }
         @keyframes marquee-scroll {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); } 
+            100% { transform: translateX(-100%); } /* 滾動到最左側消失 */
         }
-        #notice-text-el-clone { display: none; }
+        #notice-text-el-clone { display: none; } 
 
         .modern-cart-btn {
             background: var(--primary); color: #fff; border: none;
@@ -106,7 +105,7 @@
         .modern-cart-btn:hover { transform: translateY(3px); box-shadow: 0 2px 0 var(--btn-shadow-main); }
         .cart-dot { background: #ff4d4d; width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 2px solid #fff;} 
 
-        /* ================= 🌸 頂部大圖區 & 狗狗探頭修復 ================= */
+        /* ================= 🌸 頂部大圖區 & 探頭狗狗 ================= */
         .hero-section {
             height: 50vh; min-height: 420px; width: 100%;
             background-size: cover; background-position: center 30%;
@@ -145,7 +144,6 @@
             width: 140px; height: auto; object-fit: contain;
             filter: drop-shadow(0 -4px 6px rgba(107, 89, 96, 0.15));
         }
-        /* 稍微轉個角度，看起來比較生動 */
         .hero-dog.dog-left { transform: rotate(-5deg); }
         .hero-dog.dog-right { transform: rotate(5deg); }
 
@@ -185,7 +183,6 @@
         
         .deco-paw { position: absolute; right: 200px; top: -10px; font-size: 100px; opacity: 0.15; transform: rotate(15deg); pointer-events: none;}
         
-        /* 綁定區塊的小狗狗：也改為從正上方固定探出頭 */
         .peeking-dog-small {
             position: absolute; right: 100px; top: -65px; width: 100px; z-index: 1; pointer-events: none; 
             filter: drop-shadow(0 -4px 6px rgba(0,0,0,0.15)); transform: rotate(5deg);
@@ -219,20 +216,20 @@
 
         .action-row { display:flex; justify-content:space-between; align-items:center; margin-top: auto; gap: 10px; }
         
-        /* 數量增減器完美置中修復 */
+        /* ⭐ 數量增減器完美置中修復 (終極置中寫法) */
         .qty-selector { 
-            display: flex; align-items: center; justify-content: space-between; 
+            display: flex; align-items: stretch; justify-content: center; 
             border-radius: 20px; background: var(--bg-color); height: 40px; flex: 1; border: 2px solid #fce1d8;
-            overflow: hidden; box-sizing: border-box; padding: 0;
+            overflow: hidden; box-sizing: border-box; padding: 0; margin: 0;
         }
         .qty-btn { 
-            flex: 0 0 40px; height: 100%;
+            flex: 0 0 35px; 
             display: flex; align-items: center; justify-content: center;
             background: transparent; border: none; font-weight: 800; color: var(--text-main); 
             cursor: pointer; font-size: 20px; padding: 0; margin: 0; font-family: inherit; line-height: 1;
         }
         .qty-input { 
-            flex: 1; width: 100%; height: 100%;
+            flex: 1; min-width: 0;
             display: flex; align-items: center; justify-content: center; text-align: center; 
             border: none; background: #ffffff; font-weight: 800; color: var(--text-main); outline: none; 
             padding: 0; margin: 0; font-family: inherit; font-size: 16px; 
@@ -240,7 +237,7 @@
             box-sizing: border-box; border-radius: 0; -webkit-appearance: none; line-height: normal;
         }
         
-        .add-btn { font-family: inherit; background: var(--text-main); color: white; border: none; padding: 0 20px; height: 40px; border-radius: 20px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s;}
+        .add-btn { font-family: inherit; background: var(--text-main); color: white; border: none; padding: 0 20px; height: 40px; border-radius: 20px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;}
         .add-btn:hover { background: var(--primary); }
         .add-btn:disabled { background: #dbe4f0 !important; cursor: not-allowed; }
 
@@ -254,7 +251,7 @@
         .profile-card { display: flex; align-items: center; background: #ffffff; padding: 20px; border-radius: 25px; margin-bottom: 25px; border: 2px dashed #fce1d8; box-shadow: 0 5px 15px rgba(0,0,0,0.02);}
         .avatar-placeholder { width: 60px; height: 60px; background: var(--bg-color); color: var(--primary); border: 2px solid var(--btn-shadow-pink); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 20px; font-weight:bold; }
 
-        /* ================= 📦 訂單表格Q版化 ================= */
+        /* ================= 📦 訂單表格 ================= */
         .order-history-wrapper { background: var(--card-bg); border: 2px solid var(--btn-shadow-pink); padding: 30px; border-radius: 35px; box-shadow: 0 8px 0 var(--btn-shadow-pink); overflow-x: auto; }
         
         #order-history table { width: 100%; border-collapse: separate; border-spacing: 0 12px; font-size: 15px; margin-top: 10px; font-weight: 700; min-width: 700px;}
@@ -318,7 +315,7 @@
             .deco-paw { right: 50%; transform: translateX(50%) rotate(15deg); top: 10px; font-size: 120px;}
             
             /* ⭐ 修復手機版：下方綁定框的狗狗完美固定在卡片正上方 */
-            .peeking-dog-small { right: auto; left: 50%; margin-left: -45px; top: -60px; width: 90px; }
+            .peeking-dog-small { right: auto; left: 50%; margin-left: -45px; top: -55px; width: 90px; transform: rotate(5deg); }
 
             .modern-product-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
             .action-row { flex-direction: column; align-items: stretch; }
@@ -360,7 +357,7 @@
 <div id="home-view" class="view-section active">
     <header class="hero-section" id="hero-section-el">
         <div class="hero-center-box">
-            <!-- 🐕 兩隻專屬照片探頭狗狗 (加入ID方便後台替換) -->
+            <!-- 🐕 兩隻專屬照片探頭狗狗 -->
             <div class="hero-peeking-dogs">
                 <img id="hero-dog-left-el" src="https://i.ibb.co/5Wn9FCyV/image.png" class="hero-dog dog-left" alt="淺色博美">
                 <img id="hero-dog-right-el" src="https://i.ibb.co/Y7Sxx1g7/image.png" class="hero-dog dog-right" alt="深色博美">
@@ -380,7 +377,6 @@
             <div class="bento-item bento-main" onclick="showView('profile')" id="home-btn-profile">
                 <div class="deco-paw">🐾</div>
                 
-                <!-- 🐕 下方綁定區塊：淺色博美固定探頭 -->
                 <img src="https://i.ibb.co/5Wn9FCyV/image.png" class="peeking-dog-small" alt="探頭狗狗">
                 
                 <div style="position: relative; z-index: 2;">
@@ -578,8 +574,9 @@
 </div>
 
 <script>
-    // ⚠️ 這裡替換成您的 GAS_URL
+    // ⚠️⚠️⚠️ 警告：請務必替換為您自己的 GAS URL，否則商品會抓不到！⚠️⚠️⚠️
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxjeKY2LuG_z2NxPdYsnGf8OF8JIy6LqxpHuYTd-rjVZ8Wj5spuU07N8UsZzoCeWbuE/exec";
+    
     const IMGBB_API_KEY = "047c09f72967af944b7686625c1c9680";
     
     let products = [];
@@ -691,7 +688,8 @@
         localDeliveryText: "新竹市 / 竹北面交", 
         myshipLinks: [
             { name: "前往7-11賣貨便下單 (三麗鷗專區)", url: "https://myship.7-11.com.tw/general/detail/GM2608154676319" },
-            { name: "前往7-11賣貨便下單 (蒙奇奇專區)", url: "https://myship.7-11.com.tw/general/detail/GM2608064097645" }
+            { name: "前往7-11賣貨便下單 (蒙奇奇專區)", url: "https://myship.7-11.com.tw/general/detail/GM2608064097645" },
+            { name: "前往7-11賣貨便下單 (米菲兔專區)", url: "https://myship.7-11.com.tw/general/detail/GM2608104330452" }
         ]
     };
     let settings = defaultSettings;
@@ -894,7 +892,7 @@
             
             let actionHtml = isSoldOut ? 
                 `<button class="add-btn" disabled style="width:100%; box-shadow:none; cursor:not-allowed;">已售完</button>` :
-                `<div class="qty-selector" style="height:35px; border-radius:12px;">
+                `<div class="qty-selector" style="height:35px; border-radius:12px; width: 100px;">
                     <button class="qty-btn" onclick="changeQty('qty-sub-${p.id}', -1, '${maxStockStr}')">-</button>
                     <input class="qty-input" type="text" id="qty-sub-${p.id}" value="1" readonly>
                     <button class="qty-btn" onclick="changeQty('qty-sub-${p.id}', 1, '${maxStockStr}')">+</button>
@@ -934,6 +932,13 @@
 
     window.onload = function() {
         applyStyles();
+        
+        // ⭐ Check if returning from LINE Login specifically for binding
+        if (localStorage.getItem('returnToProfile') === 'true') {
+            localStorage.removeItem('returnToProfile');
+            showView('profile');
+        }
+
         liff.init({ liffId: "2010605445-uN1Lgzz8" }).then(() => {
             if (liff.isLoggedIn()) {
                 liff.getProfile().then(profile => {
@@ -965,7 +970,11 @@
                 });
             } else {
                 document.getElementById('user-name').innerText = "尚未登入 (點我登入 LINE)";
-                document.getElementById('login-card-el').onclick = () => liff.login({ redirectUri: window.location.href });
+                document.getElementById('login-card-el').onclick = () => {
+                    // ⭐ 點擊登入時，先設定標記，讓跳轉回來後留在綁定頁
+                    localStorage.setItem('returnToProfile', 'true');
+                    liff.login({ redirectUri: window.location.href });
+                };
             }
         });
         loadProducts();
@@ -1003,15 +1012,20 @@
         .then(() => {
             if (saveBtn) {
                 saveBtn.style.background = "var(--secondary)"; 
-                saveBtn.innerHTML = "✅ 同步成功！(可隨時再次修改)";
+                saveBtn.innerHTML = "✅ 同步成功！";
                 
                 setTimeout(() => {
+                    // ⭐ 加入可愛的 Alert 彈跳視窗，確定後再跳轉回首頁
+                    alert("🎉 綁定成功！汪！\n您的暱稱與設定已完成同步，將為您返回首頁繼續選購～");
+                    showView('home');
+                    
                     saveBtn.style.background = "var(--text-main)";
                     saveBtn.innerHTML = originalText;
                     saveBtn.disabled = false;
-                }, 3000);
+                }, 500);
             } else {
-                alert("🎉 設定並成功同步至後端資料庫！");
+                alert("🎉 綁定成功！汪！\n您的暱稱與設定已完成同步，將為您返回首頁繼續選購～");
+                showView('home');
             }
         })
         .catch(err => {
@@ -1092,19 +1106,11 @@
         if(promo) { promo.innerText = settings.promo?.text||""; promo.style.fontSize = settings.promo?.size; promo.style.color = settings.promo?.color; promo.style.background = settings.promo?.bg; promo.style.fontFamily = settings.promo?.font; }
         
         const nEl = document.getElementById("notice-text-el");
-        const nElClone = document.getElementById("notice-text-el-clone");
-        
         if(nEl) { 
             nEl.innerText = settings.notice?.text||""; 
             nEl.style.fontSize = settings.notice?.size; 
             nEl.style.color = settings.notice?.color; 
             nEl.style.fontFamily = settings.notice?.font; 
-        }
-        if(nElClone) { 
-            nElClone.innerText = settings.notice?.text||""; 
-            nElClone.style.fontSize = settings.notice?.size; 
-            nElClone.style.color = settings.notice?.color; 
-            nElClone.style.fontFamily = settings.notice?.font; 
         }
         document.getElementById("top-notice-banner-el").style.background = settings.notice?.bg;
 
@@ -1400,11 +1406,10 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div style="color: var(--primary-dark); font-weight: 800; font-size: 16px;">NT$ ${i.price}</div>
                             
-                            <!-- 購物車內的完美置中數量選擇器 -->
-                            <div style="display: flex; align-items: center; justify-content: space-between; border: 2px solid var(--btn-shadow-pink); border-radius: 12px; background: #ffffff; height: 32px; width: 100px; overflow: hidden; box-sizing: border-box; padding: 0;">
-                                <button onclick="updateCartQty(${idx}, -1)" style="flex: 0 0 30px; border: none; background: var(--bg-color); height: 100%; font-size: 18px; cursor: pointer; color: var(--text-main); font-weight: 800; padding: 0; margin: 0; display: flex; justify-content: center; align-items: center; font-family: inherit; line-height: 1;">-</button>
-                                <input type="text" value="${i.quantity}" readonly style="flex: 1; height: 100%; width: 100%; text-align: center; border: none; border-left: 2px solid var(--btn-shadow-pink); border-right: 2px solid var(--btn-shadow-pink); background: #ffffff; font-size: 15px; font-weight: 800; padding: 0; margin: 0; color: var(--text-main); outline: none; border-radius: 0; box-sizing: border-box; font-family: inherit; -webkit-appearance: none; line-height: normal;">
-                                <button onclick="updateCartQty(${idx}, 1)" style="flex: 0 0 30px; border: none; background: var(--bg-color); height: 100%; font-size: 16px; cursor: pointer; color: var(--text-main); font-weight: 800; padding: 0; margin: 0; display: flex; justify-content: center; align-items: center; font-family: inherit; line-height: 1;">+</button>
+                            <div class="qty-selector" style="width: 100px; height: 32px; border-radius: 12px; border: 2px solid var(--btn-shadow-pink);">
+                                <button class="qty-btn" onclick="updateCartQty(${idx}, -1)">-</button>
+                                <input class="qty-input" type="text" value="${i.quantity}" readonly>
+                                <button class="qty-btn" onclick="updateCartQty(${idx}, 1)">+</button>
                             </div>
                         </div>
                     </div>
