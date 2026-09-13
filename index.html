@@ -18,7 +18,7 @@
 
     <script>
         (function() {
-            const version = "v18.0-UltimateFix"; 
+            const version = "v19.0-LoginRedirectFix"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -45,6 +45,7 @@
             --text-muted: #8c7a80;    /* 淺棕色文字 */
             --card-bg: #ffffff;
             
+            /* 立體按鈕的陰影顏色 */
             --btn-shadow-pink: #fce1d8;
             --btn-shadow-main: #e6a296;
         }
@@ -77,7 +78,7 @@
         .admin-btn { background: none; border: none; font-size: 22px; cursor: pointer; padding: 0; transition: transform 0.2s; color: var(--text-main); font-family: inherit;}
         .admin-btn:hover { transform: scale(1.1); }
         
-        /* ⭐ 跑馬燈完美修復：確保平滑無限滾動 */
+        /* 跑馬燈區塊 */
         .top-notice-banner {
             flex: 1 1 auto; max-width: 450px;
             padding: 8px 15px; border-radius: 30px; font-size: 13px; font-weight: 700; letter-spacing: 1px; 
@@ -86,14 +87,14 @@
         }
         .marquee-track {
             display: inline-block; white-space: nowrap;
-            padding-left: 100%; /* 從最右側邊緣開始 */
+            padding-left: 100%; 
             animation: marquee-scroll 15s linear infinite;
         }
         @keyframes marquee-scroll {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); } /* 滾動到最左側消失 */
+            100% { transform: translateX(-100%); } 
         }
-        #notice-text-el-clone { display: none; } 
+        #notice-text-el-clone { display: none; }
 
         .modern-cart-btn {
             background: var(--primary); color: #fff; border: none;
@@ -105,7 +106,7 @@
         .modern-cart-btn:hover { transform: translateY(3px); box-shadow: 0 2px 0 var(--btn-shadow-main); }
         .cart-dot { background: #ff4d4d; width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 2px solid #fff;} 
 
-        /* ================= 🌸 頂部大圖區 & 探頭狗狗 ================= */
+        /* ================= 🌸 頂部大圖區 & 狗狗探頭修復 ================= */
         .hero-section {
             height: 50vh; min-height: 420px; width: 100%;
             background-size: cover; background-position: center 30%;
@@ -134,7 +135,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: inline-block;
         }
 
-        /* ⭐ 終極修復：將定位綁定在卡片「正上方邊緣 (top)」，永遠不會被遮住 */
         .hero-peeking-dogs {
             position: absolute; top: -85px; left: 0; width: 100%;
             display: flex; justify-content: center; gap: 40px; 
@@ -216,7 +216,6 @@
 
         .action-row { display:flex; justify-content:space-between; align-items:center; margin-top: auto; gap: 10px; }
         
-        /* ⭐ 數量增減器完美置中修復 (終極置中寫法) */
         .qty-selector { 
             display: flex; align-items: stretch; justify-content: center; 
             border-radius: 20px; background: var(--bg-color); height: 40px; flex: 1; border: 2px solid #fce1d8;
@@ -304,7 +303,6 @@
             .modern-cart-btn { padding: 8px 12px; font-size: 13px; gap: 5px;}
             .top-notice-banner { padding: 6px 12px; margin: 0 5px;}
             
-            /* ⭐ 修復手機版：大標題的狗狗完美固定在卡片上緣 */
             .hero-dog { width: 105px; } 
             .hero-peeking-dogs { top: -65px; gap: 15px; }
             
@@ -314,8 +312,7 @@
             .bento-main { grid-column: span 2; padding: 30px 20px 20px 20px; flex-direction: column; align-items: center; text-align: center; gap: 15px; margin-top: 20px;}
             .deco-paw { right: 50%; transform: translateX(50%) rotate(15deg); top: 10px; font-size: 120px;}
             
-            /* ⭐ 修復手機版：下方綁定框的狗狗完美固定在卡片正上方 */
-            .peeking-dog-small { right: auto; left: 50%; margin-left: -45px; top: -55px; width: 90px; transform: rotate(5deg); }
+            .peeking-dog-small { right: auto; left: 50%; margin-left: -45px; top: -60px; width: 90px; transform: rotate(5deg); }
 
             .modern-product-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
             .action-row { flex-direction: column; align-items: stretch; }
@@ -357,7 +354,6 @@
 <div id="home-view" class="view-section active">
     <header class="hero-section" id="hero-section-el">
         <div class="hero-center-box">
-            <!-- 🐕 兩隻專屬照片探頭狗狗 -->
             <div class="hero-peeking-dogs">
                 <img id="hero-dog-left-el" src="https://i.ibb.co/5Wn9FCyV/image.png" class="hero-dog dog-left" alt="淺色博美">
                 <img id="hero-dog-right-el" src="https://i.ibb.co/Y7Sxx1g7/image.png" class="hero-dog dog-right" alt="深色博美">
@@ -508,7 +504,6 @@
         <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 20px; font-weight: bold;">這將決定您接下來要瀏覽與下單的平台。</p>
         
         <div id="gatekeeper-options-container" style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
-            <!-- 將由 renderDeliveryOptions('gatekeeper') 覆蓋 -->
         </div>
     </div>
 </div>
@@ -568,13 +563,12 @@
     </div>
 </div>
 
-<!-- 🛒 懸浮跳動購物車按鈕 -->
 <div id="floating-cart" class="floating-cart" onclick="openCartModal()">
     🛒 去結帳 (<span id="float-cart-count">0</span>)
 </div>
 
 <script>
-    // ⚠️⚠️⚠️ 警告：請務必替換為您自己的 GAS URL，否則商品會抓不到！⚠️⚠️⚠️
+    // ⚠️⚠️⚠️ 警告：請務必替換為您自己的 GAS URL ⚠️⚠️⚠️
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxjeKY2LuG_z2NxPdYsnGf8OF8JIy6LqxpHuYTd-rjVZ8Wj5spuU07N8UsZzoCeWbuE/exec";
     
     const IMGBB_API_KEY = "047c09f72967af944b7686625c1c9680";
@@ -688,8 +682,7 @@
         localDeliveryText: "新竹市 / 竹北面交", 
         myshipLinks: [
             { name: "前往7-11賣貨便下單 (三麗鷗專區)", url: "https://myship.7-11.com.tw/general/detail/GM2608154676319" },
-            { name: "前往7-11賣貨便下單 (蒙奇奇專區)", url: "https://myship.7-11.com.tw/general/detail/GM2608064097645" },
-            { name: "前往7-11賣貨便下單 (米菲兔專區)", url: "https://myship.7-11.com.tw/general/detail/GM2608104330452" }
+            { name: "前往7-11賣貨便下單 (蒙奇奇專區)", url: "https://myship.7-11.com.tw/general/detail/GM2608064097645" }
         ]
     };
     let settings = defaultSettings;
@@ -932,15 +925,16 @@
 
     window.onload = function() {
         applyStyles();
-        
-        // ⭐ Check if returning from LINE Login specifically for binding
-        if (localStorage.getItem('returnToProfile') === 'true') {
-            localStorage.removeItem('returnToProfile');
-            showView('profile');
-        }
 
         liff.init({ liffId: "2010605445-uN1Lgzz8" }).then(() => {
             if (liff.isLoggedIn()) {
+                
+                // ⭐ 登入成功後，檢查是否有尚未完成綁定的標記
+                if (localStorage.getItem('returnToProfile') === 'true') {
+                    showView('profile');
+                    localStorage.removeItem('returnToProfile');
+                }
+
                 liff.getProfile().then(profile => {
                     currentUserProfile = profile;
                     currentUserProfile.realName = profile.displayName;
@@ -971,7 +965,6 @@
             } else {
                 document.getElementById('user-name').innerText = "尚未登入 (點我登入 LINE)";
                 document.getElementById('login-card-el').onclick = () => {
-                    // ⭐ 點擊登入時，先設定標記，讓跳轉回來後留在綁定頁
                     localStorage.setItem('returnToProfile', 'true');
                     liff.login({ redirectUri: window.location.href });
                 };
@@ -1015,7 +1008,6 @@
                 saveBtn.innerHTML = "✅ 同步成功！";
                 
                 setTimeout(() => {
-                    // ⭐ 加入可愛的 Alert 彈跳視窗，確定後再跳轉回首頁
                     alert("🎉 綁定成功！汪！\n您的暱稱與設定已完成同步，將為您返回首頁繼續選購～");
                     showView('home');
                     
@@ -1106,11 +1098,19 @@
         if(promo) { promo.innerText = settings.promo?.text||""; promo.style.fontSize = settings.promo?.size; promo.style.color = settings.promo?.color; promo.style.background = settings.promo?.bg; promo.style.fontFamily = settings.promo?.font; }
         
         const nEl = document.getElementById("notice-text-el");
+        const nElClone = document.getElementById("notice-text-el-clone");
+        
         if(nEl) { 
             nEl.innerText = settings.notice?.text||""; 
             nEl.style.fontSize = settings.notice?.size; 
             nEl.style.color = settings.notice?.color; 
             nEl.style.fontFamily = settings.notice?.font; 
+        }
+        if(nElClone) { 
+            nElClone.innerText = settings.notice?.text||""; 
+            nElClone.style.fontSize = settings.notice?.size; 
+            nElClone.style.color = settings.notice?.color; 
+            nElClone.style.fontFamily = settings.notice?.font; 
         }
         document.getElementById("top-notice-banner-el").style.background = settings.notice?.bg;
 
@@ -1406,10 +1406,10 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div style="color: var(--primary-dark); font-weight: 800; font-size: 16px;">NT$ ${i.price}</div>
                             
-                            <div class="qty-selector" style="width: 100px; height: 32px; border-radius: 12px; border: 2px solid var(--btn-shadow-pink);">
-                                <button class="qty-btn" onclick="updateCartQty(${idx}, -1)">-</button>
-                                <input class="qty-input" type="text" value="${i.quantity}" readonly>
-                                <button class="qty-btn" onclick="updateCartQty(${idx}, 1)">+</button>
+                            <div style="display: flex; align-items: center; justify-content: space-between; border: 2px solid var(--btn-shadow-pink); border-radius: 12px; background: #ffffff; height: 32px; width: 100px; overflow: hidden; box-sizing: border-box; padding: 0;">
+                                <button onclick="updateCartQty(${idx}, -1)" style="flex: 0 0 30px; border: none; background: var(--bg-color); height: 100%; font-size: 18px; cursor: pointer; color: var(--text-main); font-weight: 800; padding: 0; margin: 0; display: flex; justify-content: center; align-items: center; font-family: inherit; line-height: 1;">-</button>
+                                <input type="text" value="${i.quantity}" readonly style="flex: 1; height: 100%; width: 100%; text-align: center; border: none; border-left: 2px solid var(--btn-shadow-pink); border-right: 2px solid var(--btn-shadow-pink); background: #ffffff; font-size: 15px; font-weight: 800; padding: 0; margin: 0; color: var(--text-main); outline: none; border-radius: 0; box-sizing: border-box; font-family: inherit; -webkit-appearance: none; line-height: normal;">
+                                <button onclick="updateCartQty(${idx}, 1)" style="flex: 0 0 30px; border: none; background: var(--bg-color); height: 100%; font-size: 16px; cursor: pointer; color: var(--text-main); font-weight: 800; padding: 0; margin: 0; display: flex; justify-content: center; align-items: center; font-family: inherit; line-height: 1;">+</button>
                             </div>
                         </div>
                     </div>
