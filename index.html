@@ -18,7 +18,7 @@
 
     <script>
         (function() {
-            const version = "v20.0-LoadingScreenFix"; 
+            const version = "v21.0-CorsNoReceiptFix"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -45,7 +45,6 @@
             --text-muted: #8c7a80;    /* 淺棕色文字 */
             --card-bg: #ffffff;
             
-            /* 立體按鈕的陰影顏色 */
             --btn-shadow-pink: #fce1d8;
             --btn-shadow-main: #e6a296;
         }
@@ -62,14 +61,14 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ⭐ 新增：全螢幕保護載入畫面 */
+        /* ⭐ 全螢幕保護載入畫面 (Loading Screen) */
         #global-loader {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-color);
             background-image: radial-gradient(#fce1d8 2px, transparent 2px);
             background-size: 30px 30px;
-            z-index: 99999; /* 蓋在所有東西最上面 */
+            z-index: 99999; 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -252,6 +251,7 @@
 
         .action-row { display:flex; justify-content:space-between; align-items:center; margin-top: auto; gap: 10px; }
         
+        /* 數量增減器置中 */
         .qty-selector { 
             display: flex; align-items: stretch; justify-content: center; 
             border-radius: 20px; background: var(--bg-color); height: 40px; flex: 1; border: 2px solid #fce1d8;
@@ -546,7 +546,6 @@
         <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 20px; font-weight: bold;">這將決定您接下來要瀏覽與下單的平台。</p>
         
         <div id="gatekeeper-options-container" style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
-            <!-- 將由 renderDeliveryOptions('gatekeeper') 覆蓋 -->
         </div>
     </div>
 </div>
@@ -969,9 +968,10 @@
 
     window.onload = function() {
         applyStyles();
-        
+
         liff.init({ liffId: "2010605445-uN1Lgzz8" }).then(() => {
             if (liff.isLoggedIn()) {
+                
                 liff.getProfile().then(profile => {
                     currentUserProfile = profile;
                     currentUserProfile.realName = profile.displayName;
@@ -998,12 +998,6 @@
                     }
                     
                     fetchUserOrdersBackground(); 
-                    
-                    // ⭐ 將「檢查跳轉記憶」的邏輯移到確保 LIFF 完全讀取完畢後執行
-                    if (localStorage.getItem('returnToProfile') === 'true') {
-                        localStorage.removeItem('returnToProfile');
-                        showView('profile');
-                    }
                 });
             } else {
                 document.getElementById('user-name').innerText = "尚未登入 (點我登入 LINE)";
@@ -1034,8 +1028,10 @@
             saveBtn.disabled = true;
         }
 
+        // ⭐ 這裡加上 mode: "no-cors" 解決 LINE 瀏覽器強制擋下 GAS Redirect 收據的問題
         fetch(GAS_URL, {
             method: "POST",
+            mode: "no-cors",
             body: JSON.stringify({
                 action: "updateUserBinding",
                 userId: currentUserProfile.userId,
@@ -1044,7 +1040,6 @@
                 autoReplySwitch: autoReply 
             })
         })
-        .then(res => res.text())
         .then(() => {
             if (saveBtn) {
                 saveBtn.style.background = "var(--secondary)"; 
@@ -1065,7 +1060,8 @@
         })
         .catch(err => {
             console.error("同步失敗:", err);
-            alert("⚠️ 畫面已更新，但同步至後台失敗，請檢查網路。");
+            // 理論上加了 no-cors 就不會進到這裡了，但如果客人真的完全斷網還是會跳出
+            alert("⚠️ 同步至後台失敗，請檢查網路。");
             if (saveBtn) {
                 saveBtn.innerHTML = originalText;
                 saveBtn.disabled = false;
@@ -1229,16 +1225,22 @@
                 }
             }, 500);
 
-            // ⭐ 隱藏載入保護畫面
+            // ⭐ 隱藏載入保護畫面，並執行跳轉檢查
             const loader = document.getElementById('global-loader');
             if (loader) {
                 loader.style.opacity = '0';
-                setTimeout(() => loader.style.visibility = 'hidden', 600); 
+                setTimeout(() => {
+                    loader.style.visibility = 'hidden';
+                    // 在畫面載入完畢後，檢查是否要跳回 profile 綁定頁
+                    if (localStorage.getItem('returnToProfile') === 'true') {
+                        showView('profile');
+                        localStorage.removeItem('returnToProfile');
+                    }
+                }, 600); 
             }
         })
         .catch(err => {
             console.error("載入商品或設定失敗:", err);
-            // 萬一發生錯誤，也要隱藏載入畫面以免整個網站卡死
             const loader = document.getElementById('global-loader');
             if (loader) {
                 loader.style.display = 'none';
@@ -1537,8 +1539,10 @@
             btn.disabled = true;
         }
 
+        // ⭐ 加上 mode: "no-cors" 防 LINE 瀏覽器吃收據
         fetch(GAS_URL, { 
             method: "POST", 
+            mode: "no-cors",
             body: JSON.stringify({ 
                 action: "submitOrder", 
                 cart: pendingCheckoutItems, 
@@ -1956,6 +1960,7 @@
                     <div id="admin-myship-links-container"></div>
                 </div>
 
+                <!-- ⭐ 加上 mode: "no-cors" 防 LINE 瀏覽器吃收據 -->
                 <button onclick="saveSettings()" style="background:var(--text-main); color:white; border:none; padding:18px; border-radius:30px; width:100%; font-weight:900; font-size: 18px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #524449; font-family:inherit;">💾 儲存所有設定</button>
             </div>
 
@@ -2104,7 +2109,8 @@
         let oldText = btn.innerText;
         btn.innerText = "⏳ 儲存中...";
         
-        fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "updateProduct", data: updated }) })
+        // ⭐ 加上 mode: "no-cors" 防 LINE 瀏覽器吃收據
+        fetch(GAS_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ action: "updateProduct", data: updated }) })
         .then(() => { 
             alert("商品更新成功！"); 
             btn.innerText = oldText;
@@ -2118,7 +2124,8 @@
             let oldText = btn.innerText;
             btn.innerText = "⏳ 刪除中...";
             
-            fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "deleteProduct", productId: id }) })
+            // ⭐ 加上 mode: "no-cors"
+            fetch(GAS_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ action: "deleteProduct", productId: id }) })
             .then(() => { 
                 alert("✅ 商品已成功刪除！"); 
                 loadProducts(); 
@@ -2197,7 +2204,9 @@
         ];
 
         applyStyles();
-        fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "updateProduct", data: { id: "_SITE_SETTINGS_", name: "系統設定", price: 0, img: JSON.stringify(settings) } }) }).then(() => alert("設定已儲存！"));
+        
+        // ⭐ 加上 mode: "no-cors"
+        fetch(GAS_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ action: "updateProduct", data: { id: "_SITE_SETTINGS_", name: "系統設定", price: 0, img: JSON.stringify(settings) } }) }).then(() => alert("設定已儲存！"));
     }
 
     function filterAdminOrders(val) {
@@ -2271,8 +2280,10 @@
         let newUrl = prompt("請輸入此客人專屬的【7-11 賣貨便連結】：\n(若要清除連結請留白並按確定)", currentUrl);
         
         if (newUrl !== null) {
+            // ⭐ 加上 mode: "no-cors"
             fetch(GAS_URL, {
                 method: "POST",
+                mode: "no-cors",
                 body: JSON.stringify({ action: "updateUserMyship", userId: uid, myshipUrl: newUrl.trim() })
             }).then(() => {
                 alert("✅ 客人專屬賣貨便連結已更新！");
@@ -2286,7 +2297,9 @@
         if (checked.length === 0) return alert("請先勾選訂單！");
         const status = document.getElementById('batch-status-select').value;
         const updates = Array.from(checked).map(cb => ({ row: parseInt(cb.value), status }));
-        fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "batchUpdateStatus", updates }) }).then(() => {
+        
+        // ⭐ 加上 mode: "no-cors"
+        fetch(GAS_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ action: "batchUpdateStatus", updates }) }).then(() => {
             alert("更新成功！"); loadAllOrdersForAdmin();
         });
     }
@@ -2322,8 +2335,10 @@
         event.target.innerText = "⏳ 送出中...";
         event.target.disabled = true;
 
+        // ⭐ 加上 mode: "no-cors"
         fetch(GAS_URL, {
             method: "POST",
+            mode: "no-cors",
             body: JSON.stringify({
                 action: "submitFastOrder",
                 nickname: nickname,
@@ -2333,7 +2348,7 @@
                 qty: qty,
                 isNewProduct: isNewProduct 
             })
-        }).then(res => res.text()).then(text => {
+        }).then(() => {
             document.getElementById('fast-code').value = "";
             document.getElementById('fast-qty').value = "1";
             document.getElementById('fast-code').focus(); 
