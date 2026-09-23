@@ -11,14 +11,13 @@
     <title>小魔丸旅遊代購 🐾</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
-    <!-- 引入英數 Nunito 與 中文圓體 M PLUS Rounded 1c -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 
     <script>
         (function() {
-            const version = "v21.0-CorsNoReceiptFix"; 
+            const version = "v20.0-SyncExchangeRatesFix"; 
             const currentVersion = localStorage.getItem("appVersion");
             if (currentVersion !== version) {
                 localStorage.removeItem("siteSettings");
@@ -37,12 +36,12 @@
     <style>
         /* ================= 🎨 色彩與基礎設定 ================= */
         :root {
-            --bg-color: #fff9f5;      /* 暖奶油背景 */
-            --primary: #ffb5a7;       /* 溫暖珊瑚粉 */
-            --primary-dark: #f09585;  /* 珊瑚粉深色 */
-            --secondary: #a3c4bc;     /* 抹茶淺綠 */
-            --text-main: #6b5960;     /* 暖棕色文字 */
-            --text-muted: #8c7a80;    /* 淺棕色文字 */
+            --bg-color: #fff9f5;      
+            --primary: #ffb5a7;       
+            --primary-dark: #f09585;  
+            --secondary: #a3c4bc;     
+            --text-main: #6b5960;     
+            --text-muted: #8c7a80;    
             --card-bg: #ffffff;
             
             --btn-shadow-pink: #fce1d8;
@@ -61,42 +60,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ⭐ 全螢幕保護載入畫面 (Loading Screen) */
-        #global-loader {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-color);
-            background-image: radial-gradient(#fce1d8 2px, transparent 2px);
-            background-size: 30px 30px;
-            z-index: 99999; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.6s ease, visibility 0.6s;
-        }
-        .loader-paw {
-            font-size: 60px;
-            animation: bounce-paw 0.8s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5);
-            margin-bottom: 10px;
-        }
-        .loader-text {
-            font-weight: 800;
-            color: var(--primary-dark);
-            font-size: 20px;
-            letter-spacing: 3px;
-            animation: pulse-text 1.5s infinite;
-        }
-        @keyframes bounce-paw {
-            from { transform: translateY(0); }
-            to { transform: translateY(-25px) scale(1.1); }
-        }
-        @keyframes pulse-text {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-
         /* ================= 🐾 導覽列 ================= */
         .glass-nav {
             position: fixed; top: 0; left: 0; width: 100%; height: 75px;
@@ -113,7 +76,6 @@
         .admin-btn { background: none; border: none; font-size: 22px; cursor: pointer; padding: 0; transition: transform 0.2s; color: var(--text-main); font-family: inherit;}
         .admin-btn:hover { transform: scale(1.1); }
         
-        /* 跑馬燈區塊 */
         .top-notice-banner {
             flex: 1 1 auto; max-width: 450px;
             padding: 8px 15px; border-radius: 30px; font-size: 13px; font-weight: 700; letter-spacing: 1px; 
@@ -251,7 +213,6 @@
 
         .action-row { display:flex; justify-content:space-between; align-items:center; margin-top: auto; gap: 10px; }
         
-        /* 數量增減器置中 */
         .qty-selector { 
             display: flex; align-items: stretch; justify-content: center; 
             border-radius: 20px; background: var(--bg-color); height: 40px; flex: 1; border: 2px solid #fce1d8;
@@ -325,7 +286,7 @@
         .floating-cart:hover { transform: scale(1.05); background: var(--primary-dark); animation: none; }
         @keyframes bounce-cart { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-12px);} 60% {transform: translateY(-6px);} }
 
-        /* ================= 📱 手機版 RWD 調整 ================= */
+        /* ================= 📱 手機版 RWD ================= */
         @media (max-width: 850px) {
             .nav-brand span { display: none; } 
             .top-notice-banner { max-width: 100%; margin: 0 10px; }
@@ -348,7 +309,7 @@
             .bento-main { grid-column: span 2; padding: 30px 20px 20px 20px; flex-direction: column; align-items: center; text-align: center; gap: 15px; margin-top: 20px;}
             .deco-paw { right: 50%; transform: translateX(50%) rotate(15deg); top: 10px; font-size: 120px;}
             
-            .peeking-dog-small { right: auto; left: 50%; margin-left: -45px; top: -55px; width: 90px; transform: rotate(5deg); }
+            .peeking-dog-small { right: auto; left: 50%; margin-left: -45px; top: -60px; width: 90px; transform: rotate(5deg); }
 
             .modern-product-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
             .action-row { flex-direction: column; align-items: stretch; }
@@ -363,12 +324,6 @@
     </style>
 </head>
 <body id="app-body">
-
-<!-- ⭐ 全螢幕保護載入畫面 (Loading Screen) -->
-<div id="global-loader">
-    <div class="loader-paw">🐾</div>
-    <div class="loader-text">小魔丸準備中...</div>
-</div>
 
 <nav class="glass-nav">
     <div class="nav-brand" onclick="showView('home')">
@@ -402,14 +357,14 @@
             </div>
 
             <div class="hero-title-card">
-                <h1 class="hero-title" id="main-title">小魔丸 🐾</h1>
-                <p class="hero-subtitle" id="sub-title">- Live -</p>
+                <h1 class="hero-title" id="main-title">載入中...</h1>
+                <p class="hero-subtitle" id="sub-title">...</p>
             </div>
         </div>
     </header>
 
     <main class="content-wrapper">
-        <div class="promo-banner" id="promo-banner-el">優惠讀取中...</div>
+        <div class="promo-banner" id="promo-banner-el">載入中...</div>
         
         <div class="bento-grid">
             <div class="bento-item bento-main" onclick="showView('profile')" id="home-btn-profile">
@@ -605,13 +560,12 @@
     </div>
 </div>
 
-<!-- 🛒 懸浮跳動購物車按鈕 -->
 <div id="floating-cart" class="floating-cart" onclick="openCartModal()">
     🛒 去結帳 (<span id="float-cart-count">0</span>)
 </div>
 
 <script>
-    // ⚠️⚠️⚠️ 警告：請務必替換為您自己的 GAS URL，否則商品會抓不到！⚠️⚠️⚠️
+    // ⚠️⚠️⚠️ 警告：請務必替換為您自己的 GAS URL ⚠️⚠️⚠️
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxjeKY2LuG_z2NxPdYsnGf8OF8JIy6LqxpHuYTd-rjVZ8Wj5spuU07N8UsZzoCeWbuE/exec";
     
     const IMGBB_API_KEY = "047c09f72967af944b7686625c1c9680";
@@ -671,18 +625,6 @@
                 <div style="background:#fffafa; border-left:4px solid #f09585; padding:15px; border-radius:12px; margin-top:15px; color:#6b5960; font-weight:800; font-size:14px;">
                     ✅ 下單即表示已閱讀、理解並同意以上代購規範。若隨意喊單或支付訂金後要取消要求退款退貨，會被小魔丸「吉」喔，切勿以身試法！
                 </div>
-            `
-        },
-        shipping: {
-            title: "📦 物流方式",
-            html: `
-                <p>以上待商品準備出貨時，會向買家確認希望的出貨方式（運費買家自付）</p>
-                <ul style="padding-left: 20px;">
-                    <li>A. 黑貓宅配</li>
-                    <li>B. 7-11 交貨便 / 加值交貨便</li>
-                    <li>C. 7-11 賣貨便（未取貨退回需支付寄送運費）</li>
-                    <li>D. 新竹好市多附近面交，免運費且整筆訂單總額折抵 $15。</li>
-                </ul>
             `
         }
     };
@@ -907,8 +849,6 @@
     }
     function closeCartModal() { document.getElementById('cart-modal').classList.remove('active'); }
     
-    function closeDeliveryModal() { }
-
     function openGroupModal(groupName, tab) {
         document.getElementById('group-modal-title').innerHTML = `📁 ${groupName}`;
         let groupItems = products.filter(p => {
@@ -953,7 +893,7 @@
     function calculateTWD() {
         let val = parseFloat(document.getElementById('jpy-input').value) || 0;
         let rates = settings.exchangeRates || defaultSettings.exchangeRates;
-        let rate = rates[4].rate;
+        let rate = rates[rates.length - 1].rate;
         
         for (let i = 0; i < rates.length; i++) {
             if (val <= rates[i].limit) {
@@ -971,7 +911,11 @@
 
         liff.init({ liffId: "2010605445-uN1Lgzz8" }).then(() => {
             if (liff.isLoggedIn()) {
-                
+                if (localStorage.getItem('returnToProfile') === 'true') {
+                    showView('profile');
+                    localStorage.removeItem('returnToProfile');
+                }
+
                 liff.getProfile().then(profile => {
                     currentUserProfile = profile;
                     currentUserProfile.realName = profile.displayName;
@@ -1028,10 +972,8 @@
             saveBtn.disabled = true;
         }
 
-        // ⭐ 這裡加上 mode: "no-cors" 解決 LINE 瀏覽器強制擋下 GAS Redirect 收據的問題
         fetch(GAS_URL, {
             method: "POST",
-            mode: "no-cors",
             body: JSON.stringify({
                 action: "updateUserBinding",
                 userId: currentUserProfile.userId,
@@ -1040,6 +982,7 @@
                 autoReplySwitch: autoReply 
             })
         })
+        .then(res => res.text())
         .then(() => {
             if (saveBtn) {
                 saveBtn.style.background = "var(--secondary)"; 
@@ -1060,8 +1003,7 @@
         })
         .catch(err => {
             console.error("同步失敗:", err);
-            // 理論上加了 no-cors 就不會進到這裡了，但如果客人真的完全斷網還是會跳出
-            alert("⚠️ 同步至後台失敗，請檢查網路。");
+            alert("⚠️ 畫面已更新，但同步至後台失敗，請檢查網路。");
             if (saveBtn) {
                 saveBtn.innerHTML = originalText;
                 saveBtn.disabled = false;
@@ -1224,27 +1166,6 @@
                     window.history.replaceState({path: cleanUrl}, '', cleanUrl);
                 }
             }, 500);
-
-            // ⭐ 隱藏載入保護畫面，並執行跳轉檢查
-            const loader = document.getElementById('global-loader');
-            if (loader) {
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.visibility = 'hidden';
-                    // 在畫面載入完畢後，檢查是否要跳回 profile 綁定頁
-                    if (localStorage.getItem('returnToProfile') === 'true') {
-                        showView('profile');
-                        localStorage.removeItem('returnToProfile');
-                    }
-                }, 600); 
-            }
-        })
-        .catch(err => {
-            console.error("載入商品或設定失敗:", err);
-            const loader = document.getElementById('global-loader');
-            if (loader) {
-                loader.style.display = 'none';
-            }
         });
     }
     
@@ -1539,10 +1460,8 @@
             btn.disabled = true;
         }
 
-        // ⭐ 加上 mode: "no-cors" 防 LINE 瀏覽器吃收據
         fetch(GAS_URL, { 
             method: "POST", 
-            mode: "no-cors",
             body: JSON.stringify({ 
                 action: "submitOrder", 
                 cart: pendingCheckoutItems, 
@@ -1791,7 +1710,7 @@
                 <h3 style="color:var(--text-main); border-bottom:2px dashed var(--btn-shadow-pink); padding-bottom:15px; margin-top:0;">🎨 全站字體與版面設定</h3>
                 
                 <div style="background:var(--bg-color); padding:20px; border-radius:20px; margin-bottom:15px; border:2px dashed var(--btn-shadow-pink);">
-                    <strong style="color:var(--text-main);">🧮 匯率計算機設定 (5個區間)</strong><br>
+                    <strong style="color:var(--text-main);">🧮 匯率計算機設定 (與標價工具同步)</strong><br>
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
                         <div style="font-weight:800; font-size:14px; color:var(--text-muted);">區間上限 (日圓)</div>
                         <div style="font-weight:800; font-size:14px; color:var(--text-muted);">對應匯率倍數</div>
@@ -1960,8 +1879,7 @@
                     <div id="admin-myship-links-container"></div>
                 </div>
 
-                <!-- ⭐ 加上 mode: "no-cors" 防 LINE 瀏覽器吃收據 -->
-                <button onclick="saveSettings()" style="background:var(--text-main); color:white; border:none; padding:18px; border-radius:30px; width:100%; font-weight:900; font-size: 18px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #524449; font-family:inherit;">💾 儲存所有設定</button>
+                <button onclick="saveSettings(this)" style="background:var(--text-main); color:white; border:none; padding:18px; border-radius:30px; width:100%; font-weight:900; font-size: 18px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #524449; font-family:inherit;">💾 儲存所有設定</button>
             </div>
 
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; margin-top: 50px;">
@@ -2109,8 +2027,7 @@
         let oldText = btn.innerText;
         btn.innerText = "⏳ 儲存中...";
         
-        // ⭐ 加上 mode: "no-cors" 防 LINE 瀏覽器吃收據
-        fetch(GAS_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ action: "updateProduct", data: updated }) })
+        fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "updateProduct", data: updated }) })
         .then(() => { 
             alert("商品更新成功！"); 
             btn.innerText = oldText;
@@ -2124,8 +2041,7 @@
             let oldText = btn.innerText;
             btn.innerText = "⏳ 刪除中...";
             
-            // ⭐ 加上 mode: "no-cors"
-            fetch(GAS_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ action: "deleteProduct", productId: id }) })
+            fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "deleteProduct", productId: id }) })
             .then(() => { 
                 alert("✅ 商品已成功刪除！"); 
                 loadProducts(); 
@@ -2137,7 +2053,11 @@
         }
     }
 
-    function saveSettings() {
+    function saveSettings(btn) {
+        let originalText = btn.innerText;
+        btn.innerText = "⏳ 儲存中...";
+        btn.disabled = true;
+
         settings.globalFont = document.getElementById("g-font").value;
         
         settings.main.text = document.getElementById("m-t").value; 
@@ -2204,9 +2124,16 @@
         ];
 
         applyStyles();
-        
-        // ⭐ 加上 mode: "no-cors"
-        fetch(GAS_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ action: "updateProduct", data: { id: "_SITE_SETTINGS_", name: "系統設定", price: 0, img: JSON.stringify(settings) } }) }).then(() => alert("設定已儲存！"));
+        fetch(GAS_URL, { 
+            method: "POST", 
+            body: JSON.stringify({ action: "updateProduct", data: { id: "_SITE_SETTINGS_", name: "系統設定", price: 0, img: JSON.stringify(settings) } }) 
+        })
+        .then(() => alert("✅ 設定已儲存！所有設定包含匯率皆已同步。"))
+        .catch(() => alert("⚠️ 儲存失敗，請檢查網路連線。"))
+        .finally(() => {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        });
     }
 
     function filterAdminOrders(val) {
@@ -2280,10 +2207,8 @@
         let newUrl = prompt("請輸入此客人專屬的【7-11 賣貨便連結】：\n(若要清除連結請留白並按確定)", currentUrl);
         
         if (newUrl !== null) {
-            // ⭐ 加上 mode: "no-cors"
             fetch(GAS_URL, {
                 method: "POST",
-                mode: "no-cors",
                 body: JSON.stringify({ action: "updateUserMyship", userId: uid, myshipUrl: newUrl.trim() })
             }).then(() => {
                 alert("✅ 客人專屬賣貨便連結已更新！");
@@ -2297,9 +2222,7 @@
         if (checked.length === 0) return alert("請先勾選訂單！");
         const status = document.getElementById('batch-status-select').value;
         const updates = Array.from(checked).map(cb => ({ row: parseInt(cb.value), status }));
-        
-        // ⭐ 加上 mode: "no-cors"
-        fetch(GAS_URL, { method: "POST", mode: "no-cors", body: JSON.stringify({ action: "batchUpdateStatus", updates }) }).then(() => {
+        fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "batchUpdateStatus", updates }) }).then(() => {
             alert("更新成功！"); loadAllOrdersForAdmin();
         });
     }
@@ -2327,7 +2250,7 @@
                 products.push({ id: code, name: productName, price: productPrice, img: "", group: "" });
             } else { return; }
         } else {
-            productName = p.name.replace(/\[連線\]|【連線】|\[批貨\]|【批貨】/g, '').trim();
+            productName = p.name.replace(/[連線]|【連線】|[批貨]|【批貨】/g, '').trim();
             productPrice = p.price;
         }
 
@@ -2335,10 +2258,8 @@
         event.target.innerText = "⏳ 送出中...";
         event.target.disabled = true;
 
-        // ⭐ 加上 mode: "no-cors"
         fetch(GAS_URL, {
             method: "POST",
-            mode: "no-cors",
             body: JSON.stringify({
                 action: "submitFastOrder",
                 nickname: nickname,
@@ -2348,7 +2269,7 @@
                 qty: qty,
                 isNewProduct: isNewProduct 
             })
-        }).then(() => {
+        }).then(res => res.text()).then(text => {
             document.getElementById('fast-code').value = "";
             document.getElementById('fast-qty').value = "1";
             document.getElementById('fast-code').focus(); 
