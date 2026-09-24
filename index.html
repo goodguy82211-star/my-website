@@ -325,6 +325,19 @@
 </head>
 <body id="app-body">
 
+<!-- 🐾 讀取等待畫面 (保護前後台資料連線) -->
+<div id="global-loading" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.4s ease;">
+    <img src="https://i.ibb.co/5Wn9FCyV/image.png" style="width: 120px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); animation: bounce-loading 0.8s infinite alternate;">
+    <h2 style="color: var(--text-main); font-weight: 900; margin-top: 25px; letter-spacing: 2px;">🐾 資料連線中...</h2>
+    <p style="color: var(--primary-dark); font-weight: 700; font-size: 15px; margin-top: 5px;">請稍候，小魔丸正在為您準備最新資料</p>
+</div>
+<style>
+    @keyframes bounce-loading {
+        0% { transform: translateY(0) scale(1); }
+        100% { transform: translateY(-20px) scale(1.05); }
+    }
+</style>
+
 <nav class="glass-nav">
     <div class="nav-brand" onclick="showView('home')">
         <img id="nav-avatar-el" src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=150&q=80" alt="Logo">
@@ -629,6 +642,7 @@
         }
     };
 
+    // 👉 幫您把預留的專區位置補齊到 5 個
     const defaultSettings = {
         globalFont: "'Nunito', 'M PLUS Rounded 1c', '微軟正黑體', sans-serif",
         main: { text: "小魔丸旅遊代購", size: "42px", color: "#6b5960", font: "inherit" },
@@ -667,7 +681,10 @@
         localDeliveryText: "新竹市 / 竹北面交", 
         myshipLinks: [
             { name: "前往7-11賣貨便下單 (三麗鷗專區)", url: "https://myship.7-11.com.tw/general/detail/GM2608154676319" },
-            { name: "前往7-11賣貨便下單 (蒙奇奇專區)", url: "https://myship.7-11.com.tw/general/detail/GM2608064097645" }
+            { name: "前往7-11賣貨便下單 (蒙奇奇專區)", url: "https://myship.7-11.com.tw/general/detail/GM2608064097645" },
+            { name: "前往7-11賣貨便下單 (新增專區 3)", url: "#" },
+            { name: "前往7-11賣貨便下單 (新增專區 4)", url: "#" },
+            { name: "前往7-11賣貨便下單 (新增專區 5)", url: "#" }
         ]
     };
     let settings = defaultSettings;
@@ -1117,7 +1134,9 @@
     }
 
     function loadProducts() { 
-        fetch(`${GAS_URL}?mode=getProducts&t=${new Date().getTime()}`).then(res => res.json()).then(data => { 
+        fetch(`${GAS_URL}?mode=getProducts&t=${new Date().getTime()}`)
+        .then(res => res.json())
+        .then(data => { 
             let setIdx = data.findIndex(p => p.id === '_SITE_SETTINGS_');
             if (setIdx !== -1) {
                 try { 
@@ -1166,6 +1185,22 @@
                     window.history.replaceState({path: cleanUrl}, '', cleanUrl);
                 }
             }, 500);
+
+            // 👉 確保資料完全渲染後再關閉等待畫面
+            setTimeout(() => {
+                const loader = document.getElementById('global-loading');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.style.display = 'none', 400);
+                }
+            }, 600);
+            
+        }).catch(err => {
+            console.error("資料載入失敗:", err);
+            const loader = document.getElementById('global-loading');
+            if (loader) {
+                loader.innerHTML = '<h2 style="color:#e53e3e;">連線失敗，請重新整理頁面</h2><button onclick="window.location.reload()" style="margin-top:15px; padding:10px 20px; background:#e53e3e; color:white; border:none; border-radius:20px; font-weight:bold;">重新整理</button>';
+            }
         });
     }
     
